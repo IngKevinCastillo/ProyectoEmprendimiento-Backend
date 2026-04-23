@@ -1,7 +1,5 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from decimal import Decimal
-from datetime import datetime
 from Models.FacultadModelo import FacultadModelo
 
 def BuscarFacultad(db: Session, id: int):
