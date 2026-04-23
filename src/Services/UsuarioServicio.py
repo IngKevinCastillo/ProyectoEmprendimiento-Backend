@@ -5,6 +5,9 @@ from Models.UsuarioModelo import UsuarioModelo
 def BuscarUsuario(db: Session, id: int):
     return db.query(UsuarioModelo).filter(UsuarioModelo.id_usuario == id).first()
 
+def BuscarUsuarioPorCorreo(db: Session, correo: str):
+    return db.query(UsuarioModelo).filter(UsuarioModelo.correo == correo).first()
+
 def BuscarUsuarioPorDocumento(db: Session, nombre: str):
     return db.query(UsuarioModelo).filter(UsuarioModelo.numero_documento == nombre).first()
 
