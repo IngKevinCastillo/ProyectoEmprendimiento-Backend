@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Schemas.Programaschema import ProgramaCrearSchema, ProgramaRespuestaSchema
 from Configs.bd import get_db
+from Routes.UsuarioRoute import obtener_usuario_actual
 
 router = APIRouter(
     prefix="/programas",
@@ -10,7 +11,11 @@ router = APIRouter(
 
 
 @router.post("/", response_model=ProgramaRespuestaSchema, status_code=status.HTTP_201_CREATED)
-async def crear_programa(datos: ProgramaCrearSchema, db: Session = Depends(get_db)):
+async def crear_programa(
+    datos: ProgramaCrearSchema,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
     programa = None  # ProgramaController.crear(db, datos)
     if not programa:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
@@ -32,7 +37,12 @@ async def obtener_programa(id_programa: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{id_programa}", response_model=ProgramaRespuestaSchema)
-async def actualizar_programa(id_programa: int, datos: ProgramaCrearSchema, db: Session = Depends(get_db)):
+async def actualizar_programa(
+    id_programa: int,
+    datos: ProgramaCrearSchema,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
     programa = None  # ProgramaController.actualizar(db, id_programa, datos)
     if not programa:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Programa no encontrado")
@@ -40,7 +50,11 @@ async def actualizar_programa(id_programa: int, datos: ProgramaCrearSchema, db: 
 
 
 @router.delete("/{id_programa}", status_code=status.HTTP_204_NO_CONTENT)
-async def eliminar_programa(id_programa: int, db: Session = Depends(get_db)):
+async def eliminar_programa(
+    id_programa: int,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
     eliminado = None  # ProgramaController.eliminar(db, id_programa)
     if not eliminado:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Programa no encontrado")
