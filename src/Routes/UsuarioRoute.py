@@ -6,7 +6,7 @@ from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioRespuestaSchema, Lo
 from Configs.bd import get_db
 from Core.Configuracion import settings
 from Controllers.UsuarioControlador import BuscarUsuarioControlador, ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador
-from Controllers.AutenticacionControlador import CrearUsuarioControlador
+from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador
 
 router = APIRouter(
     prefix="/usuarios",
@@ -47,7 +47,7 @@ async def obtener_yo(usuario_actual=Depends(obtener_usuario_actual)):
 
 @router.post("/login")
 async def login(datos: LoginSchema, db: Session = Depends(get_db)):
-    token = None  # UsuarioController.login(db, datos)
+    token = IniciarSesionControlador(db,datos)
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
     return token
