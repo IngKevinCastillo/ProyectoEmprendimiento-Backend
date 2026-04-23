@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
 from sqlalchemy.orm import relationship
-from src.Configs.bd import Base
+from Configs.bd import Base
 
 class IndicadorModelo(Base):
     __tablename__ = "Indicador"
