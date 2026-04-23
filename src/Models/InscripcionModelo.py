@@ -1,8 +1,8 @@
 from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
 from sqlalchemy.orm import relationship
-from src.Configs.bd import Base
-from src.Models.UsuarioModelo import UsuarioModelo
-from src.Models.CursoModelo import CursoModelo
+from Configs.bd import Base
+from Models.UsuarioModelo import UsuarioModelo
+from Models.CursoModelo import CursoModelo
 
 class InscripcionModelo(Base):
     __tablename__ = "Inscripcion"

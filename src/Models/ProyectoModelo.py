@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
 from sqlalchemy.orm import relationship
-from src.Configs.bd import Base
-from src.Models.UsuarioModelo import UsuarioModelo
+from Configs.bd import Base
+from Models.UsuarioModelo import UsuarioModelo
 
 class ProyectoModelo(Base):
     __tablename__ = "Proyecto"
