@@ -8,11 +8,11 @@ class PostulacionesModelo(Base):
     __tablename__ = "Postulaciones"
     
     id_postulacion = Column(Integer, primary_key=True, nullable=False)
-    id_convocatoria = Column(Integer, ForeignKey("ConvocatoriasModelo.Id_convocatoria", ondelete="RESTRICT"), nullable=False)
-    id_usuario = Column(Integer, ForeignKey("UsuarioModelo.id_usuario", ondelete="RESTRICT"), nullable=False)
+    id_convocatoria = Column(Integer, ForeignKey("Convocatorias.Id_convocatoria", ondelete="RESTRICT"), nullable=False)
+    id_usuario = Column(Integer, ForeignKey("Usuario.id_usuario", ondelete="RESTRICT"), nullable=False)
     informacion_adicional = Column(String(400), nullable=False)
     id_plan_negocio = Column(Integer, nullable=False)
     fecha_registro = Column(TIMESTAMP, nullable=False)
     
-    convocatoria = relationship("ConvocatoriasModelo", back_populates="Postulaciones")
-    usuario = relationship("UsuarioModelo", back_populates="Postulaciones")
+    convocatoria = relationship("ConvocatoriasModelo", back_populates="postulaciones")
+    usuario = relationship("UsuarioModelo", back_populates="postulaciones")

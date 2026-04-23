@@ -11,6 +11,7 @@ class ProyectoModelo(Base):
     descripcion = Column(String, nullable=False)
     estado = Column(String(25), nullable=False)
     fecha_creacion = Column(TIMESTAMP, nullable=False, server_default=text("now()"))
-    id_usuario = Column(Integer, ForeignKey("UsuarioModelo.id_usuario"), nullable=False)
+    id_usuario = Column(Integer, ForeignKey("Usuario.id_usuario"), nullable=False)
     
-    usuario = relationship("UsuarioModelo", back_populates="Proyecto")
+    usuario = relationship("UsuarioModelo", back_populates="proyectos")
+    seguimientos = relationship("SeguimientoModelo", back_populates="proyecto")

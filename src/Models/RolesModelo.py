@@ -8,3 +8,6 @@ class RolesModelo(Base):
     id_rol = Column(Integer, primary_key=True)
     nombre = Column(String(50), nullable=False)
     estado = Column(String(10), nullable=False)
+    
+    usuarios = relationship("UsuarioModelo", back_populates="rol")
+    #participaciones = relationship("ParticipacionEventoModelo", back_populates="rol")

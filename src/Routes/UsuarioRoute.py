@@ -7,13 +7,12 @@ from Configs.bd import get_db
 from Core.Configuracion import settings
 from Controllers.UsuarioControlador import BuscarUsuarioControlador, ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador
 from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador
+from Core.Seguridad import esquema_oauth2
 
 router = APIRouter(
     prefix="/usuarios",
     tags=["Usuarios"],
 )
-
-esquema_oauth2 = OAuth2PasswordBearer(tokenUrl="/usuarios/login")
 
 
 def obtener_usuario_actual(

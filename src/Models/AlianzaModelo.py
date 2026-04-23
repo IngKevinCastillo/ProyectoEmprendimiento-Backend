@@ -8,7 +8,7 @@ class AlianzasModelo(Base):
     
     id_alianza = Column(Integer, primary_key=True, nullable=False)
     nombre_entidad = Column(String(150), nullable=False)
-    id_tipo_entidad = Column(Integer, ForeignKey("TipoEntidadesModelo.id_tipo_entidad", ondelete="RESTRICT"), nullable=False)
+    id_tipo_entidad = Column(Integer, ForeignKey("TipoEntidades.id_tipo_entidad", ondelete="RESTRICT"), nullable=False)
     representante_entidad = Column(String(120), nullable=False)
     cargo_representante = Column(String(80), nullable=False)
     correo_contacto = Column(String(120), nullable=False)

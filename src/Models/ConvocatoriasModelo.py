@@ -13,7 +13,8 @@ class ConvocatoriasModelo(Base):
     fecha_inicio = Column(TIMESTAMP, nullable=False)
     fecha_cierre = Column(TIMESTAMP, nullable=False)
     estado_convocatoria = Column(String(20), nullable=False)
-    id_usuario = Column(Integer, ForeignKey("UsuarioModelo.id_usuario", ondelete="RESTRICT"), nullable=False)
+    id_usuario = Column(Integer, ForeignKey("Usuario.id_usuario", ondelete="RESTRICT"), nullable=False)
     fecha_registro = Column(TIMESTAMP, nullable=False)
     
-    usuario = relationship("UsuarioModelo", back_populates="Convocatorias")
+    usuario = relationship("UsuarioModelo", back_populates="convocatorias")
+    postulaciones = relationship("PostulacionesModelo", back_populates="convocatoria")
