@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from decimal import Decimal
 from datetime import datetime
 from Models.TipoDocumentoModelo import TipoDocumentoModelo
+from Schemas.Tipodocumentoschema import TipoDocumentoCrearSchema
 
 def BuscarTipoDocumento(db: Session, id: int):
     return db.query(TipoDocumentoModelo).filter(TipoDocumentoModelo.id_tipo_documento == id).first()
@@ -13,13 +14,12 @@ def BuscarTipoDocumentoPorNombre(db: Session, nombre: str):
 def ObtenerTiposDocumento(db: Session):
     return db.query(TipoDocumentoModelo).all()
 
-def CrearTipoDocumento(db: Session, tipo_documento: any):
+def CrearTipoDocumento(db: Session, tipo_documento: TipoDocumentoCrearSchema):
     existente = BuscarTipoDocumentoPorNombre(db, tipo_documento.nombre)
     if existente:
         raise HTTPException(status_code=400, detail="Ya existe un tipo de documento con ese nombre")
 
     nuevo_tipo_documento = TipoDocumentoModelo(
-        id_tipo_documento=tipo_documento.id_tipo_documento,
         nombre=tipo_documento.nombre,
         abreviatura=tipo_documento.abreviatura,
         estado=tipo_documento.estado

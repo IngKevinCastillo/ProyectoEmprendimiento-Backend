@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from decimal import Decimal
 from datetime import datetime
 from Models.RolesModelo import RolesModelo
+from Schemas.Rolesschema import RolesCrearSchema
 
 def BuscarRol(db: Session, id: int):
     return db.query(RolesModelo).filter(RolesModelo.id_rol == id).first()
@@ -13,7 +14,7 @@ def BuscarRolPorNombre(db: Session, nombre: str):
 def ObtenerRoles(db: Session):
     return db.query(RolesModelo).all()
 
-def CrearRol(db: Session, rol: any): #cambiar al propio dedl modelo de niño
+def CrearRol(db: Session, rol: RolesCrearSchema):
     existente = BuscarRolPorNombre(db, rol.nombre)
     if existente:
         raise HTTPException(status_code=400, detail="Ya existe un tipo de rol con ese nombre")
@@ -21,7 +22,6 @@ def CrearRol(db: Session, rol: any): #cambiar al propio dedl modelo de niño
     RolesModelo
     
     nuevo_rol = RolesModelo(
-        id_rol=rol.id_rol, 
         nombre=rol.nombre, 
         estado=rol.estado
     )

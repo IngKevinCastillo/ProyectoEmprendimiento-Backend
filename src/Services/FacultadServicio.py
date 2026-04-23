@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from Models.FacultadModelo import FacultadModelo
+from Schemas.Facultadschema import FacultadCrearSchema
 
 def BuscarFacultad(db: Session, id: int):
     return db.query(FacultadModelo).filter(FacultadModelo.id_facultad == id).first()
@@ -11,13 +12,12 @@ def BuscarFacultadPorNombre(db: Session, nombre: str):
 def ObtenerFacultades(db: Session):
     return db.query(FacultadModelo).all()
 
-def CrearFacultad(db: Session, facultad: any):
+def CrearFacultad(db: Session, facultad: FacultadCrearSchema):
     existente = BuscarFacultadPorNombre(db, facultad.nombre)
     if existente:
         raise HTTPException(status_code=400, detail="Ya existe una facultad con ese nombre")
 
     nueva_facultad = FacultadModelo(
-        id_facultad=facultad.id_facultad,
         nombre=facultad.nombre,
         descripcion=facultad.descripcion,
         estado=facultad.estado

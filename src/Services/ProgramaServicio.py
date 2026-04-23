@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from decimal import Decimal
 from datetime import datetime
 from Models.ProgramaModelo import ProgramaModelo
+from Schemas.Programaschema import ProgramaCrearSchema
 
 def BuscarPrograma(db: Session, id: int):
     return db.query(ProgramaModelo).filter(ProgramaModelo.id_programa == id).first()
@@ -13,7 +14,7 @@ def BuscarProgramaPorNombre(db: Session, nombre: str):
 def ObtenerProgramas(db: Session):
     return db.query(ProgramaModelo).all()
 
-def CrearPrograma(db: Session, programa: any):
+def CrearPrograma(db: Session, programa: ProgramaCrearSchema):
     existente = BuscarProgramaPorNombre(db, programa.nombre)
     if existente:
         raise HTTPException(status_code=400, detail="Ya existe un programa con ese nombre")
@@ -22,7 +23,6 @@ def CrearPrograma(db: Session, programa: any):
         raise HTTPException(status_code=400, detail="El programa debe estar asociado a una facultad")
 
     nuevo_programa = ProgramaModelo(
-        id_programa=programa.id_programa,
         nombre=programa.nombre,
         nivel=programa.nivel,
         id_facultad=programa.id_facultad,
