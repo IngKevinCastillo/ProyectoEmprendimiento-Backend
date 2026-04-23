@@ -5,6 +5,8 @@ from jose import jwt, JWTError
 from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioRespuestaSchema, LoginSchema
 from Configs.bd import get_db
 from Core.Configuracion import settings
+from Controllers.UsuarioControlador import BuscarUsuarioControlador, ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador
+from Controllers.AutenticacionControlador import CrearUsuarioControlador
 
 router = APIRouter(
     prefix="/usuarios",
@@ -24,7 +26,7 @@ def obtener_usuario_actual(
     except (JWTError, TypeError):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
 
-    usuario = None  # UsuarioController.obtener_por_id(db, id_usuario)
+    usuario = BuscarUsuarioControlador(db, id_usuario)
     if not usuario:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return usuario
@@ -32,7 +34,7 @@ def obtener_usuario_actual(
 
 @router.post("/", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_201_CREATED)
 async def crear_usuario(datos: UsuarioCrearSchema, db: Session = Depends(get_db)):
-    usuario = None  # UsuarioController.crear(db, datos)
+    usuario = CrearUsuarioControlador(db,datos)
     if not usuario:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
     return usuario
@@ -54,9 +56,8 @@ async def login(datos: LoginSchema, db: Session = Depends(get_db)):
 @router.get("/", response_model=list[UsuarioRespuestaSchema])
 async def listar_usuarios(
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
-    usuarios = []  # UsuarioController.listar_todos(db)
+    usuarios = ObtenerUsuariosControlador(db)
     return usuarios
 
 
@@ -66,7 +67,7 @@ async def actualizar_yo(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    usuario = None  # UsuarioController.actualizar(db, usuario_actual.id_usuario, datos)
+    usuario = ActualizarUsuarioControlador(db, usuario_actual)
     if not usuario:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return usuario
@@ -77,7 +78,7 @@ async def eliminar_yo(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    eliminado = None  # UsuarioController.eliminar(db, usuario_actual.id_usuario)
+    eliminado = EliminarUsuarioControlador(db,usuario_actual.id_usuario)
     if not eliminado:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return eliminado
