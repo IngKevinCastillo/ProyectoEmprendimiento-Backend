@@ -9,3 +9,5 @@ class TipoDocumentoModelo(Base):
     nombre = Column(String(30), nullable=False)
     abreviatura = Column(String(10), nullable=False)
     estado = Column(String(10), nullable=False)
+    
+    usuarios = relationship("UsuarioModelo", back_populates="tipodocumento")

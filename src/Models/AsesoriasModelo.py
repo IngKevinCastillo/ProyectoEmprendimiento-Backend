@@ -12,6 +12,7 @@ class AsesoriasModelo(Base):
     fecha_asesoria = Column(TIMESTAMP, nullable=False)
     hora_inicio_asesoria = Column(TIMESTAMP, nullable=False)
     hora_fin_asesoria = Column(TIMESTAMP, nullable=False)
-    id_usuario = Column(Integer, ForeignKey("UsuarioModelo.id_usuario", ondelete="RESTRICT"), nullable=False)
+    id_usuario = Column(Integer, ForeignKey("Usuario.id_usuario", ondelete="RESTRICT"), nullable=False)
     estado_asesoria = Column(String(20), nullable=False)
     
+    usuario = relationship("UsuarioModelo", back_populates="asesorias")

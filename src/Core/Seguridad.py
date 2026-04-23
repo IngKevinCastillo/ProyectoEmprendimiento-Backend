@@ -9,7 +9,7 @@ from Services.UsuarioServicio import BuscarUsuarioPorCorreo
 from Configs.bd import get_db
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-esquema_oauth2 = OAuth2PasswordBearer(tokenUrl="/auth/login") #aqui pones la ruta de tu endpoint de login, por ejemplo "/auth/login"
+esquema_oauth2 = OAuth2PasswordBearer(tokenUrl="/usuarios/login")
 
 def HashearContrasena(contraena: str) -> str:
     return pwd_context.hash(contraena)

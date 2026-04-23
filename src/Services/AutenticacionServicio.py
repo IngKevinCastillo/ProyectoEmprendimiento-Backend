@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from fastapi import HTTPException
 from Models.UsuarioModelo import UsuarioModelo
-from Core.Seguridad import Hashear_contrasena
+from Core.Seguridad import HashearContrasena
 from Services.UsuarioServicio import BuscarUsuarioPorDocumento
 from Schemas.Usuarioschema import UsuarioCrearSchema
 from Core.Seguridad import CrearTokenAcceso, VerificarContrasena
@@ -15,7 +15,7 @@ def IniciarSesion(datos: UsuarioCrearSchema, db: Session) -> dict:
     usuario = BuscarUsuarioPorCorreo(db, datos.correo)
     if not usuario or not VerificarContrasena(datos.contrasena, usuario.contrasena):
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
-    token = CrearTokenAcceso({"sub": str(usuario.id)})
+    token = CrearTokenAcceso({"sub": str(usuario.id_usuario)})
     return {"access_token": token, "token_type": "bearer"}
 
 def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
@@ -43,7 +43,7 @@ def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
 
     nuevo_usuario = UsuarioModelo(**data)
     nuevo_usuario.fecha_registro = datetime.now()
-    nuevo_usuario.contrasena = Hashear_contrasena(nuevo_usuario.contrasena)
+    nuevo_usuario.contrasena = HashearContrasena(nuevo_usuario.contrasena)
     db.add(nuevo_usuario)
     db.commit()
     db.refresh(nuevo_usuario)
