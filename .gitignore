@@ -63,6 +63,8 @@ build/
 # ⚡ FastAPI / Uvicorn
 # =========================
 *.pid
+.postman/
+postman/
 
 # =========================
 # 🔥 Archivos temporales
