@@ -7,6 +7,8 @@ from fastapi import Depends, HTTPException
 from Core.Configuracion import settings , Settings
 from Services.UsuarioServicio import BuscarUsuarioPorCorreo
 from Configs.bd import get_db
+from Controllers.UsuarioControlador import BuscarUsuarioControlador
+from fastapi import status
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 esquema_oauth2 = OAuth2PasswordBearer(tokenUrl="/usuarios/login")
@@ -48,3 +50,18 @@ def CrearTokenAcceso(datos: dict):
     )
 
     return jwt_codificado
+
+def obtener_usuario_actual(
+    token: str = Depends(esquema_oauth2),
+    db: Session = Depends(get_db)
+):
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        id_usuario = int(payload.get("sub"))
+    except (JWTError, TypeError):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+
+    usuario = BuscarUsuarioControlador(db, id_usuario)
+    if not usuario:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+    return usuario

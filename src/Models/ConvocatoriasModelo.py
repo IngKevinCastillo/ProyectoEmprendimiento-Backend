@@ -17,4 +17,4 @@ class ConvocatoriasModelo(Base):
     fecha_registro = Column(TIMESTAMP, nullable=False)
     
     usuario = relationship("UsuarioModelo", back_populates="convocatorias")
-    postulaciones = relationship("PostulacionesModelo", back_populates="convocatoria")
+    #postulaciones = relationship("PostulacionesModelo", back_populates="convocatoria")

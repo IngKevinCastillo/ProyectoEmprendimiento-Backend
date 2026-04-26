@@ -10,4 +10,4 @@ class RolesModelo(Base):
     estado = Column(String(10), nullable=False)
     
     usuarios = relationship("UsuarioModelo", back_populates="rol")
-    #participaciones = relationship("ParticipacionEventoModelo", back_populates="rol")
+    participaciones = relationship("ParticipacionEventoModelo", back_populates="rol")
