@@ -5,7 +5,7 @@ from Routes import UsuarioRoute, TipoDocumentoRoute, RolesRoute, ProgramasRoute,
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="API Emprendimientos", version="1.0")
+app = FastAPI(title="API Emprendimientos", version="1.0", docs_url="/docs")
 
 app.include_router(UsuarioRoute.router)
 app.include_router(TipoDocumentoRoute.router)

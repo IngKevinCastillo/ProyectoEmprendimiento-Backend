@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Schemas.Tipodocumentoschema import TipoDocumentoCrearSchema, TipoDocumentoRespuestaSchema
 from Configs.bd import get_db
-from Routes.UsuarioRoute import obtener_usuario_actual
+from Core.Seguridad import obtener_usuario_actual
 
 router = APIRouter(
     prefix="/tipo-documento",

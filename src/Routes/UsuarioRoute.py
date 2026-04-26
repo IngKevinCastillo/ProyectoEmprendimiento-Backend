@@ -3,33 +3,17 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
 from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioRespuestaSchema, LoginSchema
+from Schemas.Autenticacionschema import Token
 from Configs.bd import get_db
 from Core.Configuracion import settings
 from Controllers.UsuarioControlador import BuscarUsuarioControlador, ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador
 from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador
-from Core.Seguridad import esquema_oauth2
+from Core.Seguridad import obtener_usuario_actual
 
 router = APIRouter(
     prefix="/usuarios",
     tags=["Usuarios"],
 )
-
-
-def obtener_usuario_actual(
-    token: str = Depends(esquema_oauth2),
-    db: Session = Depends(get_db)
-):
-    try:
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        id_usuario = int(payload.get("sub"))
-    except (JWTError, TypeError):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
-
-    usuario = BuscarUsuarioControlador(db, id_usuario)
-    if not usuario:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
-    return usuario
-
 
 @router.post("/", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_201_CREATED)
 async def crear_usuario(datos: UsuarioCrearSchema, db: Session = Depends(get_db)):
@@ -44,7 +28,7 @@ async def obtener_yo(usuario_actual=Depends(obtener_usuario_actual)):
     return usuario_actual
 
 
-@router.post("/login")
+@router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
 async def login(datos: LoginSchema, db: Session = Depends(get_db)):
     token = IniciarSesionControlador(db,datos)
     if not token:

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Schemas.Rolesschema import RolesCrearSchema, RolesRespuestaSchema
 from Configs.bd import get_db
-from Routes.UsuarioRoute import obtener_usuario_actual
+from Core.Seguridad import obtener_usuario_actual
 
 router = APIRouter(
     prefix="/roles",

@@ -8,8 +8,8 @@ def BuscarUsuario(db: Session, id: int):
 def BuscarUsuarioPorCorreo(db: Session, correo: str):
     return db.query(UsuarioModelo).filter(UsuarioModelo.correo == correo).first()
 
-def BuscarUsuarioPorDocumento(db: Session, nombre: str):
-    return db.query(UsuarioModelo).filter(UsuarioModelo.numero_documento == nombre).first()
+def BuscarUsuarioPorDocumento(db: Session, documento: str):
+    return db.query(UsuarioModelo).filter(UsuarioModelo.numero_documento == documento).first()
 
 def ObtenerUsuarios(db: Session):
     return db.query(UsuarioModelo).all()
@@ -23,15 +23,15 @@ def EliminarUsuario(db: Session, id: int):
     db.commit()
     return {"detail": "Usuario eliminado"}
 
-def ActualizarUsuario(db: Session, usuarioAActualizar: any):
-    usuario = BuscarUsuario(db, usuarioAActualizar.id_usuario)
-    if not usuario:
+def ActualizarUsuario(db: Session, usuario: any):
+    existente = BuscarUsuario(db, usuario.id_usuario)
+    if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el usuario")
     
-    if(usuario.id_rol is None):
+    if(existente.id_rol is None):
         raise HTTPException(status_code=400, detail="El usuario debe estar asociado a un rol")
     
-    if(usuario.id_tipodocumento is None):
+    if(existente.id_tipodocumento is None):
         raise HTTPException(status_code=400, detail="El usuario debe estar asociado a un tipo de documento")
     
     for campo in [
@@ -41,8 +41,8 @@ def ActualizarUsuario(db: Session, usuarioAActualizar: any):
         "id_programa", "id_tipodocumento", 
         "numero_documento", "telefono", "id_facultad"
     ]:
-        setattr(usuario, campo, getattr(usuarioAActualizar, campo))
+        setattr(existente, campo, getattr(usuario, campo))
 
     db.commit()
-    db.refresh(usuario)
-    return usuario
+    db.refresh(existente)
+    return existente
