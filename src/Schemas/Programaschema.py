@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
 import re
-
+from Utils.Validacionesutilidades import validar_nombre, validar_int
 
 class ProgramaCrearSchema(BaseModel):
     nombre: str
@@ -11,10 +11,7 @@ class ProgramaCrearSchema(BaseModel):
     @field_validator("nombre")
     @classmethod
     def validar_nombre(cls, v: str) -> str:
-        v = v.strip()
-        if not (5 <= len(v) <= 100):
-            raise ValueError("El nombre del programa debe tener entre 5 y 100 caracteres.")
-        return v
+        return validar_nombre(v, 5, 100, "nombre")
 
     @field_validator("nivel")
     @classmethod
@@ -27,9 +24,7 @@ class ProgramaCrearSchema(BaseModel):
     @field_validator("id_facultad")
     @classmethod
     def validar_id_facultad(cls, v: int) -> int:
-        if v < 1 or v > 2147483647:
-            raise ValueError("El ID de facultad debe ser un entero positivo válido (1 - 2147483647).")
-        return v
+        return validar_int(v, 1, 2147483647, "id_facultad")
 
     @field_validator("estado")
     @classmethod

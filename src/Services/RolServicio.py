@@ -4,6 +4,7 @@ from decimal import Decimal
 from datetime import datetime
 from Models.RolesModelo import RolesModelo
 from Schemas.Rolesschema import RolesCrearSchema
+from Utils.Mapeadorutilidades import auto_mapear
 
 def BuscarRol(db: Session, id: int):
     return db.query(RolesModelo).filter(RolesModelo.id_rol == id).first()
@@ -39,14 +40,13 @@ def EliminarRol(db: Session, id: int):
     db.commit()
     return {"detail": "Tipo de rol eliminado"}
 
-def ActualizarRol(db: Session, rolAActualizar: any):
-    rol = BuscarRol(db, rolAActualizar.id_rol)
-    if not rol:
+def ActualizarRol(db: Session, rol: any):
+    existente = BuscarRol(db, rol.id_rol)
+    if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el tipo de rol")
     
-    rol.nombre = rolAActualizar.nombre
-    rol.estado = rolAActualizar.estado
+    auto_mapear(existente, rol, excluir=["id_rol"])
     
     db.commit()
-    db.refresh(rol)
-    return rol
+    db.refresh(existente)
+    return existente

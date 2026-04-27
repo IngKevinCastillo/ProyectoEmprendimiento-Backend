@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
 import re
-
+from Utils.Validacionesutilidades import validar_nombre
 
 class TipoDocumentoCrearSchema(BaseModel):
     nombre: str
@@ -10,12 +10,7 @@ class TipoDocumentoCrearSchema(BaseModel):
     @field_validator("nombre")
     @classmethod
     def validar_nombre(cls, v: str) -> str:
-        v = v.strip()
-        if not (3 <= len(v) <= 30):
-            raise ValueError("El nombre del tipo de documento debe tener entre 3 y 30 caracteres.")
-        if not re.fullmatch(r"[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+", v):
-            raise ValueError("El nombre solo puede contener letras.")
-        return v
+        return validar_nombre(v, 3, 30, "nombre")
 
     @field_validator("abreviatura")
     @classmethod

@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from Models.UsuarioModelo import UsuarioModelo
+from Utils.Mapeadorutilidades import auto_mapear
 
 def BuscarUsuario(db: Session, id: int):
     return db.query(UsuarioModelo).filter(UsuarioModelo.id_usuario == id).first()
@@ -34,14 +35,7 @@ def ActualizarUsuario(db: Session, usuario: any):
     if(existente.id_tipodocumento is None):
         raise HTTPException(status_code=400, detail="El usuario debe estar asociado a un tipo de documento")
     
-    for campo in [
-        "primer_nombre", "segundo_nombre", "primer_apellido", "segundo_apellido",
-        "correo", "contrasena", "id_rol", "fecha_registro", "estado",
-        "fecha_nacimiento", "ubicacion_semestral", "sexo",
-        "id_programa", "id_tipodocumento", 
-        "numero_documento", "telefono", "id_facultad"
-    ]:
-        setattr(existente, campo, getattr(usuario, campo))
+    auto_mapear(existente, usuario, excluir=["id_usuario"])
 
     db.commit()
     db.refresh(existente)

@@ -4,6 +4,7 @@ from decimal import Decimal
 from datetime import datetime
 from Models.TipoDocumentoModelo import TipoDocumentoModelo
 from Schemas.Tipodocumentoschema import TipoDocumentoCrearSchema
+from Utils.Mapeadorutilidades import auto_mapear
 
 def BuscarTipoDocumento(db: Session, id: int):
     return db.query(TipoDocumentoModelo).filter(TipoDocumentoModelo.id_tipo_documento == id).first()
@@ -38,15 +39,13 @@ def EliminarTipoDocumento(db: Session, id: int):
     db.commit()
     return {"detail": "Tipo de documento eliminado"}
 
-def ActualizarTipoDocumento(db: Session, tipo_documentoAActualizar: any):
-    tipo_documento = BuscarTipoDocumento(db, tipo_documentoAActualizar.id_tipo_documento)
-    if not tipo_documento:
+def ActualizarTipoDocumento(db: Session, tipo_documento: any):
+    existente = BuscarTipoDocumento(db, tipo_documento.id_tipo_documento)
+    if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el tipo de documento")
 
-    tipo_documento.nombre = tipo_documentoAActualizar.nombre
-    tipo_documento.abreviatura = tipo_documentoAActualizar.abreviatura
-    tipo_documento.estado = tipo_documentoAActualizar.estado
+    auto_mapear(existente, tipo_documento, excluir=["id_tipo_documento"])
 
     db.commit()
-    db.refresh(tipo_documento)
-    return tipo_documento
+    db.refresh(existente)
+    return existente

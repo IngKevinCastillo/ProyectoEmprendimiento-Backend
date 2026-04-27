@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from Models.FacultadModelo import FacultadModelo
 from Schemas.Facultadschema import FacultadCrearSchema
+from Utils.Mapeadorutilidades import auto_mapear
 
 def BuscarFacultad(db: Session, id: int):
     return db.query(FacultadModelo).filter(FacultadModelo.id_facultad == id).first()
@@ -36,15 +37,13 @@ def EliminarFacultad(db: Session, id: int):
     db.commit()
     return {"detail": "Facultad eliminada"}
 
-def ActualizarFacultad(db: Session, facultadAActualizar: any):
-    facultad = BuscarFacultad(db, facultadAActualizar.id_facultad)
-    if not facultad:
+def ActualizarFacultad(db: Session, facultad: any):
+    existente = BuscarFacultad(db, facultad.id_facultad)
+    if not existente:
         raise HTTPException(status_code=404, detail="No se encontró la facultad")
     
-    facultad.nombre = facultadAActualizar.nombre
-    facultad.descripcion = facultadAActualizar.descripcion
-    facultad.estado = facultadAActualizar.estado
-
+    auto_mapear(existente, facultad, excluir=["id_facultad"])
+    
     db.commit()
-    db.refresh(facultad)
-    return facultad
+    db.refresh(existente)
+    return existente
