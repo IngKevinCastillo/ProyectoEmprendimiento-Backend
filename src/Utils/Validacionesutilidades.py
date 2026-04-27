@@ -148,3 +148,14 @@ def validar_bool(valor, campo: str = "Campo") -> bool:
     if not isinstance(valor, bool):
         raise ValueError(f"{campo} debe ser verdadero (True) o falso (False).")
     return valor
+
+def validar_fecha(valor: str, campo: str = "Fecha") -> datetime:
+    if not isinstance(valor, str):
+        raise TypeError(f"{campo} debe ser un texto en formato DD/MM/YYYY.")
+    valor = valor.strip()
+    if not re.fullmatch(r"\d{2}/\d{2}/\d{4}", valor):
+        raise ValueError(f"{campo} debe tener el formato DD/MM/YYYY (ej. 15/08/2000).")
+    try:
+        return datetime.strptime(valor, "%d/%m/%Y")
+    except ValueError:
+        raise ValueError(f"{campo} no es una fecha valida (ej. 31/02/2000 no existe).")

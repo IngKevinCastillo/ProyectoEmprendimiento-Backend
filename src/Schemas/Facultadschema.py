@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
 import re
-
+from Utils.Validacionesutilidades import validar_nombre, validar_string
 
 class FacultadCrearSchema(BaseModel):
     nombre: str
@@ -10,20 +10,12 @@ class FacultadCrearSchema(BaseModel):
     @field_validator("nombre")
     @classmethod
     def validar_nombre(cls, v: str) -> str:
-        v = v.strip()
-        if not (5 <= len(v) <= 80):
-            raise ValueError("El nombre de la facultad debe tener entre 5 y 80 caracteres.")
-        if not re.fullmatch(r"[A-Za-záéíóúÁÉÍÓÚüÜñÑ\s]+", v):
-            raise ValueError("El nombre de la facultad solo puede contener letras y espacios.")
-        return v
+        return validar_nombre(v, 5, 80, "nombre")
 
     @field_validator("descripcion")
     @classmethod
     def validar_descripcion(cls, v: str) -> str:
-        v = v.strip()
-        if not (10 <= len(v) <= 500):
-            raise ValueError("La descripción debe tener entre 10 y 500 caracteres.")
-        return v
+        return validar_string(v, 10, 500, "descripcion")
 
     @field_validator("estado")
     @classmethod

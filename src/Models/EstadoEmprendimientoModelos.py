@@ -8,4 +8,4 @@ class EstadoEmprendimientoModelo(Base):
     id_estado_emprendimiento = Column(Integer, primary_key=True, nullable=False)
     nombre = Column(String(40), nullable=False)
     
-    seguimientos = relationship("SeguimientoModelo", back_populates="estado_emprendimiento_rel")
+    # seguimientos = relationship("SeguimientoModelo", back_populates="estado_emprendimiento_rel")
