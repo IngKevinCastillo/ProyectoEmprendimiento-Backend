@@ -8,7 +8,7 @@ from Configs.bd import get_db
 from Core.Configuracion import settings
 from Controllers.UsuarioControlador import BuscarUsuarioControlador, ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador
 from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador
-from Core.Seguridad import obtener_usuario_actual
+from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 
 router = APIRouter(
     prefix="/usuarios",
@@ -16,7 +16,12 @@ router = APIRouter(
 )
 
 @router.post("/", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_201_CREATED)
-async def crear_usuario(datos: UsuarioCrearSchema, db: Session = Depends(get_db)):
+async def crear_usuario(
+    datos: UsuarioCrearSchema, 
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    verificar_usuario_admin(usuario_actual)
     usuario = CrearUsuarioControlador(db,datos)
     if not usuario:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
@@ -39,7 +44,9 @@ async def login(datos: LoginSchema, db: Session = Depends(get_db)):
 @router.get("/", response_model=list[UsuarioRespuestaSchema])
 async def listar_usuarios(
     db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
 ):
+    verificar_usuario_admin(usuario_actual)
     usuarios = ObtenerUsuariosControlador(db)
     return usuarios
 
