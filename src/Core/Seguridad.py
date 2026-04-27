@@ -12,6 +12,7 @@ from fastapi import status
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 esquema_oauth2 = OAuth2PasswordBearer(tokenUrl="/usuarios/login")
+usuarioAdmin = 2
 
 def HashearContrasena(contraena: str) -> str:
     return pwd_context.hash(contraena)
@@ -65,3 +66,8 @@ def obtener_usuario_actual(
     if not usuario:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return usuario
+
+
+def verificar_usuario_admin(usuario_actual):
+    if usuario_actual.id_rol != usuarioAdmin:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")

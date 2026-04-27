@@ -39,3 +39,8 @@ class TipoDocumentoRespuestaSchema(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class TipoDocumentoActualizarSchema(BaseModel):
+    nombre: str
+    abreviatura: str
+    estado: str

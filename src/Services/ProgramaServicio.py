@@ -6,8 +6,8 @@ from Models.ProgramaModelo import ProgramaModelo
 from Schemas.Programaschema import ProgramaCrearSchema
 from Utils.Mapeadorutilidades import auto_mapear
 
-def BuscarPrograma(db: Session, id: int):
-    return db.query(ProgramaModelo).filter(ProgramaModelo.id_programa == id).first()
+def BuscarPrograma(db: Session, id: str):
+    return db.query(ProgramaModelo).filter(ProgramaModelo.id_programa == int(id)).first()
 
 def BuscarProgramaPorNombre(db: Session, nombre: str):
     return db.query(ProgramaModelo).filter(ProgramaModelo.nombre == nombre).first()
@@ -35,8 +35,8 @@ def CrearPrograma(db: Session, programa: ProgramaCrearSchema):
     db.refresh(nuevo_programa)
     return nuevo_programa
 
-def EliminarPrograma(db: Session, id: int):
-    existente = BuscarPrograma(db, id)
+def EliminarPrograma(db: Session, id: str):
+    existente = BuscarPrograma(db, int(id))
     if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el programa")
     
@@ -44,8 +44,8 @@ def EliminarPrograma(db: Session, id: int):
     db.commit()
     return {"detail": "Programa eliminado"}
 
-def ActualizarPrograma(db: Session, programa: any):
-    existente = BuscarPrograma(db, programa.id_programa)
+def ActualizarPrograma(db: Session, programa: any, id_programa: str):
+    existente = BuscarPrograma(db, int(id_programa))
     if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el programa")
     

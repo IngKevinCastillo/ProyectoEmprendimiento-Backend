@@ -6,8 +6,8 @@ from Models.TipoDocumentoModelo import TipoDocumentoModelo
 from Schemas.Tipodocumentoschema import TipoDocumentoCrearSchema
 from Utils.Mapeadorutilidades import auto_mapear
 
-def BuscarTipoDocumento(db: Session, id: int):
-    return db.query(TipoDocumentoModelo).filter(TipoDocumentoModelo.id_tipo_documento == id).first()
+def BuscarTipoDocumento(db: Session, id_tipo_documento: str):
+    return db.query(TipoDocumentoModelo).filter(TipoDocumentoModelo.id_tipo_documento == int(id_tipo_documento)).first()
 
 def BuscarTipoDocumentoPorNombre(db: Session, nombre: str):
     return db.query(TipoDocumentoModelo).filter(TipoDocumentoModelo.nombre == nombre).first()
@@ -30,17 +30,17 @@ def CrearTipoDocumento(db: Session, tipo_documento: TipoDocumentoCrearSchema):
     db.refresh(nuevo_tipo_documento)
     return nuevo_tipo_documento
 
-def EliminarTipoDocumento(db: Session, id: int):
-    tipo_documento = BuscarTipoDocumento(db, id)
-    if not tipo_documento:
+def EliminarTipoDocumento(db: Session, id_tipo_documento: str):
+    existente = BuscarTipoDocumento(db, int(id_tipo_documento))
+    if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el tipo de documento")
 
-    db.delete(tipo_documento)
+    db.delete(existente)
     db.commit()
     return {"detail": "Tipo de documento eliminado"}
 
-def ActualizarTipoDocumento(db: Session, tipo_documento: any):
-    existente = BuscarTipoDocumento(db, tipo_documento.id_tipo_documento)
+def ActualizarTipoDocumento(db: Session, tipo_documento: any, id_tipo_documento: str):
+    existente = BuscarTipoDocumento(db, int(id_tipo_documento))
     if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el tipo de documento")
 
