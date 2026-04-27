@@ -44,3 +44,9 @@ class ProgramaRespuestaSchema(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class ProgramaActualizarSchema(BaseModel):
+    nombre: str
+    nivel: str
+    id_facultad: int
+    estado: str

@@ -29,3 +29,7 @@ class RolesRespuestaSchema(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class RolesActualizarSchema(BaseModel):
+    nombre: str
+    estado: str

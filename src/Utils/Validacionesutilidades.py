@@ -66,22 +66,23 @@ _DOMINIOS_VALIDOS = {
     "uis.edu.co", "utb.edu.co", "unicartagena.edu.co",
 }
 
-def validar_email(valor: str, solo_dominios_conocidos: bool = False) -> str:
+def validar_email(valor: str) -> str:
     if not isinstance(valor, str):
         raise TypeError("El correo debe ser un texto.")
+    
     valor = valor.strip().lower()
+    
     if not re.fullmatch(r"^[\w\.\+\-]+@[\w\-]+(\.[\w\-]+)+$", valor):
         raise ValueError("Correo electrónico con formato inválido.")
+    
+    dominio = valor.split("@")
 
-    dominio = valor.split("@")[1]
-    if dominio.endswith(".edu.co"):
-        return valor
-
-    if solo_dominios_conocidos and dominio not in _DOMINIOS_VALIDOS:
+    if dominio != "unicesar.edu.co":
         raise ValueError(
-            f"Dominio de correo no permitido: '{dominio}'. "
-            f"Usa un correo institucional o uno de los proveedores aceptados."
+            f"Correo no válido. Solo se aceptan direcciones del dominio @unicesar.edu.co. "
+            f"Se recibió: '{valor}'"
         )
+    
     return valor
 
 def validar_int(

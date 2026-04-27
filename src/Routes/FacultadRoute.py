@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from Schemas.Facultadschema import FacultadCrearSchema, FacultadRespuestaSchema
+from Schemas.Facultadschema import FacultadCrearSchema, FacultadRespuestaSchema, FacultadActualizarSchema
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual
+from Controllers.FacultadControlador import CrearFacultad, ObtenerFacultades, BuscarFacultad, EliminarFacultad, ActualizarFacultad, BuscarFacultadPorNombre
 
 router = APIRouter(
     prefix="/facultades",
@@ -16,34 +17,51 @@ async def crear_facultad(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    facultad = None  # FacultadController.crear(db, datos)
+    facultad = CrearFacultad(db, datos)
     if not facultad:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
     return facultad
 
 
 @router.get("/", response_model=list[FacultadRespuestaSchema])
-async def listar_facultades(db: Session = Depends(get_db)):
-    facultades = []  # FacultadController.listar_todos(db)
+async def listar_facultades(
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    facultades = ObtenerFacultades(db)
     return facultades
 
 
 @router.get("/{id_facultad}", response_model=FacultadRespuestaSchema)
-async def obtener_facultad(id_facultad: int, db: Session = Depends(get_db)):
-    facultad = None  # FacultadController.obtener_por_id(db, id_facultad)
+async def obtener_facultad(
+    id_facultad: str, 
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    facultad = BuscarFacultad(db, id_facultad)
     if not facultad:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facultad no encontrada")
     return facultad
 
+@router.get("/nombre/{nombre}", response_model=FacultadRespuestaSchema)
+async def obtener_facultad_nombre(
+    nombre: str, 
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    facultad = BuscarFacultadPorNombre(db, nombre)
+    if not facultad:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facultad no encontrada")
+    return facultad
 
 @router.put("/{id_facultad}", response_model=FacultadRespuestaSchema)
 async def actualizar_facultad(
     id_facultad: int,
-    datos: FacultadCrearSchema,
+    datos: FacultadActualizarSchema,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    facultad = None  # FacultadController.actualizar(db, id_facultad, datos)
+    facultad = ActualizarFacultad(db, datos, id_facultad)
     if not facultad:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facultad no encontrada")
     return facultad
@@ -55,7 +73,7 @@ async def eliminar_facultad(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    eliminado = None  # FacultadController.eliminar(db, id_facultad)
+    eliminado = EliminarFacultad(db, id_facultad)
     if not eliminado:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facultad no encontrada")
     return eliminado

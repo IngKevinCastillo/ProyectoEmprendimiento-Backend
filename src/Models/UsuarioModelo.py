@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
+from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey, Date
 from sqlalchemy.orm import relationship
 from Configs.bd import Base
 from Models.RolesModelo import RolesModelo
@@ -19,7 +19,7 @@ class UsuarioModelo(Base):
     id_rol = Column(Integer, ForeignKey("Roles.id_rol", ondelete="RESTRICT"), nullable=False)
     fecha_registro = Column(TIMESTAMP, nullable=False, server_default=text("now()"))
     estado = Column(String(10), nullable=False, default="Activo")
-    fecha_nacimiento = Column(TIMESTAMP, nullable=False)
+    fecha_nacimiento = Column(Date, nullable=False)
     ubicacion_semestral = Column(Integer, nullable=True)
     sexo = Column(String(30), nullable=False)
     id_programa = Column(Integer, ForeignKey("Programa.id_programa", ondelete="RESTRICT"), nullable=True)

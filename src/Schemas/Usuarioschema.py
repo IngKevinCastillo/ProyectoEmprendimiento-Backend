@@ -11,7 +11,7 @@ class UsuarioCrearSchema(BaseModel):
     segundo_apellido: str
     correo: EmailStr
     contrasena: str
-    fecha_nacimiento: date
+    fecha_nacimiento: str
     ubicacion_semestral: int
     id_rol: int
     estado: str = "Activo"
