@@ -133,8 +133,8 @@ class UsuarioRespuestaSchema(BaseModel):
     numero_documento: str
     telefono: str
     id_facultad: int
-    id_sede: int
-    direccion: str
+    id_sede: Optional[int] = None
+    direccion: Optional[str] = None
 
     class Config:
         from_attributes = True
