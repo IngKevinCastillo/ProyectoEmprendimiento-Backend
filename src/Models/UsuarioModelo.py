@@ -29,7 +29,7 @@ class UsuarioModelo(Base):
     telefono = Column(String(10), nullable=False)
     id_facultad = Column(Integer, ForeignKey("Facultad.id_facultad", ondelete="RESTRICT"), nullable=True)
     id_sede = Column(Integer, ForeignKey("Sede.id_sede", ondelete="RESTRICT"), nullable=True)
-    
+    direccion = Column(String(80), nullable=False)
     
     rol = relationship("RolesModelo", back_populates="usuarios")
     programa = relationship("ProgramaModelo", back_populates="usuarios")
