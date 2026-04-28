@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from Models.UsuarioModelo import UsuarioModelo
 from Utils.Mapeadorutilidades import auto_mapear
+from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
 
 def BuscarUsuario(db: Session, id: int):
     return db.query(UsuarioModelo).filter(UsuarioModelo.id_usuario == id).first()
@@ -14,6 +15,9 @@ def BuscarUsuarioPorDocumento(db: Session, documento: str):
 
 def ObtenerUsuarios(db: Session):
     return db.query(UsuarioModelo).all()
+
+def EmprendimientosUsuario(db: Session, id_usuario: str):
+    return db.query(UsuarioProyectoModelo).filter(UsuarioProyectoModelo.id_usuario == int(id_usuario)).all()
 
 def EliminarUsuario(db: Session, id: int):
     usuario = BuscarUsuario(db, id)

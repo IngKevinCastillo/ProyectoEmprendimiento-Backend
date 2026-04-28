@@ -11,7 +11,7 @@ class UsuarioCrearSchema(BaseModel):
     segundo_apellido: str
     correo: EmailStr
     contrasena: str
-    fecha_nacimiento: date
+    fecha_nacimiento: str
     ubicacion_semestral: int
     id_rol: int
     estado: str = "Activo"
@@ -21,6 +21,8 @@ class UsuarioCrearSchema(BaseModel):
     numero_documento: str
     telefono: str
     id_facultad: int
+    id_sede: int
+    direccion: str
 
     # ──────────────── Nombres y apellidos ────────────────
 
@@ -88,7 +90,7 @@ class UsuarioCrearSchema(BaseModel):
 
     # ──────────────── IDs (FK) ────────────────
 
-    @field_validator("id_rol", "id_programa", "id_tipodocumento", "id_facultad")
+    @field_validator("id_rol", "id_programa", "id_tipodocumento", "id_facultad", "id_sede")
     @classmethod
     def validar_ids_positivos(cls, v: int) -> int:
         return validar_int(v, 1, 2147483647, "ID")
@@ -106,6 +108,11 @@ class UsuarioCrearSchema(BaseModel):
     @classmethod
     def validar_telefono(cls, v: str) -> str:
         return validar_telefono(v, "telefono")
+    
+    @field_validator("direccion")
+    @classmethod
+    def validar_direccion(cls, v: str) -> str:
+        return validar_string(v, 6, 80, "direccion")
 
 
 class UsuarioRespuestaSchema(BaseModel):
@@ -126,6 +133,8 @@ class UsuarioRespuestaSchema(BaseModel):
     numero_documento: str
     telefono: str
     id_facultad: int
+    id_sede: Optional[int] = None
+    direccion: Optional[str] = None
 
     class Config:
         from_attributes = True

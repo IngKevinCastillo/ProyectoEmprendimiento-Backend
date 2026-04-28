@@ -31,7 +31,7 @@ def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
     if(usuario.id_rol is None):
         raise HTTPException(status_code=400, detail="El usuario debe estar asociado a un rol")
     
-    if  BuscarTipoDocumento(db, usuario.id_tipodocumento):
+    if not BuscarTipoDocumento(db, usuario.id_tipodocumento):
         raise HTTPException(status_code=400, detail="El tipo de documento especificado no existe")
     
     if(usuario.id_tipodocumento is None):

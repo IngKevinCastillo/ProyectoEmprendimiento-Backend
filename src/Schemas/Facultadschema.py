@@ -34,3 +34,8 @@ class FacultadRespuestaSchema(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class FacultadActualizarSchema(BaseModel):
+    nombre: str
+    descripcion: str
+    estado: str

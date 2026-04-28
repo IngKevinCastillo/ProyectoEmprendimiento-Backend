@@ -6,9 +6,10 @@ from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioRespuestaSchema, Lo
 from Schemas.Autenticacionschema import Token
 from Configs.bd import get_db
 from Core.Configuracion import settings
-from Controllers.UsuarioControlador import BuscarUsuarioControlador, ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador
+from Controllers.UsuarioControlador import BuscarUsuarioControlador, ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador, EmprendimientosUsuarioControlador
 from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
+from Schemas.UsuarioProyectoSchema import UsuarioProyectoRespuestaSchema
 
 router = APIRouter(
     prefix="/usuarios",
@@ -27,6 +28,13 @@ async def crear_usuario(
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
     return usuario
 
+@router.get("/emprendimientos/{id_usuario}", response_model=list[UsuarioProyectoRespuestaSchema])
+async def obtener_emprendimientos_usuario(
+    id_usuario: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    return EmprendimientosUsuarioControlador(db, id_usuario)
 
 @router.get("/yo", response_model=UsuarioRespuestaSchema)
 async def obtener_yo(usuario_actual=Depends(obtener_usuario_actual)):
