@@ -5,6 +5,7 @@ from Models.RolesModelo import RolesModelo
 from Models.ProgramaModelo import ProgramaModelo
 from Models.TipoDocumentoModelo import TipoDocumentoModelo
 from Models.FacultadModelo import FacultadModelo
+from Models.SedeModelo import SedeModelo
 
 class UsuarioModelo(Base):
     __tablename__ = "Usuario"
@@ -27,11 +28,14 @@ class UsuarioModelo(Base):
     numero_documento = Column(String(30), nullable=False, unique=True)
     telefono = Column(String(10), nullable=False)
     id_facultad = Column(Integer, ForeignKey("Facultad.id_facultad", ondelete="RESTRICT"), nullable=True)
+    id_sede = Column(Integer, ForeignKey("Sede.id_sede", ondelete="RESTRICT"), nullable=True)
+    
     
     rol = relationship("RolesModelo", back_populates="usuarios")
     programa = relationship("ProgramaModelo", back_populates="usuarios")
     tipodocumento = relationship("TipoDocumentoModelo", back_populates="usuarios")
     facultad = relationship("FacultadModelo", back_populates="usuarios")
+    sede = relationship("SedeModelo", back_populates="usuarios")
     #asesorias = relationship("AsesoriasModelo", back_populates="usuario")
     #certificaciones = relationship("CertificacionModelo", back_populates="usuario")
     # convocatorias = relationship("ConvocatoriasModelo", back_populates="usuario")
