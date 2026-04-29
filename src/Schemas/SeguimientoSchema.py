@@ -7,10 +7,10 @@ class SeguimientoCrearSchema(BaseModel):
     id_proyecto: int
     observaciones: str
     id_usuario_responsable: int
-    id_estado_emprendimiento: int
+    id_estado_proyecto: int
     avance_porcentaje: Decimal
 
-    @field_validator("id_proyecto", "id_usuario_responsable", "id_estado_emprendimiento")
+    @field_validator("id_proyecto", "id_usuario_responsable", "id_estado_proyecto")
     @classmethod
     def validar_ids_positivos(cls, v: int) -> int:
         if v < 1 or v > 2147483647:
@@ -39,7 +39,7 @@ class SeguimientoRespuestaSchema(BaseModel):
     observaciones: str
     id_usuario_responsable: int
     fecha_registro: date
-    id_estado_emprendimiento: int
+    id_estado_proyecto: int
     avance_porcentaje: Decimal
 
     class Config:
