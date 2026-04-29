@@ -1,7 +1,5 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from decimal import Decimal
-from datetime import datetime
 from Models.TipoDocumentoModelo import TipoDocumentoModelo
 from Schemas.Tipodocumentoschema import TipoDocumentoCrearSchema
 from Utils.Mapeadorutilidades import auto_mapear

@@ -10,6 +10,7 @@ from Controllers.UsuarioControlador import BuscarUsuarioControlador, ObtenerUsua
 from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoRespuestaSchema
+from Schemas.Usuarioschema import UsuarioActualizarSchema
 
 router = APIRouter(
     prefix="/usuarios",
@@ -28,13 +29,12 @@ async def crear_usuario(
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
     return usuario
 
-@router.get("/emprendimientos/{id_usuario}", response_model=list[UsuarioProyectoRespuestaSchema])
+@router.get("/emprendimientos", response_model=list[UsuarioProyectoRespuestaSchema])
 async def obtener_emprendimientos_usuario(
-    id_usuario: str,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    return EmprendimientosUsuarioControlador(db, id_usuario)
+    return EmprendimientosUsuarioControlador(db, usuario_actual.id_usuario)
 
 @router.get("/yo", response_model=UsuarioRespuestaSchema)
 async def obtener_yo(usuario_actual=Depends(obtener_usuario_actual)):
@@ -61,11 +61,11 @@ async def listar_usuarios(
 
 @router.put("/yo", response_model=UsuarioRespuestaSchema)
 async def actualizar_yo(
-    datos: UsuarioCrearSchema,
+    datos: UsuarioActualizarSchema,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    usuario = ActualizarUsuarioControlador(db, usuario_actual)
+    usuario = ActualizarUsuarioControlador(db, datos, usuario_actual.id_usuario)
     if not usuario:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return usuario

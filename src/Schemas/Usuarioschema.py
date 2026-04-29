@@ -14,7 +14,7 @@ class UsuarioCrearSchema(BaseModel):
     fecha_nacimiento: str
     ubicacion_semestral: int
     id_rol: int
-    estado: str = "Activo"
+    estado: str
     sexo: str
     id_programa: int
     id_tipodocumento: int
@@ -66,7 +66,7 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("ubicacion_semestral")
     @classmethod
     def validar_semestre(cls, v: int) -> int:
-        return validar_int(v, 1, 10, "ubicacion_semestral")
+        return validar_int(v, 1, 30, "ubicacion_semestral")
 
     # ──────────────── Estado ────────────────
 
@@ -133,11 +133,31 @@ class UsuarioRespuestaSchema(BaseModel):
     numero_documento: str
     telefono: str
     id_facultad: int
-    id_sede: Optional[int] = None
-    direccion: Optional[str] = None
+    id_sede: int
+    direccion: str
 
     class Config:
         from_attributes = True
+        
+class UsuarioActualizarSchema(BaseModel):
+    primer_nombre: str
+    segundo_nombre: Optional[str]
+    primer_apellido: str
+    segundo_apellido: str
+    correo: str
+    fecha_nacimiento: date
+    ubicacion_semestral: int
+    id_rol: int
+    fecha_registro: datetime
+    estado: str
+    sexo: str
+    id_programa: int
+    id_tipodocumento: int
+    numero_documento: str
+    telefono: str
+    id_facultad: int
+    id_sede: int
+    direccion: str
 
 
 class LoginSchema(BaseModel):
