@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from Utils.Mapeadorutilidades import auto_mapear
 
 def crear_sede_servicio(db: Session, sede: SedeCrearSchema):
-    existente = obtener_sede_servicio(db, sede.nombre)
+    existente = obtener_sede_por_nombre_servicio(db, sede.nombre)
     if existente:
         raise HTTPException(status_code=400, detail="Ya existe una sede con ese nombre")
     

@@ -39,12 +39,12 @@ async def obtener_sede(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sede no encontrada")
     return sede
 
-@router.get("/nombre/{id_Sede}", response_model=SedeRespuestaSchema)
+@router.get("/nombre/{nombre}", response_model=SedeRespuestaSchema)
 async def obtener_sede_nombre(
-    id_Sede: str, db: Session = Depends(get_db), 
+    nombre: str, db: Session = Depends(get_db), 
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    sede = obtener_sede_por_nombre_controlador(db, id_Sede)
+    sede = obtener_sede_por_nombre_controlador(db, nombre)
     if not sede:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sede no encontrada")
     return sede

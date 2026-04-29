@@ -4,17 +4,8 @@ import re
 
 
 class SedeCrearSchema(BaseModel):
-    # id_facultad: int
-    # id_programa: int
     nombre: str
-    ciudad: Optional[str] = None
-
-    # @field_validator("id_facultad", "id_programa")
-    # @classmethod
-    # def validar_ids_positivos(cls, v: int) -> int:
-    #     if v < 1 or v > 2147483647:
-    #         raise ValueError("El ID debe ser un entero positivo válido (1 - 2147483647).")
-    #     return v
+    ciudad: str
 
     @field_validator("nombre", "ciudad")
     @classmethod
@@ -40,17 +31,12 @@ class SedeCrearSchema(BaseModel):
 
 
 class SedeRespuestaSchema(BaseModel):
-    # id_sede: int
-    # id_facultad: int
-    id_programa: int
     nombre: str
-    ciudad: Optional[str]
+    ciudad: str
 
     class Config:
         from_attributes = True
         
 class SedeActualizarSchema(BaseModel):
-    # id_facultad: Optional[int] = None
-    # id_programa: Optional[int] = None
     nombre: str
     ciudad: str
