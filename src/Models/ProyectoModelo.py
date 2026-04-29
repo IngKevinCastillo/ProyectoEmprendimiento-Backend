@@ -13,5 +13,6 @@ class ProyectoModelo(Base):
     fecha_creacion = Column(TIMESTAMP, nullable=False, server_default=text("now()"))
     id_usuario = Column(Integer, ForeignKey("Usuario.id_usuario"), nullable=False)
     
-    usuario = relationship("UsuarioModelo", back_populates="proyectos")
-    seguimientos = relationship("SeguimientoModelo", back_populates="proyecto")
+    # usuarios = relationship("UsuarioModelo", back_populates="proyectos")
+    seguimientos = relationship("SeguimientoModelo", back_populates="proyectos")
+    usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="proyectos")

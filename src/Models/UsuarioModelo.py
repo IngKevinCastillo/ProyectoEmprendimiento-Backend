@@ -36,6 +36,7 @@ class UsuarioModelo(Base):
     tipodocumento = relationship("TipoDocumentoModelo", back_populates="usuarios")
     facultad = relationship("FacultadModelo", back_populates="usuarios")
     sede = relationship("SedeModelo", back_populates="usuarios")
+    usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="usuarios")
     #asesorias = relationship("AsesoriasModelo", back_populates="usuario")
     #certificaciones = relationship("CertificacionModelo", back_populates="usuario")
     # convocatorias = relationship("ConvocatoriasModelo", back_populates="usuario")
