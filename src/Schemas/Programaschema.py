@@ -16,7 +16,7 @@ class ProgramaCrearSchema(BaseModel):
     @field_validator("nivel")
     @classmethod
     def validar_nivel(cls, v: str) -> str:
-        permitidos = {"Técnico", "Tecnólogo", "Profesional", "Especialización"}
+        permitidos = {"Tecnico", "Tecnologo", "Profesional", "Especializacion"}
         if v not in permitidos:
             raise ValueError(f"El nivel debe ser uno de: {', '.join(permitidos)}.")
         return v

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from Configs.bd import engine, Base, get_db
-from Routes import UsuarioRoute, TipoDocumentoRoute, RolesRoute, ProgramasRoute, FacultadRoute, Eventoroute, CursoRoute, UsuarioProyectoRoute
+from Routes import UsuarioRoute, TipoDocumentoRoute, RolesRoute, ProgramasRoute, FacultadRoute, Eventoroute, CursoRoute, UsuarioProyectoRoute, SedeRoute
 
 Base.metadata.create_all(bind=engine)
 
@@ -15,6 +15,7 @@ app.include_router(FacultadRoute.router)
 app.include_router(Eventoroute.router)
 app.include_router(CursoRoute.router)
 app.include_router(UsuarioProyectoRoute.router)
+app.include_router(SedeRoute.router)
 
 @app.get("/")
 def root(db: Session = Depends(get_db)):

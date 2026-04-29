@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Schemas.Facultadschema import FacultadCrearSchema, FacultadRespuestaSchema, FacultadActualizarSchema
 from Configs.bd import get_db
+from Schemas.Programaschema import ProgramaRespuestaSchema
 from Core.Seguridad import obtener_usuario_actual
-from Controllers.FacultadControlador import CrearFacultad, ObtenerFacultades, BuscarFacultad, EliminarFacultad, ActualizarFacultad, BuscarFacultadPorNombre
+from Controllers.FacultadControlador import crear_facultad_contolador, obtener_facultades_contolador, buscar_facultad_contolador, eliminar_facultad_contolador, actualizar_facultad_contolador, buscar_facultad_nombre_contolador, obtener_programas_por_facultad_contolador
 
 router = APIRouter(
     prefix="/facultades",
@@ -17,7 +18,7 @@ async def crear_facultad(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    facultad = CrearFacultad(db, datos)
+    facultad = crear_facultad(db, datos)
     if not facultad:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
     return facultad
@@ -28,7 +29,16 @@ async def listar_facultades(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    facultades = ObtenerFacultades(db)
+    facultades = obtener_facultades_contolador(db)
+    return facultades
+
+@router.get("/programas/{id_facultad}", response_model=list[ProgramaRespuestaSchema])
+async def listar_facultades_por_programas(
+    id_facultad: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    facultades = obtener_programas_por_facultad_contolador(db, id_facultad)
     return facultades
 
 
@@ -38,7 +48,7 @@ async def obtener_facultad(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    facultad = BuscarFacultad(db, id_facultad)
+    facultad = buscar_facultad_contolador(db, id_facultad)
     if not facultad:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facultad no encontrada")
     return facultad
@@ -49,7 +59,7 @@ async def obtener_facultad_nombre(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    facultad = BuscarFacultadPorNombre(db, nombre)
+    facultad = buscar_facultad_nombre_contolador(db, nombre)
     if not facultad:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facultad no encontrada")
     return facultad
@@ -61,7 +71,7 @@ async def actualizar_facultad(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    facultad = ActualizarFacultad(db, datos, id_facultad)
+    facultad = actualizar_facultad_contolador(db, id_facultad, datos)
     if not facultad:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facultad no encontrada")
     return facultad
@@ -73,7 +83,7 @@ async def eliminar_facultad(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    eliminado = EliminarFacultad(db, id_facultad)
+    eliminado = eliminar_facultad_contolador(db, id_facultad)
     if not eliminado:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Facultad no encontrada")
     return eliminado

@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from Models.FacultadModelo import FacultadModelo
 from Schemas.Facultadschema import FacultadCrearSchema
 from Utils.Mapeadorutilidades import auto_mapear
+from Models.ProgramaModelo import ProgramaModelo
 
 def BuscarFacultad(db: Session, id: str):
     return db.query(FacultadModelo).filter(FacultadModelo.id_facultad == int(id)).first()
@@ -47,3 +48,6 @@ def ActualizarFacultad(db: Session, facultad: any, id_facultad: str):
     db.commit()
     db.refresh(existente)
     return existente
+
+def BuscarProgramasPorFacultad(db: Session, id_facultad: str):
+    return db.query(ProgramaModelo).filter(ProgramaModelo.id_facultad == int(id_facultad)).all()
