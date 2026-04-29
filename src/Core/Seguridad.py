@@ -11,11 +11,14 @@ from Controllers.UsuarioControlador import BuscarUsuarioControlador
 from fastapi import status
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Nota pequeña: Concierne a mi intento de ejecución del proyecto experimente un error altamente peculiar con la linea superior, en caso dado, lo solucione reemplazandola momentaneamente por este otra siguiente linea, si vuelve a ocurrir un error en relación al tamaño no correcto de la contraseña, intenta usarla:
+# pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
+
 esquema_oauth2 = OAuth2PasswordBearer(tokenUrl="/usuarios/login")
 usuarioAdmin = 2
 
-def HashearContrasena(contraena: str) -> str:
-    return pwd_context.hash(contraena)
+def HashearContrasena(contrasena: str) -> str:
+    return pwd_context.hash(contrasena)
 
 def VerificarContrasena(contrasena_plana: str, contrasena_hasheada: str) -> bool:
     return pwd_context.verify(contrasena_plana, contrasena_hasheada)

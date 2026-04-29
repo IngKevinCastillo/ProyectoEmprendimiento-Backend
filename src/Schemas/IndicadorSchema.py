@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
 from decimal import Decimal
+from Utils.Validacionesutilidades import validar_int
 
 
 class IndicadorCrearSchema(BaseModel):
@@ -7,6 +8,7 @@ class IndicadorCrearSchema(BaseModel):
     formula: str
     meta: Decimal
     valor_actual: Decimal = Decimal("0.00")
+    id_proyecto: int
 
     @field_validator("nombre_indicador")
     @classmethod
@@ -31,6 +33,10 @@ class IndicadorCrearSchema(BaseModel):
             raise ValueError("El valor debe estar entre 0.00 y 99999999.99.")
         return v
 
+    @field_validator("id_proyecto")
+    @classmethod
+    def validar_ids_positivos(cls, v: int) -> int:
+        return validar_int(v, 1, 2147483647, "ID")
 
 class IndicadorRespuestaSchema(BaseModel):
     id_indicador: int
@@ -38,6 +44,7 @@ class IndicadorRespuestaSchema(BaseModel):
     formula: str
     meta: Decimal
     valor_actual: Decimal
+    id_proyecto: int
 
     class Config:
         from_attributes = True

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator
 
 
-class EstadoEmprendimientoCrearSchema(BaseModel):
+class EstadoProyectoCrearSchema(BaseModel):
     nombre: str
 
     @field_validator("nombre")
@@ -13,8 +13,8 @@ class EstadoEmprendimientoCrearSchema(BaseModel):
         return v
 
 
-class EstadoEmprendimientoRespuestaSchema(BaseModel):
-    id_estado_emprendimiento: int
+class EstadoProyectoRespuestaSchema(BaseModel):
+    id_estado_proyecto: int
     nombre: str
 
     class Config:
