@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from Models.UsuarioModelo import UsuarioModelo
 from Utils.Mapeadorutilidades import auto_mapear
 from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
+from Schemas.Usuarioschema import UsuarioActualizarSchema
 
 def BuscarUsuario(db: Session, id: int):
     return db.query(UsuarioModelo).filter(UsuarioModelo.id_usuario == id).first()
@@ -28,8 +29,8 @@ def EliminarUsuario(db: Session, id: int):
     db.commit()
     return {"detail": "Usuario eliminado"}
 
-def ActualizarUsuario(db: Session, usuario: any):
-    existente = BuscarUsuario(db, usuario.id_usuario)
+def ActualizarUsuario(db: Session, usuario: UsuarioActualizarSchema, id_usuario: str):
+    existente = BuscarUsuario(db, int(id_usuario))
     if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el usuario")
     
@@ -39,7 +40,7 @@ def ActualizarUsuario(db: Session, usuario: any):
     if(existente.id_tipodocumento is None):
         raise HTTPException(status_code=400, detail="El usuario debe estar asociado a un tipo de documento")
     
-    auto_mapear(existente, usuario, excluir=["id_usuario"])
+    auto_mapear(existente, usuario, excluir=["id_usuario", "contrasena"])
 
     db.commit()
     db.refresh(existente)

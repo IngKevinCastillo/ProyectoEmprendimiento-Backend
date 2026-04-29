@@ -5,6 +5,7 @@ from datetime import datetime
 from Models.ProgramaModelo import ProgramaModelo
 from Schemas.Programaschema import ProgramaCrearSchema
 from Utils.Mapeadorutilidades import auto_mapear
+from Services.FacultadServicio import BuscarFacultad
 
 def BuscarPrograma(db: Session, id: str):
     return db.query(ProgramaModelo).filter(ProgramaModelo.id_programa == int(id)).first()
@@ -22,6 +23,9 @@ def CrearPrograma(db: Session, programa: ProgramaCrearSchema):
     
     if(programa.id_facultad is None):
         raise HTTPException(status_code=400, detail="El programa debe estar asociado a una facultad")
+    
+    if not BuscarFacultad(db, programa.id_facultad):
+        raise HTTPException(status_code=400, detail="La facultad especificada no existe")
 
     nuevo_programa = ProgramaModelo(
         nombre=programa.nombre,
