@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
 from sqlalchemy.orm import relationship
+from Models import ProyectoModelo
 from Configs.bd import Base
 
 class IndicadorModelo(Base):
@@ -10,3 +11,6 @@ class IndicadorModelo(Base):
     formula           = Column(String, nullable=False)
     meta              = Column(Numeric(10,2), nullable=False)
     valor_actual      = Column(Numeric(10,2), nullable=False, default=0.00)
+    id_proyecto       = Column(Integer, ForeignKey("Proyecto.id_proyecto", ondelete="RESTRICT"), nullable=False)
+
+    proyecto = relationship("ProyectoModelo", back_populates="Indicador")

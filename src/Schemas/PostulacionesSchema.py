@@ -4,11 +4,11 @@ from datetime import datetime
 
 class PostulacionesCrearSchema(BaseModel):
     id_convocatoria: int
-    id_usuario: int
+    id_proyecto: int
     informacion_adicional: str
     id_plan_negocio: int
 
-    @field_validator("id_convocatoria", "id_usuario", "id_plan_negocio")
+    @field_validator("id_convocatoria", "id_proyecto", "id_plan_negocio")
     @classmethod
     def validar_ids_positivos(cls, v: int) -> int:
         if v < 1 or v > 2147483647:
@@ -27,7 +27,7 @@ class PostulacionesCrearSchema(BaseModel):
 class PostulacionesRespuestaSchema(BaseModel):
     id_postulacion: int
     id_convocatoria: int
-    id_usuario: int
+    id_proyecto: int
     informacion_adicional: str
     id_plan_negocio: int
     fecha_registro: datetime

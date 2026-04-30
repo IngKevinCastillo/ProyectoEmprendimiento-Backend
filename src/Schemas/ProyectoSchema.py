@@ -6,7 +6,6 @@ class ProyectoCrearSchema(BaseModel):
     nombre_proyecto: str
     descripcion: str
     estado: str
-    id_usuario: int
 
     @field_validator("nombre_proyecto")
     @classmethod
@@ -32,12 +31,12 @@ class ProyectoCrearSchema(BaseModel):
             raise ValueError(f"El estado debe ser uno de: {', '.join(permitidos)}.")
         return v
 
-    @field_validator("id_usuario")
-    @classmethod
-    def validar_id_usuario(cls, v: int) -> int:
-        if v < 1 or v > 2147483647:
-            raise ValueError("El ID de usuario debe ser un entero positivo válido (1 - 2147483647).")
-        return v
+    # @field_validator("id_usuario")
+    # @classmethod
+    # def validar_id_usuario(cls, v: int) -> int:
+    #     if v < 1 or v > 2147483647:
+    #        raise ValueError("El ID de usuario debe ser un entero positivo válido (1 - 2147483647).")
+    #    return v
 
 
 class ProyectoRespuestaSchema(BaseModel):
@@ -46,7 +45,6 @@ class ProyectoRespuestaSchema(BaseModel):
     descripcion: str
     estado: str
     fecha_creacion: datetime
-    id_usuario: int
-
+    
     class Config:
         from_attributes = True
