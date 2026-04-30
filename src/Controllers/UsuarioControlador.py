@@ -5,7 +5,7 @@ from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioActualizarSchema
 def BuscarUsuarioControlador(db: Session, id: int):
     return BuscarUsuario(db, id)
 
-def ActualizarUsuarioControlador(db: Session, usuarioAActualizar: UsuarioActualizarSchema, id_usuario: str):
+def ActualizarUsuarioControlador(db: Session, usuarioAActualizar: UsuarioActualizarSchema, id_usuario: int):
     return ActualizarUsuario(db, usuarioAActualizar, id_usuario)
 
 def EliminarUsuarioControlador(db: Session, id: int):
@@ -17,5 +17,5 @@ def ObtenerUsuariosControlador(db: Session):
 def BuscarUsuarioPorDocumentoControlador(db: Session, numero_documento: str):
     return BuscarUsuarioPorDocumento(db, numero_documento)
 
-def EmprendimientosUsuarioControlador(db: Session, id_usuario: str):
+def EmprendimientosUsuarioControlador(db: Session, id_usuario: int):
     return EmprendimientosUsuario(db, id_usuario)

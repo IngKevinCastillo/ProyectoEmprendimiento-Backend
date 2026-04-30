@@ -14,5 +14,5 @@ class ProyectoModelo(Base):
     id_usuario = Column(Integer, ForeignKey("Usuario.id_usuario"), nullable=False)
     
     # usuarios = relationship("UsuarioModelo", back_populates="proyectos")
-    seguimientos = relationship("SeguimientoModelo", back_populates="proyectos")
+    # seguimientos = relationship("SeguimientoModelo", back_populates="proyectos")
     usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="proyectos")

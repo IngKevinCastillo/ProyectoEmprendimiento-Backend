@@ -22,7 +22,8 @@ class UsuarioCrearSchema(BaseModel):
     telefono: str
     id_facultad: int
     id_sede: int
-    direccion: str
+    direccion: Optional[str] = None
+    id_municipio: int
 
     # ──────────────── Nombres y apellidos ────────────────
 
@@ -134,7 +135,8 @@ class UsuarioRespuestaSchema(BaseModel):
     telefono: str
     id_facultad: int
     id_sede: int
-    direccion: str
+    direccion: Optional[str] = None
+    id_municipio: int
 
     class Config:
         from_attributes = True
@@ -157,8 +159,61 @@ class UsuarioActualizarSchema(BaseModel):
     telefono: str
     id_facultad: int
     id_sede: int
-    direccion: str
+    direccion: Optional[str] = None
+    id_municipio: int
 
+class UsuarioComunCrearSchema(BaseModel):
+    primer_nombre: str
+    segundo_nombre: Optional[str] = None
+    primer_apellido: str
+    segundo_apellido: str
+    correo: EmailStr
+    contrasena: str
+    fecha_nacimiento: str
+    id_rol: int
+    estado: str
+    sexo: str
+    id_tipodocumento: int
+    numero_documento: str
+    telefono: str
+    direccion: Optional[str] = None
+    id_municipio: int
+    
+class UsuarioComunRespuestaSchema(BaseModel):
+    id_usuario: int
+    primer_nombre: str
+    segundo_nombre: Optional[str] = None
+    primer_apellido: str
+    segundo_apellido: str
+    correo: EmailStr
+    contrasena: str
+    fecha_nacimiento: str
+    id_rol: int
+    estado: str
+    sexo: str
+    id_tipodocumento: int
+    numero_documento: str
+    telefono: str
+    direccion: Optional[str] = None
+    id_municipio: int
+    
+class UsuarioComunActualizarSchema(BaseModel):
+    id_usuario: int
+    primer_nombre: str
+    segundo_nombre: Optional[str] = None
+    primer_apellido: str
+    segundo_apellido: str
+    correo: EmailStr
+    contrasena: str
+    fecha_nacimiento: str
+    id_rol: int
+    estado: str
+    sexo: str
+    id_tipodocumento: int
+    numero_documento: str
+    telefono: str
+    direccion: Optional[str] = None
+    id_municipio: int
 
 class LoginSchema(BaseModel):
     correo: EmailStr
