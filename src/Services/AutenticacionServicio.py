@@ -45,7 +45,7 @@ def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
         "fecha_nacimiento", "ubicacion_semestral",
         "sexo", "id_programa", "id_tipodocumento",
         "numero_documento", "telefono", "id_facultad", "id_sede",
-        "direccion"
+        "direccion", "id_municipio"
     ]
 
     data = {campo: getattr(usuario, campo) for campo in campos}
@@ -84,7 +84,7 @@ def CrearUsuarioComun(db: Session, usuario: UsuarioComunCrearSchema):
         "fecha_nacimiento",
         "sexo","id_tipodocumento",
         "numero_documento", "telefono", 
-        "direccion"
+        "direccion", "id_municipio"
     ]
 
     data = {campo: getattr(usuario, campo) for campo in campos}
