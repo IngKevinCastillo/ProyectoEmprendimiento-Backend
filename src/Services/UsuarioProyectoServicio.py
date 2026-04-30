@@ -11,9 +11,9 @@ def CrearUsuarioProyecto(db: Session, usuario_proyecto: UsuarioProyectoCrearSche
         raise HTTPException(status_code=404, detail="No se encontró el usuario")
 
     nuevo_proyecto = UsuarioProyectoModelo(
-        id_usuario=usuario_proyecto.id_usuario,
-        id_proyecto=usuario_proyecto.id_proyecto,
-        rol_en_proyecto=usuario_proyecto.rol_en_proyecto
+        id_proyecto = usuario_proyecto.id_proyecto,
+        id_usuario = usuario_proyecto.id_usuario,
+        id_rol = usuario_proyecto.id_rol
     )
     db.add(nuevo_proyecto)
     db.commit()
@@ -35,12 +35,12 @@ def EliminarUsuarioProyecto(db: Session, id_usuario_proyecto: str):
     db.commit()
     return {"detail": "Relación usuario-proyecto eliminada"}
 
-def ActualizarUsuarioProyecto(db: Session, id_usuario_proyecto: str, usuario_proyecto_actualizado: UsuarioProyectoActualizarSchema):
+def ActualizarUsuarioProyecto(db: Session, id_usuario_proyecto: str, usuario_proyecto: UsuarioProyectoActualizarSchema):
     existente = BuscarUsuarioProyecto(db, id_usuario_proyecto)
     if not existente:
         raise HTTPException(status_code=404, detail="No se encontró la relación usuario-proyecto")
     
-    auto_mapear(existente, usuario_proyecto_actualizado, excluir=["id_usuario_proyecto"])
+    auto_mapear(existente, usuario_proyecto, excluir=["id_usuario_proyecto"])
 
     db.commit()
     db.refresh(existente)

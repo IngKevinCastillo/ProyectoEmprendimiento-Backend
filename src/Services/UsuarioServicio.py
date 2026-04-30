@@ -17,8 +17,8 @@ def BuscarUsuarioPorDocumento(db: Session, documento: str):
 def ObtenerUsuarios(db: Session):
     return db.query(UsuarioModelo).all()
 
-def EmprendimientosUsuario(db: Session, id_usuario: str):
-    return db.query(UsuarioProyectoModelo).filter(UsuarioProyectoModelo.id_usuario == int(id_usuario)).all()
+def EmprendimientosUsuario(db: Session, id_usuario: int):
+    return db.query(UsuarioProyectoModelo).filter(UsuarioProyectoModelo.id_usuario == id_usuario).all()
 
 def EliminarUsuario(db: Session, id: int):
     usuario = BuscarUsuario(db, id)
@@ -29,8 +29,8 @@ def EliminarUsuario(db: Session, id: int):
     db.commit()
     return {"detail": "Usuario eliminado"}
 
-def ActualizarUsuario(db: Session, usuario: UsuarioActualizarSchema, id_usuario: str):
-    existente = BuscarUsuario(db, int(id_usuario))
+def ActualizarUsuario(db: Session, usuario: UsuarioActualizarSchema, id_usuario: int):
+    existente = BuscarUsuario(db, id_usuario)
     if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el usuario")
     

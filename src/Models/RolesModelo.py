@@ -10,3 +10,4 @@ class RolesModelo(Base):
     estado = Column(String(10), nullable=False)
     
     usuarios = relationship("UsuarioModelo", back_populates="rol")
+    usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="rol")
