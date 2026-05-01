@@ -20,10 +20,8 @@ router = APIRouter(
 @router.post("/", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_201_CREATED)
 async def crear_usuario(
     datos: UsuarioCrearSchema, 
-    db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
+    db: Session = Depends(get_db)
 ):
-    verificar_usuario_admin(usuario_actual)
     usuario = CrearUsuarioControlador(db,datos)
     if not usuario:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
