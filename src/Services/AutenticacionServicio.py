@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from Models.UsuarioModelo import UsuarioModelo
 from Core.Seguridad import HashearContrasena
 from Services.UsuarioServicio import BuscarUsuarioPorDocumento, BuscarUsuarioPorCorreo
-from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioComunCrearSchema
+from Schemas.Usuarioschema import UsuarioCrearSchema
 from Core.Seguridad import CrearTokenAcceso, VerificarContrasena
 from Services.RolServicio import BuscarRol
 from Services.TipoDocumentoServicio import BuscarTipoDocumento
