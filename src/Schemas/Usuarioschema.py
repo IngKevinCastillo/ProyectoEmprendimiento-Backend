@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 from datetime import date, datetime
 import re
-from Utils.Validacionesutilidades import validar_documento, validar_nombre, validar_email, validar_int, validar_password, validar_telefono, validar_string, validar_fecha
+from Utils.Validacionesutilidades import validar_documento, validar_nombre, validar_int_nulos, validar_int, validar_password, validar_telefono, validar_string, validar_fecha, validar_string_nulos
 
 class UsuarioCrearSchema(BaseModel):
     primer_nombre: str
@@ -12,15 +12,15 @@ class UsuarioCrearSchema(BaseModel):
     correo: EmailStr
     contrasena: str
     fecha_nacimiento: str
-    ubicacion_semestral: int
+    ubicacion_semestral: Optional[int] = None
     id_rol: int
     estado: str
     sexo: str
-    id_programa: int
+    id_programa: Optional[int] = None
     id_tipodocumento: int
     numero_documento: str
     telefono: str
-    id_facultad: int
+    id_facultad: Optional[int] = None
     id_sede: int
     direccion: Optional[str] = None
     id_municipio: int
@@ -35,7 +35,7 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("segundo_nombre")
     @classmethod
     def validar_segundo_nombre(cls, v: Optional[str]) -> Optional[str]:
-        return validar_nombre(v, 0, 30, "segundo_nombre")
+        return validar_string_nulos(v, 0, 30, "segundo_nombre")
 
 
     @field_validator("primer_apellido")
@@ -66,8 +66,8 @@ class UsuarioCrearSchema(BaseModel):
 
     @field_validator("ubicacion_semestral")
     @classmethod
-    def validar_semestre(cls, v: int) -> int:
-        return validar_int(v, 1, 30, "ubicacion_semestral")
+    def validar_semestre_(cls, v: int) -> int:
+        return validar_int_nulos(v, 1, 30, "ubicacion_semestral")
 
     # ──────────────── Estado ────────────────
 
@@ -91,10 +91,15 @@ class UsuarioCrearSchema(BaseModel):
 
     # ──────────────── IDs (FK) ────────────────
 
-    @field_validator("id_rol", "id_programa", "id_tipodocumento", "id_facultad", "id_sede")
+    @field_validator("id_rol", "id_tipodocumento", "id_sede")
     @classmethod
     def validar_ids_positivos(cls, v: int) -> int:
         return validar_int(v, 1, 2147483647, "ID")
+    
+    @field_validator("id_programa", "id_facultad")
+    @classmethod
+    def validar_ids_positivos_nulos(cls, v: int) -> int:
+        return validar_int_nulos(v, 1, 2147483647, "ID")
 
     # ──────────────── Número de documento ────────────────
 
@@ -113,7 +118,7 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("direccion")
     @classmethod
     def validar_direccion(cls, v: str) -> str:
-        return validar_string(v, 6, 80, "direccion")
+        return validar_string_nulos(v, 6, 80, "direccion")
 
 
 class UsuarioRespuestaSchema(BaseModel):
@@ -124,16 +129,16 @@ class UsuarioRespuestaSchema(BaseModel):
     segundo_apellido: str
     correo: str
     fecha_nacimiento: date
-    ubicacion_semestral: int
+    ubicacion_semestral: Optional[int] = None
     id_rol: int
     fecha_registro: datetime
     estado: str
     sexo: str
-    id_programa: int
+    id_programa: Optional[int] = None
     id_tipodocumento: int
     numero_documento: str
     telefono: str
-    id_facultad: int
+    id_facultad: Optional[int] = None
     id_sede: int
     direccion: Optional[str] = None
     id_municipio: int
@@ -148,70 +153,17 @@ class UsuarioActualizarSchema(BaseModel):
     segundo_apellido: str
     correo: str
     fecha_nacimiento: date
-    ubicacion_semestral: int
+    ubicacion_semestral: Optional[int] = None
     id_rol: int
     fecha_registro: datetime
     estado: str
     sexo: str
-    id_programa: int
+    id_programa: Optional[int] = None
     id_tipodocumento: int
     numero_documento: str
     telefono: str
-    id_facultad: int
+    id_facultad: Optional[int] = None
     id_sede: int
-    direccion: Optional[str] = None
-    id_municipio: int
-
-class UsuarioComunCrearSchema(BaseModel):
-    primer_nombre: str
-    segundo_nombre: Optional[str] = None
-    primer_apellido: str
-    segundo_apellido: str
-    correo: EmailStr
-    contrasena: str
-    fecha_nacimiento: str
-    id_rol: int
-    estado: str
-    sexo: str
-    id_tipodocumento: int
-    numero_documento: str
-    telefono: str
-    direccion: Optional[str] = None
-    id_municipio: int
-    
-class UsuarioComunRespuestaSchema(BaseModel):
-    id_usuario: int
-    primer_nombre: str
-    segundo_nombre: Optional[str] = None
-    primer_apellido: str
-    segundo_apellido: str
-    correo: EmailStr
-    contrasena: str
-    fecha_nacimiento: str
-    id_rol: int
-    estado: str
-    sexo: str
-    id_tipodocumento: int
-    numero_documento: str
-    telefono: str
-    direccion: Optional[str] = None
-    id_municipio: int
-    
-class UsuarioComunActualizarSchema(BaseModel):
-    id_usuario: int
-    primer_nombre: str
-    segundo_nombre: Optional[str] = None
-    primer_apellido: str
-    segundo_apellido: str
-    correo: EmailStr
-    contrasena: str
-    fecha_nacimiento: str
-    id_rol: int
-    estado: str
-    sexo: str
-    id_tipodocumento: int
-    numero_documento: str
-    telefono: str
     direccion: Optional[str] = None
     id_municipio: int
 

@@ -12,6 +12,18 @@ def validar_string(valor: str, min_len: int = 1, max_len: int = 255, campo: str 
         raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
     return valor
 
+def validar_string_nulos(valor: Optional[str], min_len: int = 1, max_len: int = 255, campo: str = "Campo") -> Optional[str]:
+    if valor is None:
+        return None
+    if not isinstance(valor, str):
+        raise TypeError(f"{campo} debe ser un texto.")
+    valor = valor.strip()
+    if not valor:
+        raise ValueError(f"{campo} no puede estar vacío.")
+    if not (min_len <= len(valor) <= max_len):
+        raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
+    return valor
+
 def validar_nombre(valor: str, min_len: int = 2, max_len: int = 100, campo: str = "Nombre") -> str:
     if not isinstance(valor, str):
         raise TypeError(f"{campo} debe ser un texto.")
@@ -92,6 +104,22 @@ def validar_int(
     campo: str = "Campo"
 ) -> int:
     
+    if isinstance(valor, bool) or not isinstance(valor, int):
+        raise TypeError(f"{campo} debe ser un número entero.")
+    if min_val is not None and valor < min_val:
+        raise ValueError(f"{campo} debe ser mayor o igual a {min_val}.")
+    if max_val is not None and valor > max_val:
+        raise ValueError(f"{campo} debe ser menor o igual a {max_val}.")
+    return valor
+
+def validar_int_nulos(
+    valor: Optional[int],
+    min_val: Optional[int] = None,
+    max_val: Optional[int] = None,
+    campo: str = "Campo"
+) -> Optional[int]:
+    if valor is None:
+        return None
     if isinstance(valor, bool) or not isinstance(valor, int):
         raise TypeError(f"{campo} debe ser un número entero.")
     if min_val is not None and valor < min_val:
