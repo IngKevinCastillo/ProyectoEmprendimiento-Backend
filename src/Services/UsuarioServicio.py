@@ -8,6 +8,9 @@ from Schemas.Usuarioschema import UsuarioActualizarSchema
 def BuscarUsuario(db: Session, id: int):
     return db.query(UsuarioModelo).filter(UsuarioModelo.id_usuario == id).first()
 
+def buscar_telefono(db:Session, telefono: str):
+    return db.query(UsuarioModelo).filter(UsuarioModelo.telefono == telefono).first()
+
 def BuscarUsuarioPorCorreo(db: Session, correo: str):
     return db.query(UsuarioModelo).filter(UsuarioModelo.correo == correo).first()
 

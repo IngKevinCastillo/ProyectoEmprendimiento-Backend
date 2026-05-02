@@ -1,10 +1,10 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from Models.UsuarioModelo import UsuarioModelo
 from Core.Seguridad import HashearContrasena
-from Services.UsuarioServicio import BuscarUsuarioPorDocumento, BuscarUsuarioPorCorreo, BuscarUsuario
+from Services.UsuarioServicio import BuscarUsuarioPorDocumento, BuscarUsuarioPorCorreo, BuscarUsuario, buscar_telefono
 from Schemas.Usuarioschema import UsuarioCrearSchema
 from Core.Seguridad import CrearTokenAcceso, VerificarContrasena
 from Services.RolServicio import BuscarRol
@@ -35,6 +35,7 @@ def CambiarContrasena(db: Session, id_usuario: int, contasena_anterior: str, con
 def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
     existente = BuscarUsuarioPorDocumento(db, usuario.numero_documento)
     consultado = BuscarUsuarioPorCorreo(db, usuario.correo)
+    verificado = buscar_telefono(db, usuario.telefono)
     
     if consultado:
         raise HTTPException(status_code=400, detail="Ya hay un usuario con el correo especificado")
@@ -50,6 +51,9 @@ def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
     
     if not BuscarTipoDocumento(db, usuario.id_tipodocumento):
         raise HTTPException(status_code=400, detail="El tipo de documento especificado no existe")
+    
+    if verificado:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El telefono especificado ya se encuentra registrado. Digite otro")
     
     if(usuario.id_tipodocumento is None):
         raise HTTPException(status_code=400, detail="El usuario debe estar asociado a un tipo de documento")
