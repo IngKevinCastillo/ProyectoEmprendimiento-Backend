@@ -7,7 +7,7 @@ def crear_curso_controlador(db: Session, curso: CursoCrearSchema):
     return crear_curso(db, curso)
 
 def buscar_curso_controlador(db: Session, id_curso: str):
-    return buscar_curso(db, id_curso)
+    return buscar_curso(db, int(id_curso))
 
 def buscar_curso_nombre_contolador(db: Session, nombre: str):
     return buscar_curso_por_nombre_curso(db, nombre)

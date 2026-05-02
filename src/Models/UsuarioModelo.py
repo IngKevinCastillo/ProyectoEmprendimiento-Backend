@@ -40,6 +40,7 @@ class UsuarioModelo(Base):
     usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="usuarios")
     municipio = relationship("MunicipioModelo", back_populates="usuarios")
     participaciones = relationship("ParticipacionEventoModelo", back_populates="usuarios")
+    inscripciones =relationship("InscripcionModelo", back_populates="usuarios")
     #asesorias = relationship("AsesoriasModelo", back_populates="usuario")
     #certificaciones = relationship("CertificacionModelo", back_populates="usuario")
     # convocatorias = relationship("ConvocatoriasModelo", back_populates="usuario")

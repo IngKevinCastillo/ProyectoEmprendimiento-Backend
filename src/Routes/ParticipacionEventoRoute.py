@@ -28,7 +28,6 @@ async def crear_participacion_evento(
     db: Session = Depends(get_db),
     usuario_actual = Depends(obtener_usuario_actual),
 ):
-    verificar_usuario_admin(usuario_actual)
     participacion_evento = crear_participacion_evento_controlador(db, datos)
     if not participacion_evento:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controlador pendiente")
@@ -70,7 +69,7 @@ async def listar_participaciones_eventos(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No hay participaciones eventos disponibles")
     return participacion_evento
 
-@router.put("/{id_participacion_evento}", response_model=ParticipacionActualizarSchema)
+@router.put("/{id_participacion_evento}", response_model=ParticipacionActualizarSchema, status_code=status.HTTP_200_OK)
 async def actualizar_participacion_evento(
     id_participacion_evento: int,
     datos: ParticipacionActualizarSchema,
@@ -80,17 +79,16 @@ async def actualizar_participacion_evento(
     verificar_usuario_admin(usuario_actual)
     participacion_evento = actualizar_participacion_evento_controlador(db, id_participacion_evento, datos)
     if not participacion_evento:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Participacion evento no encontrado")
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Participacion evento no encontrado")
     return participacion_evento
 
 
-@router.delete("/{id_participacion_evento}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id_participacion_evento}", status_code=status.HTTP_200_OK)
 async def eliminar_participacion_evento(
     id_participacion_evento: int,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    verificar_usuario_admin(usuario_actual)
     eliminado = eliminar_participacion_proyecto_controlador(db, id_participacion_evento)
     if not eliminado:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Participacion evento no encontrado")
