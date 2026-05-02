@@ -1,16 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from jose import jwt, JWTError
 from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioRespuestaSchema, LoginSchema
 from Schemas.Autenticacionschema import Token
 from Configs.bd import get_db
-from Core.Configuracion import settings
-from Controllers.UsuarioControlador import BuscarUsuarioControlador, ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador, EmprendimientosUsuarioControlador
-from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador
+from Controllers.UsuarioControlador import ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador, EmprendimientosUsuarioControlador, BuscarUsuarioControlador
+from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador, CambiarContrasena
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoRespuestaSchema
-from Schemas.Usuarioschema import UsuarioActualizarSchema
+from Schemas.Usuarioschema import UsuarioActualizarSchema, UsuarioCambiarContrasena
 
 router = APIRouter(
     prefix="/usuarios",
@@ -55,6 +52,18 @@ async def listar_usuarios(
     verificar_usuario_admin(usuario_actual)
     usuarios = ObtenerUsuariosControlador(db)
     return usuarios
+
+
+@router.put("/cambiarcontrasena", response_model=UsuarioRespuestaSchema)
+async def cambiar_contrasena(
+    datos: UsuarioCambiarContrasena,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    nuevo_valor = CambiarContrasena(db, usuario_actual.id_usuario, datos.contasena_anterior, datos.contrasena_nueva)
+    if not nuevo_valor:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al cambiar la contraseña")
+    return nuevo_valor
 
 
 @router.put("/yo", response_model=UsuarioRespuestaSchema)

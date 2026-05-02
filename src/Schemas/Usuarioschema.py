@@ -167,6 +167,15 @@ class UsuarioActualizarSchema(BaseModel):
     direccion: Optional[str] = None
     id_municipio: int
 
+class UsuarioCambiarContrasena(BaseModel):
+    contasena_anterior: str
+    contrasena_nueva: str
+    
+    @field_validator("contrasena_nueva")
+    @classmethod
+    def validar_contrasena(cls, v: str) -> str:
+        return validar_password(v)
+
 class LoginSchema(BaseModel):
     correo: EmailStr
     contrasena: str

@@ -1,6 +1,6 @@
 from Services.UsuarioServicio import BuscarUsuario, ActualizarUsuario, EliminarUsuario, ObtenerUsuarios, BuscarUsuarioPorDocumento, EmprendimientosUsuario
 from sqlalchemy.orm import Session
-from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioActualizarSchema
+from Schemas.Usuarioschema import UsuarioActualizarSchema
 
 def BuscarUsuarioControlador(db: Session, id: int):
     return BuscarUsuario(db, id)
