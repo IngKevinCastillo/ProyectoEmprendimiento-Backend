@@ -79,7 +79,7 @@ async def actualizar_participacion_evento(
     verificar_usuario_admin(usuario_actual)
     participacion_evento = actualizar_participacion_evento_controlador(db, id_participacion_evento, datos)
     if not participacion_evento:
-        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Participacion evento no encontrado")
+        raise HTTPException(status_code=status.HTTP_404_NO_CONTENT, detail="Participacion evento no encontrado")
     return participacion_evento
 
 
@@ -89,7 +89,7 @@ async def eliminar_participacion_evento(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    eliminado = eliminar_participacion_proyecto_controlador(db, id_participacion_evento)
-    if not eliminado:
+    participacion_evento = eliminar_participacion_proyecto_controlador(db, id_participacion_evento)
+    if not participacion_evento:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Participacion evento no encontrado")
-    return eliminado
+    return participacion_evento
