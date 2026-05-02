@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
 from Configs.bd import get_db
 from Schemas.ParticipacionEventoSchema import ParticipacionActualizarSchema, ParticipacionEventoCrearSchema, ParticipacionEventoRespuestaSchema
-from Controllers.ParticipacionEventoControlador import actualizar_participacion_evento_controlador, buscar_participacion_evento_controlador, buscar_usuario_participacion_evento_controlador, buscar_usuarios_participaciones_eventos_controlador, eliminar_participacion_proyecto_controlador, crear_participacion_evento_controlador, listar_participaciones_eventos_controlador
+from Controllers.ParticipacionEventoControlador import actualizar_participacion_evento_controlador, buscar_participacion_evento_controlador, buscar_usuario_participacion_evento_controlador, buscar_usuarios_participaciones_eventos_controlador, eliminar_participacion_proyecto_controlador, crear_participacion_evento_controlador, listar_participaciones_en_evento_controlador
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 
 router = APIRouter(
@@ -58,13 +58,14 @@ async def obtener_usuario_participacion_evento(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return participacion_evento
 
-@router.get("/", response_model=list[ParticipacionEventoRespuestaSchema], status_code=status.HTTP_200_OK)
-async def listar_participaciones_eventos(
+@router.get("/participaciones/{id_evento}", response_model=list[ParticipacionEventoRespuestaSchema], status_code=status.HTTP_200_OK)
+async def listar_participaciones_en_evento(
+    id_evento: int,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     verificar_usuario_admin(usuario_actual)
-    participacion_evento = listar_participaciones_eventos_controlador(db)
+    participacion_evento = listar_participaciones_en_evento_controlador(db, id_evento)
     if not participacion_evento:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No hay participaciones eventos disponibles")
     return participacion_evento

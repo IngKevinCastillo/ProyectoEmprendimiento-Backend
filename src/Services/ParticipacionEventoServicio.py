@@ -45,8 +45,8 @@ def buscar_usuario_participacion_evento(db: Session, id_usuario: int, id_evento:
 def buscar_usuario_participaciones_eventos(db: Session, id_usuario: int):
     return db.query(ParticipacionEventoModelo).filter(ParticipacionEventoModelo.id_usuario == id_usuario).all()
 
-def listar_participaciones_eventos(db: Session):
-    return db.query(ParticipacionEventoModelo).all()
+def listar_participaciones_en_evento(db: Session, id_evento: int):
+    return db.query(ParticipacionEventoModelo).filter(ParticipacionEventoModelo.id_evento == id_evento).all()
 
 def actualizar_participacion_evento(db: Session, id_participacion_evento: int, participacion_evento: ParticipacionActualizarSchema):
     existente = buscar_participacion_evento(db, id_participacion_evento)
