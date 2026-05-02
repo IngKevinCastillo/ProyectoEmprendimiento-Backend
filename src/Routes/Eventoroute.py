@@ -27,9 +27,7 @@ async def crear_evento(
 @router.get("/", response_model=list[EventoRespuestaSchema])
 async def listar_eventos(
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
-    verificar_usuario_admin(usuario_actual)
     eventos = listar_eventos_controlador(db)
     return eventos
 
@@ -37,9 +35,7 @@ async def listar_eventos(
 async def obtener_evento(
     id_evento: str,
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
-    verificar_usuario_admin(usuario_actual)
     evento = buscar_evento_controlador(db, id_evento)
     if not evento:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")
@@ -49,9 +45,7 @@ async def obtener_evento(
 async def obtener_evento_fecha(
     fecha: datetime,
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
-    verificar_usuario_admin(usuario_actual)
     evento = buscar_evento_por_fechas_controlador(db, fecha)
     if not evento:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")
@@ -61,9 +55,7 @@ async def obtener_evento_fecha(
 async def obtener_evento_nombre(
     nombre: str,
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
-    verificar_usuario_admin(usuario_actual)
     evento = buscar_evento_por_nombre_controlador(db, nombre)
     if not evento:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")
@@ -73,9 +65,7 @@ async def obtener_evento_nombre(
 async def obtener_evento_lugar(
     lugar: str,
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
-    verificar_usuario_admin(usuario_actual)
     evento = buscar_evento_por_lugar_controlador(db, lugar)
     if not evento:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")

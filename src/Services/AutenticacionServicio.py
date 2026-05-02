@@ -21,12 +21,16 @@ def IniciarSesion(datos: UsuarioCrearSchema, db: Session) -> dict:
 
 def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
     existente = BuscarUsuarioPorDocumento(db, usuario.numero_documento)
+    consultado = BuscarUsuarioPorCorreo(db, usuario.correo)
+    
+    if consultado:
+        raise HTTPException(status_code=400, detail="Ya hay un usuario con el correo especificado")
     
     if existente:
         raise HTTPException(status_code=400, detail="Ya existe un usuario con esa número de documento")
     
     if not BuscarRol(db, usuario.id_rol):
-        raise HTTPException(status_code=400, detail="El rol especificado no existe")
+        raise HTTPException(status_code=404, detail="El rol especificado no existe")
     
     if(usuario.id_rol is None):
         raise HTTPException(status_code=400, detail="El usuario debe estar asociado a un rol")

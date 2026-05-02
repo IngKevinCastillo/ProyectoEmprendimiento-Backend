@@ -11,4 +11,4 @@ class EventoModelo(Base):
     fecha = Column(TIMESTAMP, nullable=False)
     lugar = Column(String(60), nullable=False)
     
-    #participaciones = relationship("ParticipacionEventoModelo", back_populates="evento")
+    participaciones = relationship("ParticipacionEventoModelo", back_populates="evento")

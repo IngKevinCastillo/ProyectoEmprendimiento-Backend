@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from Schemas.Facultadschema import FacultadRespuestaSchema
 from Configs.bd import get_db
 from Schemas.Programaschema import ProgramaRespuestaSchema
-from Core.Seguridad import obtener_usuario_actual
 from Controllers.FacultadControlador import obtener_facultades_contolador, buscar_facultad_contolador, buscar_facultad_nombre_contolador, obtener_programas_por_facultad_contolador
 
 router = APIRouter(
@@ -14,7 +13,6 @@ router = APIRouter(
 @router.get("/", response_model=list[FacultadRespuestaSchema])
 async def listar_facultades(
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
     facultades = obtener_facultades_contolador(db)
     return facultades
@@ -23,7 +21,6 @@ async def listar_facultades(
 async def listar_facultades_por_programas(
     id_facultad: str,
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
     facultades = obtener_programas_por_facultad_contolador(db, id_facultad)
     return facultades
@@ -33,7 +30,6 @@ async def listar_facultades_por_programas(
 async def obtener_facultad(
     id_facultad: str, 
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
     facultad = buscar_facultad_contolador(db, id_facultad)
     if not facultad:
@@ -44,7 +40,6 @@ async def obtener_facultad(
 async def obtener_facultad_nombre(
     nombre: str, 
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
     facultad = buscar_facultad_nombre_contolador(db, nombre)
     if not facultad:
