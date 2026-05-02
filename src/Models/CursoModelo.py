@@ -13,4 +13,4 @@ class CursoModelo(Base):
     fecha_inicio = Column(Date, nullable=False) 
     fecha_fin = Column(Date, nullable=False)
         
-    # inscripciones = relationship("InscripcionModelo", back_populates="curso")
+    inscripciones = relationship("InscripcionModelo", back_populates="curso")

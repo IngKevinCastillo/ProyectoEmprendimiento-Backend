@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
-from Models.EstadoProyectoModelos import EstadoProyectoModelo
+from Models.EstadoProyectoModelo import EstadoProyectoModelo
 from Schemas.EstadoProyectoSchema import EstadoProyectoCrearSchema
 from Utils.Mapeadorutilidades import auto_mapear
 

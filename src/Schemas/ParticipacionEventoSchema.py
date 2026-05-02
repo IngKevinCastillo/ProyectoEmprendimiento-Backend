@@ -15,7 +15,7 @@ class ParticipacionEventoCrearSchema(BaseModel):
 
 
 class ParticipacionEventoRespuestaSchema(BaseModel):
-    id_participacion: int
+    id_participacion_evento: int
     id_usuario: int
     id_evento: int
     Id_rol: int
@@ -24,5 +24,6 @@ class ParticipacionEventoRespuestaSchema(BaseModel):
         from_attributes = True
         
 class ParticipacionActualizarSchema(BaseModel):
+    id_usuario: int
     id_evento: int
     Id_rol: int

@@ -1,11 +1,11 @@
 from pydantic import BaseModel, field_validator
 from datetime import datetime
-
+from Utils.Validacionesutilidades import validar_int
 
 class ProyectoCrearSchema(BaseModel):
     nombre_proyecto: str
     descripcion: str
-    estado: str
+    id_estado_proyecto: int
 
     @field_validator("nombre_proyecto")
     @classmethod
@@ -23,27 +23,19 @@ class ProyectoCrearSchema(BaseModel):
             raise ValueError("La descripción debe tener entre 20 y 2000 caracteres.")
         return v
 
-    @field_validator("estado")
+    @field_validator("id_estado_proyecto")
     @classmethod
-    def validar_estado(cls, v: str) -> str:
-        permitidos = {"En proceso", "Aprobado", "Finalizado"}
-        if v not in permitidos:
-            raise ValueError(f"El estado debe ser uno de: {', '.join(permitidos)}.")
+    def validar_id_usuario(cls, v: int) -> int:
+        if v < 1 or v > 2147483647:
+           raise ValueError("El ID de usuario debe ser un entero positivo válido (1 - 2147483647).")
         return v
-
-    # @field_validator("id_usuario")
-    # @classmethod
-    # def validar_id_usuario(cls, v: int) -> int:
-    #     if v < 1 or v > 2147483647:
-    #        raise ValueError("El ID de usuario debe ser un entero positivo válido (1 - 2147483647).")
-    #    return v
 
 
 class ProyectoRespuestaSchema(BaseModel):
     id_proyecto: int
     nombre_proyecto: str
     descripcion: str
-    estado: str
+    id_estado_proyecto: int
     fecha_creacion: datetime
     
     class Config:

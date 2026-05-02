@@ -11,3 +11,4 @@ class RolesModelo(Base):
     
     usuarios = relationship("UsuarioModelo", back_populates="rol")
     usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="rol")
+    participaciones = relationship("ParticipacionEventoModelo", back_populates="rol")

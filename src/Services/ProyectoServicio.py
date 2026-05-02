@@ -16,8 +16,8 @@ def buscarEmprendimientoPorNombre(db: Session, nombre: str):
 def obtenerEmprendimientos(db: Session):
     return db.query(ProyectoModelo).all()
 
-def obtenerEmprendimientosPorEstado(db: Session, estado: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.estado == estado).all()
+def obtenerEmprendimientosPorEstado(db: Session, id_estado_proyecto: int):
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_estado_proyecto == id_estado_proyecto).all()
 
 def crearEmprendimiento(db: Session, emprendimiento: ProyectoCrearSchema):
     existente = buscarEmprendimientoPorNombre(db, emprendimiento.nombre_proyecto)
@@ -28,7 +28,7 @@ def crearEmprendimiento(db: Session, emprendimiento: ProyectoCrearSchema):
     nuevo_emprendimiento = ProyectoModelo(
         nombre_proyecto=emprendimiento.nombre_proyecto,
         descripcion=emprendimiento.descripcion,
-        estado=emprendimiento.estado,
+        id_estado_proyecto=emprendimiento.id_estado_proyecto,
     )
     db.add(nuevo_emprendimiento)
     db.commit()

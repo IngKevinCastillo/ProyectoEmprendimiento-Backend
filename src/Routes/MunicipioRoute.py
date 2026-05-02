@@ -1,6 +1,5 @@
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi import HTTPException
 from Controllers.MunicipioControlador import buscar_municipio_nombre_controlador, buscar_municipio_controlador, listar_municipios_controlador
 from Configs.bd import get_db
 from Schemas.MunicipioSchema import MunicipioRespuestaSchema

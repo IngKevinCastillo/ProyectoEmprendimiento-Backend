@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Schemas.Tipodocumentoschema import TipoDocumentoRespuestaSchema
 from Configs.bd import get_db
-from Core.Seguridad import obtener_usuario_actual
 from Controllers.TipoDocumentoControlador import obtener_tipo_documento_controlador, obtener_tipo_documento_nombre_controlador, listar_tipos_documento_controlador
 
 router = APIRouter(
@@ -13,7 +12,6 @@ router = APIRouter(
 @router.get("/", response_model=list[TipoDocumentoRespuestaSchema])
 async def listar_tipos_documento(
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
     tipos_documento = listar_tipos_documento_controlador(db)
     return tipos_documento
@@ -23,7 +21,6 @@ async def listar_tipos_documento(
 async def obtener_tipo_documento(
     id_tipo_documento: str, 
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
     tipo_documento = obtener_tipo_documento_controlador(db, id_tipo_documento)
     if not tipo_documento:
@@ -34,7 +31,6 @@ async def obtener_tipo_documento(
 async def obtener_tipo_documento_nombre(
     nombre: str, 
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
     tipo_documento = obtener_tipo_documento_nombre_controlador(db, nombre)
     if not tipo_documento:

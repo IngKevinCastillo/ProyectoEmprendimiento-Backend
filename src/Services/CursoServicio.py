@@ -4,8 +4,8 @@ from Utils.Mapeadorutilidades import auto_mapear
 from Models.CursoModelo import CursoModelo
 from Schemas.CursoSchema import CursoCrearSchema, CursoActualizarSchema
 
-def buscar_curso(db: Session, id_curso: str):
-    return db.query(CursoModelo).filter(CursoModelo.id_curso == int(id_curso)).first()
+def buscar_curso(db: Session, id_curso: int):
+    return db.query(CursoModelo).filter(CursoModelo.id_curso == id_curso).first()
 
 def buscar_curso_por_nombre_curso(db: Session, nombre: str):
     return db.query(CursoModelo).filter(CursoModelo.nombre_curso == nombre).first()

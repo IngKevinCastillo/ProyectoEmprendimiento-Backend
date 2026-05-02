@@ -12,16 +12,15 @@ router = APIRouter(
 
 @router.get("/", response_model=list[SedeRespuestaSchema])
 async def listar_sedes(
-    db: Session = Depends(get_db), 
-    usuario_actual=Depends(obtener_usuario_actual)
+    db: Session = Depends(get_db),
 ):
     sedes = listar_sedes_controlador(db)
     return sedes
 
 @router.get("/{id_Sede}", response_model=SedeRespuestaSchema)
 async def obtener_sede(
-    id_Sede: str, db: Session = Depends(get_db), 
-    usuario_actual=Depends(obtener_usuario_actual)
+    id_Sede: str, 
+    db: Session = Depends(get_db),
 ):
     sede = obtener_sede_controlador(db, id_Sede)
     if not sede:
@@ -30,8 +29,8 @@ async def obtener_sede(
 
 @router.get("/nombre/{nombre}", response_model=SedeRespuestaSchema)
 async def obtener_sede_nombre(
-    nombre: str, db: Session = Depends(get_db), 
-    usuario_actual=Depends(obtener_usuario_actual)
+    nombre: str, 
+    db: Session = Depends(get_db),
 ):
     sede = obtener_sede_por_nombre_controlador(db, nombre)
     if not sede:

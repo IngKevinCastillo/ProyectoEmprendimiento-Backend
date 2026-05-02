@@ -8,8 +8,8 @@ def crear_emprendimiento_controlador(db: Session, emprendimiento: ProyectoCrearS
 def obtener_emprendimientos_controlador(db: Session):
     return obtenerEmprendimientos(db)
 
-def obtener_emprendimientos_por_estado_controlador(db: Session, estado: str):
-    return obtenerEmprendimientosPorEstado(db, estado)
+def obtener_emprendimientos_por_estado_controlador(db: Session, id_estado_proyecto: int):
+    return obtenerEmprendimientosPorEstado(db, id_estado_proyecto)
 
 def buscar_emprendimiento_controlador(db: Session, id_emprendimiento: str):
     return buscarEmprendimiento(db, id_emprendimiento)
