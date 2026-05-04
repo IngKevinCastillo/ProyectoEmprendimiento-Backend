@@ -85,7 +85,7 @@ async def actualizar_evento(
     return evento
 
 
-@router.delete("/{id_evento}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id_evento}", status_code=status.HTTP_200_OK)
 async def eliminar_evento(
     id_evento: str,
     db: Session = Depends(get_db),
