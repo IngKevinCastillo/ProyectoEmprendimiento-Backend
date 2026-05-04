@@ -8,6 +8,7 @@ class EventoCrearSchema(BaseModel):
     tipo_evento: str
     fecha: datetime
     lugar:str
+    descripcion: str
     
     @field_validator("nombre_evento")
     @classmethod
@@ -28,6 +29,16 @@ class EventoCrearSchema(BaseModel):
     @classmethod
     def validar_lugar(cls, v: str) -> str:
         return validar_string(v, 1, 60, "lugar")
+    
+    @field_validator("descripcion")
+    @classmethod
+    def validar_descripcion(cls, v: str) -> str:
+        v = v.strip()
+        if len(v) > 450:
+            raise ValueError("La descripción no puede superar los 450 caracteres.")
+        if not v:
+            raise ValueError("La descripción no puede estar vacía.")
+        return v
             
 class EventoRespuestaSchema(BaseModel):
     id_evento: int
@@ -35,6 +46,7 @@ class EventoRespuestaSchema(BaseModel):
     tipo_evento: str
     fecha: datetime
     lugar: str
+    descripcion: str
 
     class Config:
         from_attributes = True
@@ -44,3 +56,4 @@ class EventoActualizarSchema(BaseModel):
     tipo_evento: str
     fecha: datetime
     lugar: str
+    descripcion: str

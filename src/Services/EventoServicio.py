@@ -1,16 +1,20 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from Models.EventoModelo import EventoModelo
 from Schemas.Eventoschema import EventoCrearSchema
 from Utils.Mapeadorutilidades import auto_mapear
 from datetime import datetime
 
 def crear_evento(db: Session, evento: EventoCrearSchema):
+    existente = buscar_evento_por_nombre(db, evento.nombre_evento)
+    if existente:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El eventto especificado ya existe.")
     nuevo_evento = EventoModelo(
         nombre_evento=evento.nombre_evento,
         tipo_evento=evento.tipo_evento,
         fecha=evento.fecha,
-        lugar=evento.lugar
+        lugar=evento.lugar,
+        descripcion=evento.descripcion
     )
     db.add(nuevo_evento)
     db.commit()

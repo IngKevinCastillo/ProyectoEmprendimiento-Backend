@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioRespuestaSchema, LoginSchema
 from Schemas.Autenticacionschema import Token
 from Configs.bd import get_db
-from Controllers.UsuarioControlador import ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, BuscarUsuarioPorDocumentoControlador, EmprendimientosUsuarioControlador, BuscarUsuarioControlador
+from Controllers.UsuarioControlador import ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, EmprendimientosUsuarioControlador, BuscarUsuarioControlador
 from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador, CambiarContrasena
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoRespuestaSchema
@@ -13,6 +13,17 @@ router = APIRouter(
     prefix="/usuarios",
     tags=["Usuarios"],
 )
+
+@router.get("/buscar-usuario/{id_usuario}", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_200_OK)
+async def buscar_usuario(
+    id_usuario: int,
+    db: Session = Depends(get_db),
+    usuario_actual = Depends(obtener_usuario_actual)
+):
+    usuario = BuscarUsuarioControlador(db, id_usuario)
+    if not usuario:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario especificado no existe.")
+    return usuario
 
 @router.post("/", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_201_CREATED)
 async def crear_usuario(

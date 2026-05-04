@@ -10,5 +10,6 @@ class EventoModelo(Base):
     tipo_evento = Column(String(30), nullable=False)
     fecha = Column(TIMESTAMP, nullable=False)
     lugar = Column(String(60), nullable=False)
+    descripcion = Column(String, nullable=False)
     
     participaciones = relationship("ParticipacionEventoModelo", back_populates="evento")
