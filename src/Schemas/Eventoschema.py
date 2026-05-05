@@ -1,45 +1,36 @@
 from pydantic import BaseModel, field_validator
-from datetime import timezone, datetime
+from datetime import date, timezone, datetime
 import re
-from Utils.Validacionesutilidades import validar_nombre, validar_fecha_futura, validar_string
+from Utils.Validacionesutilidades import validar_nombre
+from enum import Enum
+
+class TipoEvento(str, Enum):
+    INTERNA = "Interna"
+    EXTERNA = "Externa"
+    CONCURSO = "Concurso"
+    EMPRENDIMIENTO = "Emprendimiento"
+
 
 class EventoCrearSchema(BaseModel):
     nombre_evento: str
-    tipo_evento: str
-    fecha: datetime
+    tipo_evento: TipoEvento
+    fecha: date
     lugar:str
-    descripcion: str
+#    descripcion: str
     
     @field_validator("nombre_evento")
     @classmethod
     def validar_nombre_evento(cls, v: str) -> str:
-        return validar_nombre(v, 1, 50, "nombre_evento")
-    
-    @field_validator("tipo_evento")
-    @classmethod
-    def validar_tipo_evento(cls, v: str) -> str:
-        return validar_string(v, 1, 30, "tipo_evento")
-    
-    @field_validator("fecha")
-    @classmethod
-    def validar_fecha(cls, v: datetime) -> datetime:
-        return validar_fecha_futura(v, "fecha")
+        return validar_nombre(v, min_len=3, max_len=100, campo="Nombre del evento")
     
     @field_validator("lugar")
     @classmethod
     def validar_lugar(cls, v: str) -> str:
-        return validar_string(v, 1, 60, "lugar")
-    
-    @field_validator("descripcion")
-    @classmethod
-    def validar_descripcion(cls, v: str) -> str:
         v = v.strip()
-        if len(v) > 450:
-            raise ValueError("La descripción no puede superar los 450 caracteres.")
-        if not v:
-            raise ValueError("La descripción no puede estar vacía.")
+        if not (3 <= len(v) <= 100):
+            raise ValueError("El nombre del lugar del evento debe tener entre 3 y 100 caracteres.")
         return v
-            
+
 class EventoRespuestaSchema(BaseModel):
     id_evento: int
     nombre_evento: str

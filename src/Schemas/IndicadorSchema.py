@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
 from decimal import Decimal
-from Utils.Validacionesutilidades import validar_int
+from Utils.Validacionesutilidades import validar_int, validar_nombre
 
 
 class IndicadorCrearSchema(BaseModel):
@@ -13,10 +13,7 @@ class IndicadorCrearSchema(BaseModel):
     @field_validator("nombre_indicador")
     @classmethod
     def validar_nombre_indicador(cls, v: str) -> str:
-        v = v.strip()
-        if not (3 <= len(v) <= 45):
-            raise ValueError("El nombre del indicador debe tener entre 3 y 45 caracteres.")
-        return v
+        return validar_nombre(v, min_len=3, max_len=100, campo="Nombre del indicador")
 
     @field_validator("formula")
     @classmethod

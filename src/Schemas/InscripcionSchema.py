@@ -1,25 +1,18 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, validation_info
 from datetime import date
-from Utils.Validacionesutilidades import validar_fecha
+from Utils.Validacionesutilidades import validar_id_entero
 
 class InscripcionCrearSchema(BaseModel):
     id_usuario: int
     id_curso: int
-    fecha_inscripcion: str
+    fecha_inscripcion: date
     
     @field_validator("id_usuario", "id_curso")
     @classmethod
-    def validar_ids_positivos(cls, v: int) -> int:
-        if v < 1 or v > 2147483647:
-            raise ValueError("El ID debe ser un entero positivo válido (1 - 2147483647).")
-        return v
+    def validar_ids(cls, v: int, info: validation_info) -> int:
+        campo = info.field_name.replace("_", " ").capitalize()
+        return validar_id_entero(v, campo=campo)
     
-    @field_validator("fecha_inscripcion")
-    @classmethod
-    def validar_fecha(cls, v: date) -> date:
-        return validar_fecha(v, "fecha_inscripcion")
-
-
 class InscripcionRespuestaSchema(BaseModel):
     id_inscripcion: int
     id_usuario: int

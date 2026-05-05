@@ -1,5 +1,5 @@
-from pydantic import BaseModel, field_validator
-
+from pydantic import BaseModel, field_validator, validation_info
+from Utils.Validacionesutilidades import validar_id_entero
 
 class ParticipacionEventoCrearSchema(BaseModel):
     id_usuario: int
@@ -8,11 +8,9 @@ class ParticipacionEventoCrearSchema(BaseModel):
 
     @field_validator("id_usuario", "id_evento", "Id_rol")
     @classmethod
-    def validar_ids_positivos(cls, v: int) -> int:
-        if v < 1 or v > 2147483647:
-            raise ValueError("El ID debe ser un entero positivo válido (1 - 2147483647).")
-        return v
-
+    def validar_ids_positivos(cls, v: int, info: validation_info) -> int:
+        campo = info.field_name.replace("_", " ").capitalize()
+        return validar_id_entero(v, campo=campo)
 
 class ParticipacionEventoRespuestaSchema(BaseModel):
     id_participacion_evento: int

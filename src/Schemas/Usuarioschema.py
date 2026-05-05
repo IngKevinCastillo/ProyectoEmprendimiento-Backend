@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 from datetime import date, datetime
 import re
-from Utils.Validacionesutilidades import validar_documento, validar_nombre, validar_int_nulos, validar_int, validar_password, validar_telefono, validar_string, validar_fecha, validar_string_nulos
+from Utils.Validacionesutilidades import validar_documento, validar_nombre_usuario, validar_int_nulos, validar_int, validar_password, validar_telefono, validar_string, validar_fecha, validar_string_nulos
 
 class UsuarioCrearSchema(BaseModel):
     primer_nombre: str
@@ -30,7 +30,7 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("primer_nombre")
     @classmethod
     def validar_primer_nombre(cls, v: str) -> str:
-        return validar_nombre(v, 1, 30, "primer_nombre")
+        return validar_nombre_usuario(v, 1, 30, "primer_nombre")
 
     @field_validator("segundo_nombre")
     @classmethod
@@ -41,12 +41,12 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("primer_apellido")
     @classmethod
     def validar_primer_apellido(cls, v: str) -> str:
-        return validar_nombre(v, 1, 30, "primer_apellido")
+        return validar_nombre_usuario(v, 1, 30, "primer_apellido")
 
     @field_validator("segundo_apellido")
     @classmethod
     def validar_segundo_apellido(cls, v: str) -> str:
-        return validar_nombre(v, 0, 30, "segundo_apellido")
+        return validar_nombre_usuario(v, 0, 30, "segundo_apellido")
 
     # ──────────────── Contraseña ────────────────
 

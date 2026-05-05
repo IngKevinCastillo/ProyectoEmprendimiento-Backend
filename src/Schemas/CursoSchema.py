@@ -1,5 +1,6 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, model_validator
 from datetime import date
+from Utils.Validacionesutilidades import validar_nombre, validar_descripcion
 
 class CursoCrearSchema(BaseModel):
     nombre_curso: str
@@ -9,20 +10,20 @@ class CursoCrearSchema(BaseModel):
     
     @field_validator("nombre_curso")
     @classmethod
-    def validar_nombre_curso(cls, v: str) -> str:
-        v = v.strip()
-        if not (3 <= len(v) <= 80):
-            raise ValueError("El nombre del estado debe tener entre 3 y 80 caracteres.")
-        return v
-    
+    def validar_nombre(cls, v: str) -> str:
+        return validar_nombre(v, min_len=3, max_len=100, campo="Nombre del curso")
+
     @field_validator("descripcion")
     @classmethod
     def validar_descripcion(cls, v: str) -> str:
-        v = v.strip()
-        if not (3 <= len(v) <= 80):
-            raise ValueError("La descripción debe tener entre 3 y 80 caracteres.")
-        return v
-    
+        return validar_descripcion(v, min_len=20, max_len=2000, campo="Descripción del curso")
+
+    @model_validator(mode="after")
+    def validar_fechas(self):
+        if self.fecha_fin < self.fecha_inicio:
+            raise ValueError("La fecha de fin debe ser mayor o igual a la fecha de inicio.")
+        return self
+
 class CursoRespuestaSchema(BaseModel):
     id_curso: int
     nombre_curso: str

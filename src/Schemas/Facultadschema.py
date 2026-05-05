@@ -1,6 +1,7 @@
 from pydantic import BaseModel, field_validator
 import re
-from Utils.Validacionesutilidades import validar_nombre, validar_string
+from Utils.Validacionesutilidades import validar_nombre_usuario, validar_descripcion
+
 
 class FacultadRespuestaSchema(BaseModel):
     id_facultad: int
