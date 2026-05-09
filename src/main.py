@@ -31,11 +31,9 @@ app.include_router(ProyectoRoute.router)
 app.include_router(ParticipacionEventoRoute.router)
 app.include_router(InscripcionRoute.router)
 app.include_router(ConvocatoriasRoute.router)
-
 app.include_router(CategoriaRoute.router)
 app.include_router(PalabraClaveRoute.router)
 app.include_router(ProyectoPalabraClaveRoutes.router)
-
 app.include_router(AlianzaRoute.router)
 app.include_router(TipoEntidadesRoute.router)
 

@@ -8,4 +8,4 @@ class TipoEntidadesModelo(Base):
     id_tipo_entidad = Column(Integer, primary_key=True, nullable=False)
     nombre_tipo_entidad = Column(String(40), nullable=False)
     
-    alianzas = relationship("AlianzasModelo", back_populates="tipo_entidad")
+    alianzas = relationship("AlianzaModelo", back_populates="tipo_entidad")

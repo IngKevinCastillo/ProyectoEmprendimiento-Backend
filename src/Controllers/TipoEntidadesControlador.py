@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from Services.TipoEntidadServicio import crear_tipo_entidad, listar_tipo_entidades, buscar_tipo_entidad, actualizar_tipo_entidad
-from Schemas.TipoEntidadSchema import TipoEntidadCrearSchema, TipoEntidadActualizarSchema
+from Services.TipoEntidadesServicio import crear_tipo_entidad, listar_tipo_entidades, buscar_tipo_entidad, actualizar_tipo_entidad
+from Schemas.TipoEntidadesSchema import TipoEntidadCrearSchema, TipoEntidadActualizarSchema
 
 def crear_tipo_entidad_controlador(db: Session, tipo_entidad: TipoEntidadCrearSchema):
     return crear_tipo_entidad(db, tipo_entidad)

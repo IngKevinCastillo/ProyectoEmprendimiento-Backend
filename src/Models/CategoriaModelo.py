@@ -8,3 +8,5 @@ class CategoriaModelo(Base):
     
     id_categoria = Column(Integer, primary_key=True)
     nombre_categoria = Column(String(100), nullable=False)
+    
+    proyecto = relationship("ProyectoModelo", back_populates="categoria")

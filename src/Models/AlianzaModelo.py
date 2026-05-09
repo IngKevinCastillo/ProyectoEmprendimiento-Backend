@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, Boolean, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from Configs.bd import Base
-from Models.TipoEntidadesModelo import TipoEntidadesModelo
 
 class AlianzaModelo(Base):
     __tablename__ = "Alianzas"
