@@ -246,3 +246,8 @@ def validar_id_entero(
         raise ValueError(f"{campo} debe estar entre {min_val} y {max_val}.")
 
     return valor
+
+def validar_calificacion(v: float) -> float:
+    if v is not None and not (0 <= v <= 10):
+        raise ValueError("La calificación debe estar entre 0 y 10")
+    return v
