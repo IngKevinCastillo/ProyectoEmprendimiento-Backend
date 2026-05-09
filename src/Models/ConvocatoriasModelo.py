@@ -17,4 +17,4 @@ class ConvocatoriasModelo(Base):
     fecha_registro = Column(Date, nullable=False)
     url_convocatoria = Column(String, nullable=False)
     
-    proyectos = relationship("ProyectoModelo", back_populates="convocatorias")
+    proyecto = relationship("ProyectoModelo", back_populates="convocatorias")

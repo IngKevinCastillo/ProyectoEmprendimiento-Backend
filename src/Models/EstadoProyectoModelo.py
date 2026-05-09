@@ -9,4 +9,4 @@ class EstadoProyectoModelo(Base):
     nombre = Column(String(40), nullable=False)
     
     # seguimientos = relationship("SeguimientoModelo", back_populates="estado_proyecto")
-    proyectos = relationship("ProyectoModelo", back_populates="estado_proyecto")
+    proyecto = relationship("ProyectoModelo", back_populates="estado_proyecto")

@@ -16,6 +16,7 @@ class ProyectoBaseSchema(BaseModel):
     recursos_clave: Optional[str] = None
     modelo_de_negocio: Optional[str] = None
     calificacion: Optional[float] = None
+    id_categoria: int
 
     @field_validator("nombre_proyecto")
     @classmethod

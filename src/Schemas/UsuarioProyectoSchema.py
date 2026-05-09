@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator, validation_info
+from pydantic import BaseModel, field_validator, ValidationInfo
 from Utils.Validacionesutilidades import validar_id_entero
 
 class UsuarioProyectoCrearSchema(BaseModel):
@@ -8,7 +8,7 @@ class UsuarioProyectoCrearSchema(BaseModel):
 
     @field_validator("id_proyecto", "id_usuario", "id_rol")
     @classmethod
-    def validar_ids_positivos(cls, v: int, info: validation_info) -> int:
+    def validar_ids_positivos(cls, v: int, info: ValidationInfo) -> int:
         campo = info.field_name.replace("_", " ").capitalize()
         return validar_id_entero(v, campo=campo)
 
