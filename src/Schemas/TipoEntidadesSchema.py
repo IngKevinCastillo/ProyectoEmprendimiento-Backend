@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator
-from Utils.Validacionesutilidades import validar_nombre
+from Utils.Validacionesutilidades import validar_nombre_utils
 
 class TipoEntidadCrearSchema(BaseModel):
     nombre_tipo_entidad: str
@@ -7,7 +7,7 @@ class TipoEntidadCrearSchema(BaseModel):
     @field_validator("nombre_tipo_entidad")
     @classmethod
     def validar_nombre_tipo_entidad(cls, v: str) -> str:
-        return validar_nombre(v, min_len=3, max_len=100, campo="Nombre del tipo de entidad")
+        return validar_nombre_utils(v, min_len=3, max_len=100, campo="Nombre del tipo de entidad")
 
 
 class TipoEntidadRespuestaSchema(BaseModel):

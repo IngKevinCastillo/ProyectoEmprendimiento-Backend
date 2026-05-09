@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator
 from datetime import date
 from typing import Optional
-from Utils.Validacionesutilidades import validar_nombre, validar_descripcion, validar_id_entero, validar_calificacion
+from Utils.Validacionesutilidades import validar_nombre_utils, validar_descripcion_utils, validar_id_entero, validar_calificacion
 
 
 class ProyectoBaseSchema(BaseModel):
@@ -21,12 +21,12 @@ class ProyectoBaseSchema(BaseModel):
     @field_validator("nombre_proyecto")
     @classmethod
     def validar_nombre_proyecto(cls, v: Optional[str]) -> str:
-        return validar_nombre(v, min_len=3, max_len=100, campo="Nombre del proyecto")
+        return validar_nombre_utils(v, min_len=3, max_len=100, campo="Nombre del proyecto")
 
     @field_validator("descripcion")
     @classmethod
     def validar_descripcion_proyecto(cls, v: Optional[str]) -> str:
-        return validar_descripcion(v, min_len=20, max_len=2000, campo="Descripción del proyecto")
+        return validar_descripcion_utils(v, min_len=20, max_len=2000, campo="Descripción del proyecto")
 
     @field_validator("id_estado_proyecto")
     @classmethod

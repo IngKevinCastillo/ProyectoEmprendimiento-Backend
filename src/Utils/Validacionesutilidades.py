@@ -2,6 +2,68 @@ import re
 from datetime import datetime, timezone
 from typing import Optional
 
+def validar_nombre_usuario_utils(valor: str, min_len: int = 1, max_len: int = 30, campo: str = "Nombre") -> str:
+    if not isinstance(valor, str):
+        raise TypeError(f"{campo} debe ser un texto.")
+    valor = " ".join(valor.split())
+    if not valor:
+        raise ValueError(f"{campo} no puede estar vacío.")
+    if not (min_len <= len(valor) <= max_len):
+        raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
+    caracteres = r"[A-Za-z0-9áéíóúÁÉÍÓÚàèìòùäëïöüÄËÏÖÜñÑ\-\']"
+    if not re.fullmatch(rf"{caracteres}+(\s{caracteres}+)*", valor):
+        raise ValueError(
+            f"{campo} solo puede contener letras, números, espacios simples, "
+            f"tildes, guiones, apóstrofes y diéresis."
+        )
+    return valor
+
+def validar_contrasena_utils(valor: str, campo: str = "Contraseña") -> str:
+    if not isinstance(valor, str):
+        raise TypeError(f"{campo} debe ser un texto.")
+    if not (8 <= len(valor) <= 30):
+        raise ValueError(f"{campo} debe tener entre 8 y 30 caracteres.")
+    if not re.search(r"[A-Z]", valor):
+        raise ValueError(f"{campo} debe contener al menos una letra mayúscula.")
+    if not re.search(r"[a-z]", valor):
+        raise ValueError(f"{campo} debe contener al menos una letra minúscula.")
+    if not re.search(r"[0-9]", valor):
+        raise ValueError(f"{campo} debe contener al menos un número.")
+    if not re.search(r"[!@#$%^&*()\-_=+\[\]{};:'\",.<>?/\\|`~]", valor):
+        raise ValueError(f"{campo} debe contener al menos un carácter especial.")
+    caracteres_permitidos = r"[A-Za-z0-9!@#$%^&*()\-_=+\[\]{};:'\",.<>?/\\|`~]"
+    if not re.fullmatch(rf"{caracteres_permitidos}+", valor):
+        raise ValueError(f"{campo} contiene caracteres no permitidos.")
+    return valor
+
+def validar_documento(valor: str, campo: str = "Documento") -> str:
+    if not isinstance(valor, str):
+        raise TypeError(f"{campo} debe ser un texto.")
+    valor = valor.strip().replace(".", "").replace(",", "").replace(" ", "")
+    if not re.fullmatch(r"[A-Za-z0-9]{6,12}", valor):
+        raise ValueError(
+            f"{campo} inválido. Debe tener entre 6 y 12 caracteres alfanuméricos (sin puntos ni espacios)."
+        )
+    return valor
+
+def validar_telefono_utils(valor: str, campo: str = "Teléfono") -> str:
+    if not isinstance(valor, str):
+        raise TypeError(f"{campo} debe ser un texto.")
+    valor = valor.strip().replace(" ", "").replace("-", "")
+    if valor.startswith("+57"):
+        valor = valor[3:]
+    elif valor.startswith("57") and len(valor) > 10:
+        valor = valor[2:]
+    if not valor.isdigit():
+        raise ValueError(f"{campo} solo debe contener dígitos.")
+    if len(valor) == 10 and valor.startswith("3"):
+        return valor
+    if len(valor) == 7:
+        return valor
+    raise ValueError(
+        f"{campo} inválido. Debe ser un número colombiano válido de 7 o 10 dígitos."
+    )
+
 def validar_string(valor: str, min_len: int = 1, max_len: int = 255, campo: str = "Campo") -> str:
     if not isinstance(valor, str):
         raise TypeError(f"{campo} debe ser un texto.")
@@ -22,81 +84,6 @@ def validar_string_nulos(valor: Optional[str], min_len: int = 1, max_len: int = 
         raise ValueError(f"{campo} no puede estar vacío.")
     if not (min_len <= len(valor) <= max_len):
         raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
-    return valor
-
-def validar_nombre_usuario(valor: str, min_len: int = 3, max_len: int = 100, campo: str = "Nombre") -> str:
-    if not isinstance(valor, str):
-        raise TypeError(f"{campo} debe ser un texto.")
-    valor = " ".join(valor.split())
-    if not valor:
-        raise ValueError(f"{campo} no puede estar vacío.")
-    if not (min_len <= len(valor) <= max_len):
-        raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
-    caracteres = r"[A-Za-záéíóúÁÉÍÓÚàèìòùäëïöüÄËÏÖÜñÑ6]"
-    if not re.fullmatch(rf"{caracteres}+(\s{caracteres}+)*", valor):
-        raise ValueError(
-            f"{campo} solo puede contener letras, el número 6 y espacios simples entre palabras."
-        )
-    return valor
-
-def validar_telefono(valor: str, campo: str = "Teléfono") -> str:
-    if not isinstance(valor, str):
-        raise TypeError(f"{campo} debe ser un texto.")
-    valor = valor.strip().replace(" ", "").replace("-", "")
-    if valor.startswith("+57"):
-        valor = valor[3:]
-    elif valor.startswith("57") and len(valor) > 10:
-        valor = valor[2:]
-
-    if not valor.isdigit():
-        raise ValueError(f"{campo} solo debe contener dígitos.")
-    if len(valor) == 10 and valor.startswith("3"):
-        return valor 
-    if len(valor) in (7, 10):
-        return valor 
-    raise ValueError(f"{campo} inválido. Debe ser un número colombiano de 7 o 10 dígitos.")
-
-def validar_documento(valor: str, campo: str = "Documento") -> str:
-    if not isinstance(valor, str):
-        raise TypeError(f"{campo} debe ser un texto.")
-    valor = valor.strip().replace(".", "").replace(",", "").replace(" ", "")
-    if not re.fullmatch(r"[A-Za-z0-9]{6,12}", valor):
-        raise ValueError(
-            f"{campo} inválido. Debe tener entre 6 y 12 caracteres alfanuméricos (sin puntos ni espacios)."
-        )
-    return valor
-
-_DOMINIOS_VALIDOS = {
-    "gmail.com", "googlemail.com",
-    "hotmail.com", "hotmail.es", "hotmail.co",
-    "outlook.com", "outlook.es",
-    "live.com", "live.co",
-    "yahoo.com", "yahoo.es", "yahoo.co",
-    "icloud.com", "me.com", "mac.com",
-    "protonmail.com", "proton.me",
-    "tutanota.com",
-    "unal.edu.co", "udea.edu.co", "uniandes.edu.co",
-    "javeriana.edu.co", "eafit.edu.co", "uninorte.edu.co",
-    "uis.edu.co", "utb.edu.co", "unicartagena.edu.co",
-}
-
-def validar_email(valor: str) -> str:
-    if not isinstance(valor, str):
-        raise TypeError("El correo debe ser un texto.")
-    
-    valor = valor.strip().lower()
-    
-    if not re.fullmatch(r"^[\w\.\+\-]+@[\w\-]+(\.[\w\-]+)+$", valor):
-        raise ValueError("Correo electrónico con formato inválido.")
-    
-    dominio = valor.split("@")[1]
-
-    if dominio != "unicesar.edu.co":
-        raise ValueError(
-            f"Correo no válido. Solo se aceptan direcciones del dominio @unicesar.edu.co. "
-            f"Se recibió: '{valor}'"
-        )
-    
     return valor
 
 def validar_int(
@@ -130,6 +117,34 @@ def validar_int_nulos(
         raise ValueError(f"{campo} debe ser menor o igual a {max_val}.")
     return valor
 
+_DOMINIOS_VALIDOS = {
+    "gmail.com", "googlemail.com",
+    "hotmail.com", "hotmail.es", "hotmail.co",
+    "outlook.com", "outlook.es",
+    "live.com", "live.co",
+    "yahoo.com", "yahoo.es", "yahoo.co",
+    "icloud.com", "me.com", "mac.com",
+    "protonmail.com", "proton.me",
+    "tutanota.com",
+    "unal.edu.co", "udea.edu.co", "uniandes.edu.co",
+    "javeriana.edu.co", "eafit.edu.co", "uninorte.edu.co",
+    "uis.edu.co", "utb.edu.co", "unicartagena.edu.co",
+}
+
+def validar_email(valor: str) -> str:
+    if not isinstance(valor, str):
+        raise TypeError("El correo debe ser un texto.")
+    valor = valor.strip().lower()
+    if not re.fullmatch(r"^[\w\.\+\-]+@[\w\-]+(\.[\w\-]+)+$", valor):
+        raise ValueError("Correo electrónico con formato inválido.")  
+    dominio = valor.split("@")[1]
+    if dominio != "unicesar.edu.co":
+        raise ValueError(
+            f"Correo no válido. Solo se aceptan direcciones del dominio @unicesar.edu.co. "
+            f"Se recibió: '{valor}'"
+        )
+    return valor
+
 def validar_fecha_futura(valor: datetime, campo: str = "Fecha") -> datetime:
     if not isinstance(valor, datetime):
         raise TypeError(f"{campo} debe ser un objeto datetime.")
@@ -150,25 +165,6 @@ def validar_rango_fechas(
         raise ValueError(f"{campo_inicio} debe ser anterior a {campo_fin}.")
     return fecha_inicio, fecha_fin
 
-def validar_password(valor: str) -> str:
-    if not isinstance(valor, str):
-        raise TypeError("La contraseña debe ser un texto.")
-    errores = []
-    if len(valor) < 8:
-        errores.append("al menos 8 caracteres")
-    if len(valor) > 50:
-        errores.append("máximo 50 caracteres")
-    if not re.search(r"[A-Z]", valor):
-        errores.append("una letra mayúscula")
-    if not re.search(r"[a-z]", valor):
-        errores.append("una letra minúscula")
-    if not re.search(r"\d", valor):
-        errores.append("un número")
-    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', valor):
-        errores.append("un carácter especial (!@#$%...)")  
-    if errores:
-        raise ValueError("La contraseña debe tener: " + ", ".join(errores) + ".")    
-    return valor
 
 def validar_hora(valor: str, campo: str = "Hora") -> str:
     if not isinstance(valor, str):
@@ -194,7 +190,7 @@ def validar_fecha(valor: str, campo: str = "Fecha") -> datetime:
         raise ValueError(f"{campo} no es una fecha valida (ej. 31/02/2000 no existe).")
     
 
-def validar_nombre(valor: str, min_len: int = 3, max_len: int = 100, campo: str = "Nombre") -> str:
+def validar_nombre_utils(valor: str, min_len: int = 3, max_len: int = 100, campo: str = "Nombre") -> str:
     if not isinstance(valor, str):
         raise TypeError(f"{campo} debe ser un texto.")
     valor = " ".join(valor.split())
@@ -209,7 +205,7 @@ def validar_nombre(valor: str, min_len: int = 3, max_len: int = 100, campo: str 
         )
     return valor    
 
-def validar_descripcion(
+def validar_descripcion_utils(
     valor: str,
     min_len: int = 20,
     max_len: int = 2000,
@@ -217,20 +213,13 @@ def validar_descripcion(
 ) -> str:
     if not isinstance(valor, str):
         raise TypeError(f"{campo} debe ser un texto.")
-
-    # Normalizar espacios
     valor = " ".join(valor.split())
-
     if not valor:
         raise ValueError(f"{campo} no puede estar vacía.")
-
     if not (min_len <= len(valor) <= max_len):
         raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
-
-    # Evitar textos sin contenido real (ej: ".....", "----", "123456")
     if not re.search(r"[A-Za-záéíóúÁÉÍÓÚñÑ]", valor):
         raise ValueError(f"{campo} debe contener al menos una letra.")
-
     return valor
 
 def validar_id_entero(
@@ -241,12 +230,9 @@ def validar_id_entero(
 ) -> int:
     if not isinstance(valor, int):
         raise TypeError(f"{campo} debe ser un número entero.")
-
     if not (min_val <= valor <= max_val):
         raise ValueError(f"{campo} debe estar entre {min_val} y {max_val}.")
-
     return valor
-
 def validar_calificacion(v: float) -> float:
     if v is not None and not (0 <= v <= 10):
         raise ValueError("La calificación debe estar entre 0 y 10")

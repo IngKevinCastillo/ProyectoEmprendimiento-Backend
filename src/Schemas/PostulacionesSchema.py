@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator, validation_info
 from datetime import date
-from Utils.Validacionesutilidades import validar_id_entero, validar_descripcion
+from Utils.Validacionesutilidades import validar_id_entero, validar_descripcion_utils
 
 class PostulacionesCrearSchema(BaseModel):
     id_convocatoria: int
@@ -18,7 +18,7 @@ class PostulacionesCrearSchema(BaseModel):
     @field_validator("informacion_adicional")
     @classmethod
     def validar_informacion_adicional(cls, v: str) -> str:
-        return validar_descripcion(v, min_len=20, max_len=2000, campo="Información adicional")
+        return validar_descripcion_utils(v, min_len=20, max_len=2000, campo="Información adicional")
 
 class PostulacionesRespuestaSchema(BaseModel):
     id_postulacion: int

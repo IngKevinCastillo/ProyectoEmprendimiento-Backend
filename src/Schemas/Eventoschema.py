@@ -1,7 +1,6 @@
 from pydantic import BaseModel, field_validator
-from datetime import date, timezone, datetime
-import re
-from Utils.Validacionesutilidades import validar_nombre
+from datetime import date, datetime
+from Utils.Validacionesutilidades import validar_nombre_utils
 from enum import Enum
 
 class TipoEvento(str, Enum):
@@ -21,7 +20,7 @@ class EventoCrearSchema(BaseModel):
     @field_validator("nombre_evento")
     @classmethod
     def validar_nombre_evento(cls, v: str) -> str:
-        return validar_nombre(v, min_len=3, max_len=100, campo="Nombre del evento")
+        return validar_nombre_utils(v, min_len=3, max_len=100, campo="Nombre del evento")
     
     @field_validator("lugar")
     @classmethod

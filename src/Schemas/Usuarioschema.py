@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 from datetime import date, datetime
 import re
-from Utils.Validacionesutilidades import validar_documento, validar_nombre_usuario, validar_int_nulos, validar_int, validar_password, validar_telefono, validar_string, validar_fecha, validar_string_nulos
+from Utils.Validacionesutilidades import validar_documento, validar_nombre_usuario_utils, validar_int_nulos, validar_int, validar_contrasena_utils, validar_telefono_utils, validar_string, validar_fecha, validar_string_nulos
 
 class UsuarioCrearSchema(BaseModel):
     primer_nombre: str
@@ -30,7 +30,7 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("primer_nombre")
     @classmethod
     def validar_primer_nombre(cls, v: str) -> str:
-        return validar_nombre_usuario(v, 1, 30, "primer_nombre")
+        return validar_nombre_usuario_utils(v, 1, 30, "primer_nombre")
 
     @field_validator("segundo_nombre")
     @classmethod
@@ -41,19 +41,19 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("primer_apellido")
     @classmethod
     def validar_primer_apellido(cls, v: str) -> str:
-        return validar_nombre_usuario(v, 1, 30, "primer_apellido")
+        return validar_nombre_usuario_utils(v, 1, 30, "primer_apellido")
 
     @field_validator("segundo_apellido")
     @classmethod
     def validar_segundo_apellido(cls, v: str) -> str:
-        return validar_nombre_usuario(v, 0, 30, "segundo_apellido")
+        return validar_nombre_usuario_utils(v, 0, 30, "segundo_apellido")
 
     # ──────────────── Contraseña ────────────────
 
     @field_validator("contrasena")
     @classmethod
     def validar_contrasena(cls, v: str) -> str:
-        return validar_password(v)
+        return validar_contrasena_utils(v)
 
     # ──────────────── Fecha de nacimiento ────────────────
 
@@ -67,7 +67,7 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("ubicacion_semestral")
     @classmethod
     def validar_semestre_(cls, v: int) -> int:
-        return validar_int_nulos(v, 1, 30, "ubicacion_semestral")
+        return validar_int_nulos(v, 1, 10, "ubicacion_semestral")
 
     # ──────────────── Estado ────────────────
 
@@ -113,7 +113,7 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("telefono")
     @classmethod
     def validar_telefono(cls, v: str) -> str:
-        return validar_telefono(v, "telefono")
+        return validar_telefono_utils(v, "telefono")
     
     @field_validator("direccion")
     @classmethod
@@ -168,13 +168,13 @@ class UsuarioActualizarSchema(BaseModel):
     id_municipio: int
 
 class UsuarioCambiarContrasena(BaseModel):
-    contasena_anterior: str
+    contrasena_anterior: str
     contrasena_nueva: str
     
     @field_validator("contrasena_nueva")
     @classmethod
     def validar_contrasena(cls, v: str) -> str:
-        return validar_password(v)
+        return validar_contrasena_utils(v)
 
 class LoginSchema(BaseModel):
     correo: EmailStr

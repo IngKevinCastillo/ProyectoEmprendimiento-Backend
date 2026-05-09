@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator, model_validator
 from datetime import date
 from enum import Enum
-from Utils.Validacionesutilidades import validar_string, validar_id_entero, validar_nombre, validar_descripcion
+from Utils.Validacionesutilidades import validar_string, validar_id_entero, validar_nombre_utils, validar_descripcion_utils
 
 
 class TipoConvocatoria(str, Enum):
@@ -37,12 +37,12 @@ class ConvocatoriasBaseSchema(BaseModel):
     @field_validator("titulo_convocatoria")
     @classmethod
     def validar_tema(cls, v: str) -> str:
-        return validar_nombre(v, min_len=3, max_len=100, campo="Tema de la asesoría")
+        return validar_nombre_utils(v, min_len=3, max_len=100, campo="Tema de la asesoría")
 
     @field_validator("descripcion_convocatoria")
     @classmethod
     def validar_descripcion(cls, v: str) -> str:
-        return validar_descripcion(v, min_len=20, max_len=2000, campo="Descripción de la convocatoria")
+        return validar_descripcion_utils(v, min_len=20, max_len=2000, campo="Descripción de la convocatoria")
 
     @model_validator(mode="after")
     def validar_fechas(self):

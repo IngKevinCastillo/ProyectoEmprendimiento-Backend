@@ -1,8 +1,8 @@
-from pydantic import BaseModel, field_validator, condecimal
+from pydantic import BaseModel, field_validator
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
-from Utils.Validacionesutilidades import validar_descripcion
+from Utils.Validacionesutilidades import validar_descripcion_utils
 
 class EstadoProyectoBaseSchema(BaseModel):
     nombre_estado: str
@@ -29,7 +29,7 @@ class EstadoProyectoBaseSchema(BaseModel):
     @field_validator("observaciones")
     @classmethod
     def validar_observaciones(cls, v: Optional[str]) -> Optional[str]:
-        return validar_descripcion(v, min_len=20, max_len=2000, campo="Observaciones")
+        return validar_descripcion_utils(v, min_len=20, max_len=2000, campo="Observaciones")
 
     @field_validator("id_usuario_responsable")
     @classmethod
