@@ -12,4 +12,4 @@ class UsuarioProyectoModelo(Base):
 
     rol = relationship("RolesModelo", back_populates="usuarioproyecto")
     usuarios = relationship("UsuarioModelo", back_populates="usuarioproyecto")
-    proyectos = relationship("ProyectoModelo", back_populates="usuarioproyecto")
+    proyecto = relationship("ProyectoModelo", back_populates="usuarioproyecto")
