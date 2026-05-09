@@ -1,13 +1,34 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from Schemas.Usuarioschema import UsuarioCrearSchema, UsuarioRespuestaSchema, LoginSchema
+
+from Schemas.Usuarioschema import (
+    UsuarioCrearSchema,
+    UsuarioRespuestaSchema,
+    LoginSchema,
+    UsuarioActualizarSchema,
+    UsuarioCambiarContrasena
+)
 from Schemas.Autenticacionschema import Token
-from Configs.bd import get_db
-from Controllers.UsuarioControlador import ObtenerUsuariosControlador, ActualizarUsuarioControlador, EliminarUsuarioControlador, EmprendimientosUsuarioControlador, BuscarUsuarioControlador
-from Controllers.AutenticacionControlador import CrearUsuarioControlador, IniciarSesionControlador, CambiarContrasena
-from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoRespuestaSchema
-from Schemas.Usuarioschema import UsuarioActualizarSchema, UsuarioCambiarContrasena
+
+from Configs.bd import get_db
+
+from Controllers.UsuarioControlador import (
+    ObtenerUsuariosControlador,
+    ActualizarUsuarioControlador,
+    EliminarUsuarioControlador,
+    EmprendimientosUsuarioControlador,
+    BuscarUsuarioControlador
+)
+
+from Controllers.AutenticacionControlador import (
+    CrearUsuarioControlador,
+    IniciarSesionControlador,
+    CambiarContrasena
+)
+
+from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
+
 
 router = APIRouter(
     prefix="/usuarios",
@@ -25,15 +46,17 @@ async def buscar_usuario(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario especificado no existe.")
     return usuario
 
+
 @router.post("/", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_201_CREATED)
 async def crear_usuario(
     datos: UsuarioCrearSchema, 
     db: Session = Depends(get_db)
 ):
-    usuario = CrearUsuarioControlador(db,datos)
+    usuario = CrearUsuarioControlador(db, datos)
     if not usuario:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
     return usuario
+
 
 @router.get("/emprendimientos", response_model=list[UsuarioProyectoRespuestaSchema])
 async def obtener_emprendimientos_usuario(
@@ -42,6 +65,7 @@ async def obtener_emprendimientos_usuario(
 ):
     return EmprendimientosUsuarioControlador(db, usuario_actual.id_usuario)
 
+
 @router.get("/yo", response_model=UsuarioRespuestaSchema)
 async def obtener_yo(usuario_actual=Depends(obtener_usuario_actual)):
     return usuario_actual
@@ -49,7 +73,7 @@ async def obtener_yo(usuario_actual=Depends(obtener_usuario_actual)):
 
 @router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
 async def login(datos: LoginSchema, db: Session = Depends(get_db)):
-    token = IniciarSesionControlador(db,datos)
+    token = IniciarSesionControlador(db, datos)
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
     return token
@@ -61,8 +85,7 @@ async def listar_usuarios(
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     verificar_usuario_admin(usuario_actual)
-    usuarios = ObtenerUsuariosControlador(db)
-    return usuarios
+    return ObtenerUsuariosControlador(db)
 
 
 @router.put("/cambiarcontrasena", response_model=UsuarioRespuestaSchema)
@@ -71,7 +94,12 @@ async def cambiar_contrasena(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    nuevo_valor = CambiarContrasena(db, usuario_actual.id_usuario, datos.contasena_anterior, datos.contrasena_nueva)
+    nuevo_valor = CambiarContrasena(
+        db,
+        usuario_actual.id_usuario,
+        datos.contasena_anterior,
+        datos.contrasena_nueva
+    )
     if not nuevo_valor:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al cambiar la contraseña")
     return nuevo_valor
@@ -94,7 +122,7 @@ async def eliminar_yo(
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    eliminado = EliminarUsuarioControlador(db,usuario_actual.id_usuario)
+    eliminado = EliminarUsuarioControlador(db, usuario_actual.id_usuario)
     if not eliminado:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return eliminado
