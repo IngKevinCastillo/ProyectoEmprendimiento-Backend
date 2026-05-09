@@ -1,12 +1,9 @@
-from sqlite3 import Date
-from typing import Text
-from xmlrpc.client import Boolean
-from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Boolean, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from Configs.bd import Base
 from Models.TipoEntidadesModelo import TipoEntidadesModelo
 
-class Alianza(Base):
+class AlianzaModelo(Base):
     __tablename__ = "Alianzas"
 
     id_alianza        = Column(Integer, primary_key=True, autoincrement=True)
@@ -20,5 +17,5 @@ class Alianza(Base):
     telefono_contacto = Column(String, nullable=False)
     fecha_inicio      = Column(Date, nullable=False)
     fecha_fin         = Column(Date, nullable=False)
-    tipo_entidad = relationship("TipoEntidad", back_populates="alianzas")
     
+    tipo_entidad = relationship("TipoEntidadesModelo", back_populates="alianzas")
