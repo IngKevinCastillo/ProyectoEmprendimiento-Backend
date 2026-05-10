@@ -30,8 +30,11 @@ def crear_alianza(db: Session, alianza: AlianzaCrearSchema):
     db.refresh(nueva_alianza)
     return nueva_alianza
 
-def listar_alianzas(db: Session):
-    return db.query(AlianzaModelo).filter(AlianzaModelo.activo.is_(True)).all()
+def listar_alianzas(db: Session, activo: bool | None = None):
+    query = db.query(AlianzaModelo)
+    if activo is not None:
+        query = query.filter(AlianzaModelo.activo == activo)
+    return query.all()
 
 def actualizar_alianza(db: Session, id_alianza: int, alianza_actualizada: AlianzaActualizarSchema):
     existente = buscar_alianza(db, id_alianza)
