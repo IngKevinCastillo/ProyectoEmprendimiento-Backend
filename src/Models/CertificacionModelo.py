@@ -10,6 +10,8 @@ class CertificacionModelo(Base):
     id_usuario = Column(Integer, ForeignKey("Usuario.id_usuario", ondelete="RESTRICT"), nullable=False)
     nombre_certificacion = Column(String(80), nullable=False)
     fecha_certificacion = Column(TIMESTAMP, nullable=False)
+    id_curso = Column(Integer, ForeignKey("Curso.id_curso", ondelete="RESTRICT"), nullable=False)
     
     usuario = relationship("UsuarioModelo", back_populates="certificaciones")
+    # curso = relationship("CursoModelo", back_populates="certificaciones")
     

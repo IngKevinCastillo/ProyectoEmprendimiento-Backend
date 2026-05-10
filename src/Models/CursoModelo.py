@@ -14,3 +14,4 @@ class CursoModelo(Base):
     fecha_fin = Column(Date, nullable=False)
         
     inscripciones = relationship("InscripcionModelo", back_populates="curso")
+    # certificaciones = relationship("CertificacionModelo", back_populates="curso")
