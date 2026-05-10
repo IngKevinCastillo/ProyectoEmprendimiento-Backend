@@ -16,7 +16,6 @@ class ProyectoBaseSchema(BaseModel):
     recursos_clave: Optional[str] = None
     modelo_de_negocio: Optional[str] = None
     calificacion: Optional[float] = None
-    id_categoria: int
 
     @field_validator("nombre_proyecto")
     @classmethod
@@ -56,10 +55,6 @@ class ProyectoCrearSchema(ProyectoBaseSchema):
     id_categoria: int
 
 
-class ProyectoActualizarSchema(ProyectoBaseSchema):
-    pass  
-
-
 class ProyectoRespuestaSchema(BaseModel):
     id_proyecto: int
     nombre_proyecto: str
@@ -77,3 +72,16 @@ class ProyectoRespuestaSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ProyectoActualizarSchema(ProyectoBaseSchema):
+    nombre_proyecto: Optional[str] = None
+    descripcion: Optional[str] = None
+    id_estado_proyecto: Optional[int] = None
+    id_categoria: Optional[int] = None
+    calificacion: Optional[float] = None
+    problematica: Optional[str] = None
+    publico_objetivo: Optional[str] = None
+    propuesta_de_valor: Optional[str] = None
+    solucion: Optional[str] = None
+    recursos_clave: Optional[str] = None
+    modelo_de_negocio: Optional[str] = None
