@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator, model_validator, EmailStr, HttpUrl
 from datetime import date
 from typing import Optional
-from Utils.Validacionesutilidades import validar_nombre_utils, validar_rango_fechas, validar_telefono_utils
+from Utils.Validacionesutilidades import validar_nombre_utils, validar_telefono_utils
 
 class AlianzaBaseSchema(BaseModel):
     nombre_entidad: str
@@ -30,15 +30,12 @@ class AlianzaBaseSchema(BaseModel):
         if v is None:
             return v
         return validar_telefono_utils(v)
-
+    
     @model_validator(mode="after")
     def validar_fechas(self):
-        validar_rango_fechas(
-            self.fecha_inicio_alianza,
-            self.fecha_fin_alianza
-        )
+        if self.fecha_inicio_alianza > self.fecha_fin_alianza:
+            raise ValueError("La fecha de inicio no puede ser mayor que la fecha de fin")
         return self
-
 
 class AlianzaCrearSchema(AlianzaBaseSchema):
     pass
@@ -76,16 +73,7 @@ class AlianzaActualizarSchema(BaseModel):
     def validar_nombre_entidad(cls, v: str) -> str:
         if v is None:
             return v
-        return validar_nombre(v, 3, 100, "Nombre de la entidad")
-
-    @model_validator(mode="after")
-    def validar_fechas(self):
-        if self.fecha_inicio_alianza and self.fecha_fin_alianza:
-            validar_rango_fechas(
-                self.fecha_inicio_alianza,
-                self.fecha_fin_alianza
-            )
-        return self
+        return validar_nombre_utils(v, 3, 100, "Nombre de la entidad")
     
     @field_validator("telefono_contacto")
     @classmethod
@@ -93,3 +81,9 @@ class AlianzaActualizarSchema(BaseModel):
         if v is None:
             return v
         return validar_telefono_utils(v)
+    
+    @model_validator(mode="after")
+    def validar_fechas(self):
+        if self.fecha_inicio_alianza > self.fecha_fin_alianza:
+            raise ValueError("La fecha de inicio no puede ser mayor que la fecha de fin")
+        return self

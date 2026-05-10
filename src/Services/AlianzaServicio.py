@@ -17,14 +17,13 @@ def crear_alianza(db: Session, alianza: AlianzaCrearSchema):
         raise HTTPException(status_code=400, detail="Ya existe una alianza con ese nombre")
     nueva_alianza = AlianzaModelo(
         nombre_entidad=alianza.nombre_entidad,
-        sitio_web_url=alianza.sitio_web_url,
+        sitio_web_url=str(alianza.sitio_web_url),
         id_tipo_entidad=alianza.id_tipo_entidad,
         representante_entidad=alianza.representante_entidad,
         correo_contacto=alianza.correo_contacto,
         telefono_contacto=alianza.telefono_contacto,
         fecha_inicio_alianza=alianza.fecha_inicio_alianza,
         fecha_fin_alianza=alianza.fecha_fin_alianza,
-        fecha_registro_alianza=alianza.fecha_registro_alianza
     )
     db.add(nueva_alianza)
     db.commit()

@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text, Boolean, Date, ForeignKey, func
+from sqlalchemy import Column, Integer, String, Text, Boolean, Date, ForeignKey
 from sqlalchemy.orm import relationship
 from Configs.bd import Base
+from datetime import date
 
 class AlianzaModelo(Base):
     __tablename__ = "Alianzas"
@@ -15,6 +16,6 @@ class AlianzaModelo(Base):
     telefono_contacto         = Column(String, nullable=False)
     fecha_inicio_alianza      = Column(Date, nullable=False)
     fecha_fin_alianza         = Column(Date, nullable=False) 
-    fecha_registro_alianza = Column(Date, server_default=func.now())
+    fecha_registro_alianza = Column(Date, default=date.today)
 
     tipo_entidad = relationship("TipoEntidadesModelo", back_populates="alianzas")
