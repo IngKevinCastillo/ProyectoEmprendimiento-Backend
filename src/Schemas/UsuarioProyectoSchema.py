@@ -12,7 +12,6 @@ class UsuarioProyectoCrearSchema(BaseModel):
         campo = info.field_name.replace("_", " ").capitalize()
         return validar_id_entero(v, campo=campo)
 
-
 class UsuarioProyectoRespuestaSchema(BaseModel):
     id_usuario_proyecto: int
     id_proyecto: int

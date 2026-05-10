@@ -26,3 +26,4 @@ class ProyectoModelo(Base):
     categoria = relationship("CategoriaModelo", back_populates="proyecto")
     usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="proyecto")
     proyectopalabrasclave = relationship("ProyectoPalabraClaveModelo", back_populates="proyecto")
+    seguimientos = relationship("SeguimientoModelo", back_populates="proyecto")

@@ -45,3 +45,9 @@ class IndicadorRespuestaSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class IndicadorActualizarSchema(BaseModel):
+    nombre_indicador: str
+    formula: str
+    meta: Decimal
+    valor_actual: Decimal

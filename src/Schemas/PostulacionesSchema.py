@@ -30,3 +30,9 @@ class PostulacionesRespuestaSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class PostulacionesActualizarSchema(BaseModel):
+    id_convocatoria: int
+    id_proyecto: int
+    informacion_adicional: str
+    id_plan_negocio: int
