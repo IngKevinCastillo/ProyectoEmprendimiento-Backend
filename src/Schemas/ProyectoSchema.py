@@ -1,4 +1,4 @@
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, ValidationInfo
 from datetime import date
 from typing import Optional
 from Utils.Validacionesutilidades import validar_nombre_utils, validar_descripcion_utils, validar_id_entero, validar_calificacion
@@ -41,11 +41,11 @@ class ProyectoBaseSchema(BaseModel):
     @classmethod
     def validar_calificacion(cls, v: Optional[float]) -> float:
         return validar_calificacion(v)
-
-    @field_validator("problematica", "publico_objetivo", "propuesta_de_valor", "solucion", "recursos_clave", "modelo_de_negocio", mode="before")
+    
+    @field_validator("problematica", "publico_objetivo", "propuesta_de_valor", "solucion", "recursos_clave", "modelo_de_negocio")
     @classmethod
-    def validar_campos_opcionales(cls, v: Optional[str]) -> str:
-        return validar_descripcion_utils(v, min_len=20, max_len=2000, campo="Campo opcional")
+    def validar_campos_opcionales(cls, v: Optional[str], info: ValidationInfo) -> Optional[str]:
+        return validar_descripcion_utils(v, min_len=20, max_len=2000, campo=info.field_name)
 
 
 class ProyectoCrearSchema(ProyectoBaseSchema):
