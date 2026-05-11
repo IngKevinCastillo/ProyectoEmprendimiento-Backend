@@ -3,31 +3,33 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from Models.SeguimientoModelo import SeguimientoModelo
 from Schemas.SeguimientoSchema import SeguimientoCrearSchema, SeguimientoRespuestaSchema, SeguimientoActualizarSchema
+from Services.EstadosServicio import BuscarEstadosPorNombre
 from Utils.Mapeadorutilidades import auto_mapear
 
 def BuscarSeguimiento(db: Session, id: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_seguimiento_emprendimiento == int(id)).first()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_seguimiento_emprendimiento == int(id), SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, "Eliminado").id_estado).first()
 
 def BuscarUltimoSeguimientoPorProyecto(db: Session, id_proyecto: int):
     return db.query(SeguimientoModelo)\
-        .filter(SeguimientoModelo.id_proyecto == int(id_proyecto))\
+        .filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, "Eliminado").id_estado)\
         .order_by(SeguimientoModelo.fecha_registro.desc())\
         .first()
 
 def ObtenerSeguimientos(db: Session):
-    return db.query(SeguimientoModelo).all()
+    estado = BuscarEstadosPorNombre(db, "Eliminado")
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado != estado.id_estado).all()
 
 def ObtenerSeguimientosPorProyecto(db: Session, id_proyecto: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_proyecto == int(id_proyecto)).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, "Eliminado").id_estado).all()
 
 def ObtenerSeguimientosPorEstado(db: Session, id_estado: str):
     return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado == int(id_estado)).all()
 
 def ObtenerSeguimientoPorUsuarioResponsable(db: Session, id: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_usuario_responsable == int(id)).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_usuario_responsable == int(id), SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, "Eliminado").id_estado).all()
 
 def ObtenerSeguimientoPorFecha(db: Session, fecha: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.fecha_registro == fecha).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.fecha_registro == fecha, SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, "Eliminado").id_estado).all()
 
 def CrearSeguimiento(db: Session, seguimiento: SeguimientoCrearSchema) -> SeguimientoModelo:
 
@@ -53,6 +55,11 @@ def EliminarSeguimiento(db: Session, id: int):
     if not seguimiento:
         raise HTTPException(status_code=404, detail="No se encontró el seguimiento")
 
+    estado = BuscarEstadosPorNombre(db, "Eliminado")
+    if not estado:
+        raise HTTPException(status_code=404, detail="No se encontró el estado 'Eliminado' en la base de datos")
+    
+    seguimiento.id_estado = estado.id_estado
     db.delete(seguimiento)
     db.commit()
     return {"detail": "Seguimiento eliminado"}
