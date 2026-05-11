@@ -12,9 +12,9 @@ class SeguimientoModelo(Base):
     observaciones = Column(String(400), nullable=False)
     id_usuario_responsable = Column(Integer, ForeignKey("Usuario.id_usuario", ondelete="RESTRICT"), nullable=False)
     fecha_registro = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
-    id_estado_proyecto = Column(Integer, ForeignKey("estado_proyecto.id_estado_proyecto", ondelete="RESTRICT"), nullable=False)
+    id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
     avance_porcentaje = Column(Numeric(5, 2), nullable=False)
     
     proyecto = relationship("ProyectoModelo", back_populates="seguimientos")
     usuario_responsable = relationship("UsuarioModelo", back_populates="seguimientos")
-    estado_proyecto = relationship("EstadoProyectoModelo", back_populates="seguimientos")
+    estados = relationship("EstadosModelo", back_populates="seguimientos")

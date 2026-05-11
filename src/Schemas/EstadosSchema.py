@@ -1,7 +1,8 @@
 from pydantic import BaseModel, field_validator
 
-class EstadoProyectoBaseSchema(BaseModel):
+class EstadosBaseSchema(BaseModel):
     nombre: str
+    descripcion: str
 
     @field_validator("nombre")
     @classmethod
@@ -11,13 +12,14 @@ class EstadoProyectoBaseSchema(BaseModel):
             raise ValueError("El nombre del estado debe tener entre 3 y 30 caracteres.")
         return v
 
-class EstadoProyectoCrearSchema(EstadoProyectoBaseSchema):
+class EstadosCrearSchema(EstadosBaseSchema):
     pass
 
 
-class EstadoProyectoRespuestaSchema(BaseModel):
+class EstadosRespuestaSchema(BaseModel):
     id_estado_proyecto: int
     nombre: str
+    descripcion: str
 
     class Config:
         from_attributes = True

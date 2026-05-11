@@ -52,13 +52,13 @@ async def obtener_proyecto_por_nombre(
     return proyecto
 
 
-@router.get("/estado/{id_estado_proyecto}", response_model=list[ProyectoRespuestaSchema])
+@router.get("/estado/{id_estado}", response_model=list[ProyectoRespuestaSchema])
 async def listar_proyectos_por_estado(
-    id_estado_proyecto: int,
+    id_estado: int,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    return obtener_emprendimientos_por_estado_controlador(db, id_estado_proyecto)
+    return obtener_emprendimientos_por_estado_controlador(db, id_estado)
 
 
 @router.get("/categoria/{id_categoria}", response_model=list[ProyectoRespuestaSchema])
