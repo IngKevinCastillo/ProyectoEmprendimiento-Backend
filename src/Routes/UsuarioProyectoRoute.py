@@ -3,7 +3,7 @@ from Core.Seguridad import obtener_usuario_actual
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoCrearSchema, UsuarioProyectoRespuestaSchema, UsuarioProyectoActualizarSchema
-from Controllers.UsuarioProyectoControlador import crear_usuario_proyecto_controlador, listar_usuarios_proyectos_controlador, buscar_usuario_proyecto_controlador, eliminar_usuario_proyecto_controlador, actualizar_usuario_proyecto_controlador
+from Controllers.UsuarioProyectoControlador import crear_usuario_proyecto_controlador, listar_usuarios_proyectos_controlador, buscar_usuario_proyecto_controlador, eliminar_usuario_proyecto_controlador, actualizar_usuario_proyecto_controlador, listar_usuarios_proyectos_por_proyecto_controlador, listar_proyectos_por_usuario_controlador, listar_proyectos_por_usuario_propietario_controlador, listar_proyectos_por_usuario_empleado_controlador
 
 router = APIRouter(
     prefix="/usuario-proyecto",
@@ -28,6 +28,42 @@ async def listar_usuarios_proyectos(
 ):
     usuarios_proyectos = listar_usuarios_proyectos_controlador(db)
     return usuarios_proyectos
+
+@router.get("/proyecto/{id_proyecto}", response_model=list[UsuarioProyectoRespuestaSchema])
+async def listar_usuarios_proyectos_por_proyecto(
+    id_proyecto: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    usuarios_proyectos = listar_usuarios_proyectos_por_proyecto_controlador(db, id_proyecto)
+    return usuarios_proyectos
+
+@router.get("/usuario/{id_usuario}", response_model=list[UsuarioProyectoRespuestaSchema])
+async def listar_proyectos_por_usuario(
+    id_usuario: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    proyectos_usuario = listar_proyectos_por_usuario_controlador(db, id_usuario)
+    return proyectos_usuario
+
+@router.get("/usuario/propietario/{id_usuario}", response_model=list[UsuarioProyectoRespuestaSchema])
+async def listar_proyectos_por_usuario_propietario(
+    id_usuario: int,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    proyectos_propietario = listar_proyectos_por_usuario_propietario_controlador(db, id_usuario)
+    return proyectos_propietario
+
+@router.get("/usuario/empleado/{id_usuario}", response_model=list[UsuarioProyectoRespuestaSchema])
+async def listar_proyectos_por_usuario_empleado(
+    id_usuario: int,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    proyectos_empleado = listar_proyectos_por_usuario_empleado_controlador(db, id_usuario)
+    return proyectos_empleado
 
 @router.get("/{id_usuario_proyecto}", response_model=UsuarioProyectoRespuestaSchema)
 async def obtener_usuario_proyecto(

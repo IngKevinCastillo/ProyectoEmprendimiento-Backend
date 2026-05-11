@@ -1,12 +1,24 @@
 from sqlalchemy.orm import Session
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoCrearSchema,UsuarioProyectoActualizarSchema
-from Services.UsuarioProyectoServicio import CrearUsuarioProyecto, ListarUsuariosProyectos, BuscarUsuarioProyecto, EliminarUsuarioProyecto, ActualizarUsuarioProyecto
+from Services.UsuarioProyectoServicio import CrearUsuarioProyecto, ListarUsuariosProyectos, BuscarUsuarioProyecto, EliminarUsuarioProyecto, ActualizarUsuarioProyecto, ListarUsuariosProyectosPorProyecto, ListarProyectosPorUsuario, ListarProyectosPorUsuarioPropietario, ListarProyectosPorUsuarioEmpleado
 
 def crear_usuario_proyecto_controlador(db: Session, usuario_proyecto: UsuarioProyectoCrearSchema):
     return CrearUsuarioProyecto(db, usuario_proyecto)
 
 def listar_usuarios_proyectos_controlador(db: Session):
     return ListarUsuariosProyectos(db)
+
+def listar_usuarios_proyectos_por_proyecto_controlador(db: Session, id_proyecto: str):
+    return ListarUsuariosProyectosPorProyecto(db, id_proyecto)
+
+def listar_proyectos_por_usuario_controlador(db: Session, id_usuario: str):
+    return ListarProyectosPorUsuario(db, id_usuario)
+
+def listar_proyectos_por_usuario_propietario_controlador(db: Session, id_usuario: int):
+    return ListarProyectosPorUsuarioPropietario(db, id_usuario)
+
+def listar_proyectos_por_usuario_empleado_controlador(db: Session, id_usuario: int):
+    return ListarProyectosPorUsuarioEmpleado(db, id_usuario)
 
 def buscar_usuario_proyecto_controlador(db: Session, id_usuario_proyecto: str):
     return BuscarUsuarioProyecto(db, id_usuario_proyecto)
