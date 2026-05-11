@@ -8,5 +8,5 @@ def BuscarEstados(db: Session, id_estado: str):
 def BuscarEstadosPorNombre(db: Session, nombre: str):
     return db.query(EstadosModelo).filter(EstadosModelo.nombre == nombre).first()
 
-def ObtenerEstadoss(db: Session):
+def ObtenerEstados(db: Session):
     return db.query(EstadosModelo).all()

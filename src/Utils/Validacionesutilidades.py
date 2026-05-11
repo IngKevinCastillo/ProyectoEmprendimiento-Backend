@@ -206,11 +206,13 @@ def validar_nombre_utils(valor: str, min_len: int = 3, max_len: int = 100, campo
     return valor    
 
 def validar_descripcion_utils(
-    valor: str,
+    valor: Optional[str],
     min_len: int = 20,
     max_len: int = 2000,
     campo: str = "Descripción"
-) -> str:
+) -> Optional[str]:
+    if valor is None:
+        return None
     if not isinstance(valor, str):
         raise TypeError(f"{campo} debe ser un texto.")
     valor = " ".join(valor.split())
