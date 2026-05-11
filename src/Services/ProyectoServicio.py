@@ -1,10 +1,11 @@
 from datetime import date
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from Schemas.ProyectoSchema import ProyectoCrearSchema, ProyectoActualizarSchema
 from Models.ProyectoModelo import ProyectoModelo
 from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
 from Utils.Mapeadorutilidades import auto_mapear
+eliminado = 6
 
 def buscarEmprendimiento(db: Session, id: str):
     return db.query(ProyectoModelo).filter(ProyectoModelo.id_proyecto == int(id)).first()
@@ -38,11 +39,17 @@ def crearEmprendimiento(db: Session, emprendimiento: ProyectoCrearSchema):
 
 def eliminarEmprendimiento(db: Session, id: int):
     emprendimiento = buscarEmprendimiento(db, id)
+    
     if not emprendimiento:
-        raise HTTPException(status_code=404, detail="No se encontró el emprendimiento")
+        raise HTTPException(status_code=404, detail="No se encontró el proyecto")
 
-    db.delete(emprendimiento)
+    if(emprendimiento.id_estado == eliminado):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El proyecto no existe")
+
+    emprendimiento.id_estado = eliminado
+
     db.commit()
+    db.refresh(emprendimiento)
     return {"detail": "Emprendimiento eliminado"}
 
 def actualizarEmprendimiento(db: Session, emprendimiento: ProyectoActualizarSchema, id_proyecto: str):

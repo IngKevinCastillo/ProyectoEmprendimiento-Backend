@@ -8,8 +8,13 @@ eliminado = 6
 
 def crear_evento(db: Session, evento: EventoCrearSchema):
     existente = buscar_evento_por_nombre(db, evento.nombre_evento)
+    
     if existente:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El eventto especificado ya existe.")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El evento especificado ya existe.")
+    
+    if not existente.id_estado:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El estado especificado no existe.")
+    
     nuevo_evento = EventoModelo(
         nombre_evento=evento.nombre_evento,
         tipo_evento=evento.tipo_evento,
@@ -45,6 +50,9 @@ def eliminar_evento(db:Session, id: str):
     existente = buscar_evento(db, int(id))
     if not existente:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
+
+    if(existente.id_estado == eliminado):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El evento no existe")
 
     existente.id_estado = eliminado
 
