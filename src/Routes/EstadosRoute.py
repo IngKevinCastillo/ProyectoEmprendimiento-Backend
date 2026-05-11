@@ -10,8 +10,8 @@ from Controllers.EstadosControlador import (
 )
 
 router = APIRouter(
-    prefix="/estados-proyecto",
-    tags=["Estados Proyecto"],
+    prefix="/estados",
+    tags=["Estados"],
 )
 
 
