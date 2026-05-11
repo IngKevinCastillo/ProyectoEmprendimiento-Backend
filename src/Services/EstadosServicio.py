@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from Models.EstadosModelo import EstadosModelo
 
 def BuscarEstados(db: Session, id_estado: str):
-    return db.query(EstadosModelo).filter(EstadosModelo.id_estado_proyecto == int(id_estado)).first()
+    return db.query(EstadosModelo).filter(EstadosModelo.id_estado == int(id_estado)).first()
 
 def BuscarEstadosPorNombre(db: Session, nombre: str):
     return db.query(EstadosModelo).filter(EstadosModelo.nombre == nombre).first()
