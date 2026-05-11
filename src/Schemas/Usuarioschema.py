@@ -121,7 +121,6 @@ class UsuarioRespuestaSchema(BaseModel):
     ubicacion_semestral: Optional[int] = None
     id_rol: int
     fecha_registro: datetime
-    estado: str
     sexo: str
     id_programa: Optional[int] = None
     id_tipodocumento: int
@@ -146,7 +145,6 @@ class UsuarioActualizarSchema(BaseModel):
     ubicacion_semestral: Optional[int] = None
     id_rol: int
     fecha_registro: datetime
-    estado: str
     sexo: str
     id_programa: Optional[int] = None
     id_tipodocumento: int

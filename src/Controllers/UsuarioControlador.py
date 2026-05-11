@@ -5,8 +5,8 @@ from Schemas.Usuarioschema import UsuarioActualizarSchema, CambiarEstado
 def BuscarUsuarioControlador(db: Session, id: int):
     return buscar_usuario(db, id)
 
-def BuscarUsuarioPorCorreoControlador(db: Session, id: int):
-    return buscar_usuario_por_correo(db, id)
+def BuscarUsuarioPorCorreoControlador(db: Session, correo: str):
+    return buscar_usuario_por_correo(db, correo)
 
 def BuscarUsuarioPorTelefonoControlador(db: Session, id: int):
     return buscar_telefono(db, id)
@@ -17,8 +17,8 @@ def ActualizarUsuarioIdControlador(db: Session, usuarioAActualizar: UsuarioActua
 def ActualizarUsuarioDocumentoControlador(db: Session, usuarioAActualizar: UsuarioActualizarSchema, documento: int):
     return actualizar_usuario_documento(db, usuarioAActualizar, documento)
 
-def EliminarUsuarioControlador(db: Session, id: int):
-    return eliminar_usuario(db, id)
+def EliminarUsuarioControlador(db: Session, numero_documento: int):
+    return eliminar_usuario(db, numero_documento)
 
 def ObtenerUsuariosControlador(db: Session):
     return listar_usuarios(db)
