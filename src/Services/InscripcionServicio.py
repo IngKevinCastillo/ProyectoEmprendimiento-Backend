@@ -2,12 +2,12 @@ from sqlalchemy.orm import Session
 from Schemas.InscripcionSchema import InscripcionCrearSchema, InscripcionActualizarSchema
 from Models.InscripcionModelo import InscripcionModelo
 from fastapi import HTTPException
-from Services.UsuarioServicio import BuscarUsuario
+from Services.UsuarioServicio import buscar_usuario
 from Services.CursoServicio import buscar_curso
 from Utils.Mapeadorutilidades import auto_mapear
 
 def crear_inscripcion(db: Session, inscripcion: InscripcionCrearSchema):
-    existente = BuscarUsuario(db, inscripcion.id_usuario)
+    existente = buscar_usuario(db, inscripcion.id_usuario)
     consultado = buscar_curso(db, inscripcion.id_curso)
     registro_existente = verificar_registro(db, inscripcion.id_usuario, inscripcion.id_curso)
     

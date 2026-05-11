@@ -3,11 +3,11 @@ from fastapi import HTTPException
 from Utils.Mapeadorutilidades import auto_mapear
 from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoCrearSchema, UsuarioProyectoActualizarSchema
-from Services.UsuarioServicio import BuscarUsuario
+from Services.UsuarioServicio import buscar_usuario
 from Services.ProyectoServicio import buscarEmprendimiento
 
 def CrearUsuarioProyecto(db: Session, usuario_proyecto: UsuarioProyectoCrearSchema):
-    usuario = BuscarUsuario(db, usuario_proyecto.id_usuario)
+    usuario = buscar_usuario(db, usuario_proyecto.id_usuario)
     emprendimiento = buscarEmprendimiento(db, usuario_proyecto.id_proyecto)
 
     if not usuario:

@@ -14,7 +14,6 @@ class UsuarioCrearSchema(BaseModel):
     fecha_nacimiento: str
     ubicacion_semestral: Optional[int] = None
     id_rol: int
-    estado: str
     sexo: str
     id_programa: Optional[int] = None
     id_tipodocumento: int
@@ -68,16 +67,6 @@ class UsuarioCrearSchema(BaseModel):
     @classmethod
     def validar_semestre_(cls, v: int) -> int:
         return validar_int_nulos(v, 1, 10, "ubicacion_semestral")
-
-    # ──────────────── Estado ────────────────
-
-    @field_validator("estado")
-    @classmethod
-    def validar_estado(cls, v: str) -> str:
-        permitidos = {"Activo", "Inactivo"}
-        if v not in permitidos:
-            raise ValueError(f"El estado debe ser uno de: {', '.join(permitidos)}.")
-        return v
 
     # ──────────────── Sexo ────────────────
 
@@ -142,6 +131,7 @@ class UsuarioRespuestaSchema(BaseModel):
     id_sede: int
     direccion: Optional[str] = None
     id_municipio: int
+    id_estado: int
 
     class Config:
         from_attributes = True
@@ -175,6 +165,9 @@ class UsuarioCambiarContrasena(BaseModel):
     @classmethod
     def validar_contrasena(cls, v: str) -> str:
         return validar_contrasena_utils(v)
+    
+class CambiarEstado(BaseModel):
+    id_estado_cambiar: int 
 
 class LoginSchema(BaseModel):
     correo: EmailStr
