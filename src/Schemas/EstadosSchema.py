@@ -3,7 +3,7 @@ from typing import Optional
 
 class EstadosBaseSchema(BaseModel):
     nombre: str
-    descripcion: Optional[int] = None
+    descripcion: Optional[str] = None
 
     @field_validator("nombre")
     @classmethod
@@ -20,7 +20,7 @@ class EstadosCrearSchema(EstadosBaseSchema):
 class EstadosRespuestaSchema(BaseModel):
     id_estado: int
     nombre: str
-    descripcion: Optional[int] = None
+    descripcion: Optional[str] = None
 
     class Config:
         from_attributes = True

@@ -1,13 +1,14 @@
 from pydantic import BaseModel, field_validator, model_validator, EmailStr, HttpUrl
 from datetime import date
 from typing import Optional
+from Schemas.EstadosSchema import EstadosRespuestaSchema
 from Utils.Validacionesutilidades import validar_nombre_utils, validar_telefono_utils
 
 class AlianzaBaseSchema(BaseModel):
     nombre_entidad: str
     sitio_web_url: HttpUrl
     id_tipo_entidad: int
-    activo: bool = True
+    id_estado: int
     representante_entidad: str
     correo_contacto: EmailStr
     telefono_contacto: str
@@ -33,7 +34,7 @@ class AlianzaBaseSchema(BaseModel):
     
     @model_validator(mode="after")
     def validar_fechas(self):
-        if self.fecha_inicio_alianza > self.fecha_fin_alianza:
+        if (self.fecha_inicio_alianza and self.fecha_fin_alianza and self.fecha_inicio_alianza > self.fecha_fin_alianza):
             raise ValueError("La fecha de inicio no puede ser mayor que la fecha de fin")
         return self
 
@@ -45,7 +46,7 @@ class AlianzaRespuestaSchema(BaseModel):
     nombre_entidad: str
     sitio_web_url: HttpUrl
     id_tipo_entidad: int
-    activo: bool
+    estado: EstadosRespuestaSchema
     representante_entidad: str
     correo_contacto: EmailStr
     telefono_contacto: str
@@ -61,7 +62,7 @@ class AlianzaActualizarSchema(BaseModel):
     nombre_entidad: Optional[str] = None
     sitio_web_url: Optional[HttpUrl] = None
     id_tipo_entidad: Optional[int] = None
-    activo: Optional[bool] = None
+    id_estado: Optional[int] = None
     representante_entidad: Optional[str] = None
     correo_contacto: Optional[EmailStr] = None
     telefono_contacto: Optional[str] = None
@@ -84,6 +85,7 @@ class AlianzaActualizarSchema(BaseModel):
     
     @model_validator(mode="after")
     def validar_fechas(self):
-        if self.fecha_inicio_alianza > self.fecha_fin_alianza:
+        if (self.fecha_inicio_alianza and self.fecha_fin_alianza and self.fecha_inicio_alianza > self.fecha_fin_alianza):
             raise ValueError("La fecha de inicio no puede ser mayor que la fecha de fin")
         return self
+    

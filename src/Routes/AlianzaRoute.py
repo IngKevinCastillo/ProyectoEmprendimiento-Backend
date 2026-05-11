@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from Schemas.AlianzaSchema import AlianzaCrearSchema, AlianzaRespuestaSchema, AlianzaActualizarSchema
-from Controllers.AlianzaControlador import crear_alianza_controlador, buscar_alianza_controlador, listar_alianzas_controlador, actualizar_alianza_controlador, activar_alianza_controlador, desactivar_alianza_controlador
+from Controllers.AlianzaControlador import crear_alianza_controlador, buscar_alianza_controlador, listar_alianzas_controlador, actualizar_alianza_controlador, cambiar_estado_alianza_controlador
 
 router = APIRouter(
     prefix="/alianzas",
@@ -23,14 +23,11 @@ async def crear_alianza(
     return nueva_alianza
 
 @router.get("/", response_model=list[AlianzaRespuestaSchema])
-async def listar_alianzas(activo: bool | None = None, db: Session = Depends(get_db)):
-    return listar_alianzas_controlador(db, activo)
+async def listar_alianzas(id_estado: int | None = None, db: Session = Depends(get_db)):
+    return listar_alianzas_controlador(db, id_estado)
 
 @router.get("/{id_alianza}", response_model=AlianzaRespuestaSchema)
-async def obtener_alianza(
-    id_alianza: str,
-    db: Session = Depends(get_db)
-):
+async def obtener_alianza(id_alianza: str, db: Session = Depends(get_db)):
     alianza = buscar_alianza_controlador(db, id_alianza)
     if not alianza:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alianza no encontrada")
@@ -42,25 +39,22 @@ async def actualizar_alianza(
     datos: AlianzaActualizarSchema,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
-):
+    ):
     verificar_usuario_admin(usuario_actual)
     alianza = actualizar_alianza_controlador(db, id_alianza, datos)
     if not alianza:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alianza no encontrada")
     return alianza
 
-@router.patch("/{id_alianza}/activar")
-async def activar_alianza_endpoint(
+@router.patch("/{id_alianza}/estado/{id_estado}", response_model=AlianzaRespuestaSchema)
+async def cambiar_estado_alianza(
     id_alianza: str,
+    id_estado: int,
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)):
+    usuario_actual=Depends(obtener_usuario_actual)
+):
     verificar_usuario_admin(usuario_actual)
-    return activar_alianza_controlador(db, id_alianza)
-
-@router.patch("/{id_alianza}/desactivar")
-async def desactivar_alianza_endpoint(
-    id_alianza: str,
-    db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)):
-    verificar_usuario_admin(usuario_actual)
-    return desactivar_alianza_controlador(db,id_alianza)
+    alianza = cambiar_estado_alianza_controlador(db, id_alianza, id_estado)
+    if not alianza:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alianza no encontrada")
+    return alianza
