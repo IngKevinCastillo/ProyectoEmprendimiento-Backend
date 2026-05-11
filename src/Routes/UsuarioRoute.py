@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+eliminado = 6
 
 from Schemas.Usuarioschema import (
     UsuarioCrearSchema,
     UsuarioRespuestaSchema,
     LoginSchema,
     UsuarioActualizarSchema,
-    UsuarioCambiarContrasena
+    UsuarioCambiarContrasena,
+    CambiarEstado
 )
 from Schemas.Autenticacionschema import Token
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoRespuestaSchema
@@ -15,10 +17,13 @@ from Configs.bd import get_db
 
 from Controllers.UsuarioControlador import (
     ObtenerUsuariosControlador,
-    ActualizarUsuarioControlador,
+    ActualizarUsuarioIdControlador,
+    ActualizarUsuarioDocumentoControlador,
     EliminarUsuarioControlador,
-    EmprendimientosUsuarioControlador,
-    BuscarUsuarioControlador
+    BuscarUsuarioControlador,
+    CambiarEstadoControlador,
+    BuscarUsuarioPorDocumentoControlador,
+    BuscarUsuarioPorCorreoControlador
 )
 
 from Controllers.AutenticacionControlador import (
@@ -42,7 +47,18 @@ async def buscar_usuario(
     usuario_actual = Depends(obtener_usuario_actual)
 ):
     usuario = BuscarUsuarioControlador(db, id_usuario)
-    if not usuario:
+    if not usuario or usuario.id_estado  == eliminado:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario especificado no existe.")
+    return usuario
+
+@router.get("/buscar-usuario-documento/{numero_documento}", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_200_OK)
+async def buscar_usuario_por_documento(
+    numero_documento: int,
+    db: Session = Depends(get_db),
+    usuario_actual = Depends(obtener_usuario_actual)
+):
+    usuario = BuscarUsuarioPorDocumentoControlador(db, numero_documento)
+    if not usuario or usuario.id_estado  == eliminado:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario especificado no existe.")
     return usuario
 
@@ -58,16 +74,8 @@ async def crear_usuario(
     return usuario
 
 
-@router.get("/emprendimientos", response_model=list[UsuarioProyectoRespuestaSchema])
-async def obtener_emprendimientos_usuario(
-    db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
-):
-    return EmprendimientosUsuarioControlador(db, usuario_actual.id_usuario)
-
-
 @router.get("/yo", response_model=UsuarioRespuestaSchema)
-async def obtener_yo(usuario_actual=Depends(obtener_usuario_actual)):
+async def obtener_mi_cuenta(usuario_actual=Depends(obtener_usuario_actual)):
     return usuario_actual
 
 
@@ -76,6 +84,9 @@ async def login(datos: LoginSchema, db: Session = Depends(get_db)):
     token = IniciarSesionControlador(db, datos)
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
+    usuario = BuscarUsuarioPorCorreoControlador(db, datos.correo)
+    if(usuario.id_estado == eliminado):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La cuenta no existe...por favor crea tu cuenta.")
     return token
 
 
@@ -85,7 +96,25 @@ async def listar_usuarios(
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     verificar_usuario_admin(usuario_actual)
-    return ObtenerUsuariosControlador(db)
+    existentes = ObtenerUsuariosControlador(db)
+    if not existentes:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No existen usuarios.")
+    return existentes
+
+@router.put("/cambiar-estado/{numero_documento}", response_model=UsuarioRespuestaSchema)
+async def cambiar_estado(
+    numero_documento: int,
+    datos: CambiarEstado,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    verificar_usuario_admin(usuario_actual)
+    
+    nuevo_valor = CambiarEstadoControlador(db, numero_documento, datos)
+    
+    if not nuevo_valor:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al cambiar el estado")
+    return nuevo_valor
 
 
 @router.put("/cambiarcontrasena", response_model=UsuarioRespuestaSchema)
@@ -106,23 +135,46 @@ async def cambiar_contrasena(
 
 
 @router.put("/yo", response_model=UsuarioRespuestaSchema)
-async def actualizar_yo(
+async def actualizar_mi_cuenta(
     datos: UsuarioActualizarSchema,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    usuario = ActualizarUsuarioControlador(db, datos, usuario_actual.id_usuario)
+    usuario = ActualizarUsuarioIdControlador(db, datos, usuario_actual.id_usuario)
     if not usuario:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return usuario
 
-
-@router.delete("/yo", status_code=status.HTTP_204_NO_CONTENT)
-async def eliminar_yo(
+@router.put("/actualizar-usuario/{numero_documento}", response_model=UsuarioRespuestaSchema)
+async def actualizar_usuario(
+    numero_documento: int,
+    datos: UsuarioActualizarSchema,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    eliminado = EliminarUsuarioControlador(db, usuario_actual.id_usuario)
+    usuario = ActualizarUsuarioDocumentoControlador(db, datos, numero_documento)
+    if not usuario:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+    return usuario
+
+@router.delete("/yo", status_code=status.HTTP_200_OK)
+async def eliminar_mi_cuenta(
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    eliminado = EliminarUsuarioControlador(db, usuario_actual.numero_documento)
+    if not eliminado:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+    return eliminado
+
+@router.delete("/eliminar-usuario/{numero_documento}", status_code=status.HTTP_200_OK)
+async def eliminar_usuario(
+    numero_documento: int,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    verificar_usuario_admin(usuario_actual)
+    eliminado = EliminarUsuarioControlador(db, numero_documento)
     if not eliminado:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
     return eliminado

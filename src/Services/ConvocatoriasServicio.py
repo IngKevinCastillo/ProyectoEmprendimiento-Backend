@@ -5,6 +5,7 @@ from fastapi import HTTPException, status
 from Services.ProyectoServicio import buscarEmprendimiento
 from datetime import date
 from Utils.Mapeadorutilidades import auto_mapear
+eliminado = 6
 
 def crear_convocatoria(db: Session, convocatoria: ConvocatoriasCrearSchema):
     existente = buscar_convocatoria_titulo(db, convocatoria.titulo_convocatoria)
@@ -16,6 +17,9 @@ def crear_convocatoria(db: Session, convocatoria: ConvocatoriasCrearSchema):
     if not proyecto:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El proyecto especificado no existe.")
     
+    if not existente.id_estado:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El estado especificado no existe.")
+    
     convocatoria_nueva = ConvocatoriasModelo(
         titulo_convocatoria = convocatoria.titulo_convocatoria,
         descripcion_convocatoria = convocatoria.descripcion_convocatoria,
@@ -25,7 +29,8 @@ def crear_convocatoria(db: Session, convocatoria: ConvocatoriasCrearSchema):
         estado_convocatoria = convocatoria.estado_convocatoria,
         id_proyecto = convocatoria.id_proyecto,
         fecha_registro = date.today(),
-        url_convocatoria = convocatoria.url_convocatoria
+        url_convocatoria = convocatoria.url_convocatoria,
+        id_estado = convocatoria.id_estado
     )
     
     db.add(convocatoria_nueva)
@@ -63,6 +68,11 @@ def eliminar_convocatoria(db: Session, id_convocatoria: int):
     if not existente:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La convocatoria especificada no existe.")
     
-    db.delete(existente)
+    if(existente.id_estado == eliminado):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La convocatoria no existe")
+
+    existente.id_estado = eliminado
+    
     db.commit()
+    db.refresh(existente)
     return {"detail": "Participacion evento eliminado"}

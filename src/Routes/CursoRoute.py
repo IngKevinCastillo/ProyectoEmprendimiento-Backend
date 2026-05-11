@@ -63,7 +63,7 @@ async def actualizar_curso(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Curso no encontrado")
     return curso
 
-@router.delete("/{id_curso}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{id_curso}", status_code=status.HTTP_200_OK)
 async def eliminar_curso(
     id_curso: str,
     db: Session = Depends(get_db),

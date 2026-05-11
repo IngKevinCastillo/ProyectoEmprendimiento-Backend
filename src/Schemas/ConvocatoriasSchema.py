@@ -10,29 +10,35 @@ class TipoConvocatoria(str, Enum):
     CONCURSO = "Concurso"
     EMPRENDIMIENTO = "Emprendimiento"
 
-
-class EstadoConvocatoria(str, Enum):
-    BORRADOR = "Borrador"
-    PUBLICADA = "Publicada"
-    CERRADA = "Cerrada"
-    CANCELADA = "Cancelada"
-
-
-
 class ConvocatoriasBaseSchema(BaseModel):
     titulo_convocatoria: str
     descripcion_convocatoria: str
     tipo_convocatoria: TipoConvocatoria
     fecha_inicio: date
     fecha_cierre: date
-    estado_convocatoria: EstadoConvocatoria
     id_proyecto: int
     url_convocatoria: str
+    id_estado: int
+    
+    @field_validator("tipo_convocatoria", mode="before")
+    @classmethod
+    def validar_tipo_convocatoria(cls, v):
+        valores_validos = [e.value for e in TipoConvocatoria]
+        if v not in valores_validos:
+            raise ValueError(
+                f"'{v}' no es válido. Los tipos permitidos son: {', '.join(valores_validos)}"
+            )
+        return v
 
     @field_validator("id_proyecto")
     @classmethod
-    def validar_id_entero(cls, v: int) -> int:
+    def validar_id_proyecto(cls, v: int) -> int:
         return validar_id_entero(v, campo="ID de usuario")
+    
+    @field_validator("id_estado")
+    @classmethod
+    def validar_id_estado(cls, v: int) -> int:
+        return validar_id_entero(v, campo="ID de estado")
 
     @field_validator("titulo_convocatoria")
     @classmethod
@@ -72,10 +78,10 @@ class ConvocatoriasRespuestaSchema(BaseModel):
     tipo_convocatoria: TipoConvocatoria
     fecha_inicio: date
     fecha_cierre: date
-    estado_convocatoria: EstadoConvocatoria
     id_proyecto: int
     fecha_registro: date
     url_convocatoria: str
+    id_estado: int
 
     class Config:
         from_attributes = True

@@ -4,7 +4,7 @@ from Models.ParticipacionEventoModelo import ParticipacionEventoModelo
 from Schemas.ParticipacionEventoSchema import ParticipacionEventoCrearSchema, ParticipacionActualizarSchema
 from Services.RolServicio import BuscarRol
 from Services.EventoServicio import buscar_evento
-from Services.UsuarioServicio import BuscarUsuario
+from Services.UsuarioServicio import buscar_usuario
 from Utils.Mapeadorutilidades import auto_mapear
 
 def crear_participacion_evento(db: Session, participacion_evento: ParticipacionEventoCrearSchema):

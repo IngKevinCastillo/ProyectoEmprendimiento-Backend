@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException
 from Core.Configuracion import settings , Settings
-from Services.UsuarioServicio import BuscarUsuarioPorCorreo
+from Services.UsuarioServicio import buscar_usuario_por_correo
 from Configs.bd import get_db
 from Controllers.UsuarioControlador import BuscarUsuarioControlador
 from fastapi import status
@@ -33,7 +33,7 @@ def obtener_usuario_actual(
     except (JWTError, TypeError):
         raise HTTPException(status_code=401, detail="Token inválido")
 
-    usuario = BuscarUsuarioPorCorreo(db, usuario_id)
+    usuario = buscar_usuario_por_correo(db, usuario_id)
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario

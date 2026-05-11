@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from fastapi import HTTPException, status
 from Models.UsuarioModelo import UsuarioModelo
 from Core.Seguridad import HashearContrasena
-from Services.UsuarioServicio import BuscarUsuarioPorDocumento, BuscarUsuarioPorCorreo, BuscarUsuario, buscar_telefono
+from Services.UsuarioServicio import buscar_usuario_por_documento, buscar_usuario_por_correo, buscar_usuario, buscar_telefono
 from Schemas.Usuarioschema import UsuarioCrearSchema
 from Core.Seguridad import CrearTokenAcceso, VerificarContrasena
 from Services.RolServicio import BuscarRol
@@ -13,14 +13,14 @@ from Services.TipoDocumentoServicio import BuscarTipoDocumento
 contexto_password = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def IniciarSesion(datos: UsuarioCrearSchema, db: Session) -> dict:
-    usuario = BuscarUsuarioPorCorreo(db, datos.correo)
+    usuario = buscar_usuario_por_correo(db, datos.correo)
     if not usuario or not VerificarContrasena(datos.contrasena, usuario.contrasena):
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
     token = CrearTokenAcceso({"sub": str(usuario.id_usuario)})
     return {"access_token": token, "token_type": "bearer"}
 
 def CambiarContrasena(db: Session, id_usuario: int, contasena_anterior: str, contrasena_nueva: str):
-    existente = BuscarUsuario(db, id_usuario)
+    existente = buscar_usuario(db, id_usuario)
     if not existente:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     if not VerificarContrasena(contasena_anterior, existente.contrasena):
@@ -33,8 +33,8 @@ def CambiarContrasena(db: Session, id_usuario: int, contasena_anterior: str, con
     return existente
 
 def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
-    existente = BuscarUsuarioPorDocumento(db, usuario.numero_documento)
-    consultado = BuscarUsuarioPorCorreo(db, usuario.correo)
+    existente = buscar_usuario_por_documento(db, int(usuario.numero_documento))
+    consultado = buscar_usuario_por_correo(db, usuario.correo)
     verificado = buscar_telefono(db, usuario.telefono)
     
     if consultado:

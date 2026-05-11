@@ -19,7 +19,6 @@ class UsuarioModelo(Base):
     contrasena = Column(String(100), nullable=False) #modificar diccionario
     id_rol = Column(Integer, ForeignKey("Roles.id_rol", ondelete="RESTRICT"), nullable=False)
     fecha_registro = Column(TIMESTAMP, nullable=False, server_default=text("now()"))
-    estado = Column(String(10), nullable=False, default="Activo")
     fecha_nacimiento = Column(Date, nullable=False)
     ubicacion_semestral = Column(Integer, nullable=True)
     sexo = Column(String(30), nullable=False)
@@ -31,6 +30,7 @@ class UsuarioModelo(Base):
     id_sede = Column(Integer, ForeignKey("Sede.id_sede", ondelete="RESTRICT"), nullable=True)
     direccion = Column(String(80), nullable=False)
     id_municipio = Column(Integer, ForeignKey("Municipio.id_municipio", ondelete="RESTRICT"), nullable=False)
+    id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
     
     rol = relationship("RolesModelo", back_populates="usuarios")
     programa = relationship("ProgramaModelo", back_populates="usuarios")
@@ -42,4 +42,5 @@ class UsuarioModelo(Base):
     inscripciones =relationship("InscripcionModelo", back_populates="usuarios")
     usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="usuarios")
     seguimientos = relationship("SeguimientoModelo", back_populates="usuario_responsable")
+    estados = relationship("EstadosModelo", back_populates="usuarios")
     
