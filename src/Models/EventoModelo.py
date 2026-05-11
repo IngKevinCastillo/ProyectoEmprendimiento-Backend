@@ -11,5 +11,7 @@ class EventoModelo(Base):
     fecha = Column(TIMESTAMP, nullable=False)
     lugar = Column(String(60), nullable=False)
     descripcion = Column(String, nullable=False)
+    id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
     
     participaciones = relationship("ParticipacionEventoModelo", back_populates="evento")
+    estados = relationship("EstadosModelo", back_populates="evento")

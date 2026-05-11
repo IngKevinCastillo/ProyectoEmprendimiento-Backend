@@ -11,3 +11,4 @@ class EstadosModelo(Base):
     
     proyecto = relationship("ProyectoModelo", back_populates="estados")
     seguimientos = relationship("SeguimientoModelo", back_populates="estados")
+    evento = relationship("EventoModelo", back_populates="estados")

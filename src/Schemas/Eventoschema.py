@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator
 from datetime import date, datetime
-from Utils.Validacionesutilidades import validar_nombre_utils
+from Utils.Validacionesutilidades import validar_nombre_utils, validar_descripcion_no_nulo, validar_id_entero
 from enum import Enum
 
 class TipoEvento(str, Enum):
@@ -15,7 +15,18 @@ class EventoCrearSchema(BaseModel):
     tipo_evento: TipoEvento
     fecha: date
     lugar:str
-#    descripcion: str
+    id_estado: int
+    descripcion: str
+    
+    @field_validator("tipo_evento", mode="before")
+    @classmethod
+    def validar_tipo_evento(cls, v):
+        valores_validos = [e.value for e in TipoEvento]
+        if v not in valores_validos:
+            raise ValueError(
+                f"'{v}' no es válido. Los tipos permitidos son: {', '.join(valores_validos)}"
+            )
+        return v
     
     @field_validator("nombre_evento")
     @classmethod
@@ -29,6 +40,16 @@ class EventoCrearSchema(BaseModel):
         if not (3 <= len(v) <= 100):
             raise ValueError("El nombre del lugar del evento debe tener entre 3 y 100 caracteres.")
         return v
+    
+    @field_validator("descripcion")
+    @classmethod
+    def validar_descripcion(cls, v: str) -> str:
+        return validar_descripcion_no_nulo(v, 6, 100, "Descripcion")
+    
+    @field_validator("id_estado")
+    @classmethod
+    def validar_id_estado(cls, v: int) -> int:
+        return validar_id_entero(v, "id estado", 1, 2147483647)
 
 class EventoRespuestaSchema(BaseModel):
     id_evento: int
@@ -37,6 +58,7 @@ class EventoRespuestaSchema(BaseModel):
     fecha: datetime
     lugar: str
     descripcion: str
+    id_estado: int
 
     class Config:
         from_attributes = True
@@ -47,3 +69,37 @@ class EventoActualizarSchema(BaseModel):
     fecha: datetime
     lugar: str
     descripcion: str
+    id_estado: int
+    
+    @field_validator("tipo_evento", mode="before")
+    @classmethod
+    def validar_tipo_evento(cls, v):
+        valores_validos = [e.value for e in TipoEvento]
+        if v not in valores_validos:
+            raise ValueError(
+                f"'{v}' no es válido. Los tipos permitidos son: {', '.join(valores_validos)}"
+            )
+        return v
+    
+    @field_validator("nombre_evento")
+    @classmethod
+    def validar_nombre_evento(cls, v: str) -> str:
+        return validar_nombre_utils(v, min_len=3, max_len=100, campo="Nombre del evento")
+    
+    @field_validator("lugar")
+    @classmethod
+    def validar_lugar(cls, v: str) -> str:
+        v = v.strip()
+        if not (3 <= len(v) <= 100):
+            raise ValueError("El nombre del lugar del evento debe tener entre 3 y 100 caracteres.")
+        return v
+    
+    @field_validator("descripcion")
+    @classmethod
+    def validar_descripcion(cls, v: str) -> str:
+        return validar_descripcion_no_nulo(v, 6, 100, "Descripcion")
+    
+    @field_validator("id_estado")
+    @classmethod
+    def validar_id_estado(cls, v: int) -> int:
+        return validar_id_entero(v, "id estado", 1, 2147483647)

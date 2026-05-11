@@ -4,7 +4,7 @@ from Schemas.Eventoschema import EventoCrearSchema, EventoRespuestaSchema, Event
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from datetime import datetime
-from Controllers.EventoControlador import crear_evento_controlador, buscar_evento_controlador, buscar_evento_por_fechas_controlador, buscar_evento_por_nombre_controlador, buscar_evento_por_lugar_controlador, eliminar_evento_controlador, actualizar_evento_controlador, listar_eventos_controlador
+from Controllers.EventoControlador import buscar_eventos_por_estados, crear_evento_controlador, buscar_evento_controlador, buscar_evento_por_fechas_controlador, buscar_evento_por_nombre_controlador, buscar_evento_por_lugar_controlador, eliminar_evento_controlador, actualizar_evento_controlador, listar_eventos_controlador
 
 router = APIRouter(
     prefix="/eventos",
@@ -29,6 +29,14 @@ async def listar_eventos(
     db: Session = Depends(get_db),
 ):
     eventos = listar_eventos_controlador(db)
+    return eventos
+
+@router.get("/estados/{id_estado}", response_model=list[EventoRespuestaSchema])
+async def listar_eventos_por_estado(
+    id_estado: int,
+    db: Session = Depends(get_db),
+):
+    eventos = buscar_eventos_por_estados(db, id_estado)
     return eventos
 
 @router.get("/{id_evento}", response_model=EventoRespuestaSchema)
