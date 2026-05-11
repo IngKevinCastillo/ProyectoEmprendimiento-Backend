@@ -224,6 +224,23 @@ def validar_descripcion_utils(
         raise ValueError(f"{campo} debe contener al menos una letra.")
     return valor
 
+def validar_descripcion_no_nulo(
+    valor: str,
+    min_len: int = 20,
+    max_len: int = 2000,
+    campo: str = "Descripción"
+) -> str:
+    if not isinstance(valor, str):
+        raise TypeError(f"{campo} debe ser un texto.")
+    valor = " ".join(valor.split())
+    if not valor:
+        raise ValueError(f"{campo} no puede estar vacía.")
+    if not (min_len <= len(valor) <= max_len):
+        raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
+    if not re.search(r"[A-Za-záéíóúÁÉÍÓÚñÑ]", valor):
+        raise ValueError(f"{campo} debe contener al menos una letra.")
+    return valor
+
 def validar_id_entero(
     valor: int,
     campo: str = "ID",

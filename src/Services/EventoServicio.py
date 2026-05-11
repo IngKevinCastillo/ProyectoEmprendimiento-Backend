@@ -4,6 +4,7 @@ from Models.EventoModelo import EventoModelo
 from Schemas.Eventoschema import EventoCrearSchema
 from Utils.Mapeadorutilidades import auto_mapear
 from datetime import datetime
+eliminado = 6
 
 def crear_evento(db: Session, evento: EventoCrearSchema):
     existente = buscar_evento_por_nombre(db, evento.nombre_evento)
@@ -14,7 +15,8 @@ def crear_evento(db: Session, evento: EventoCrearSchema):
         tipo_evento=evento.tipo_evento,
         fecha=evento.fecha,
         lugar=evento.lugar,
-        descripcion=evento.descripcion
+        descripcion=evento.descripcion,
+        id_estado=evento.id_estado
     )
     db.add(nuevo_evento)
     db.commit()
@@ -33,6 +35,9 @@ def buscar_evento_por_nombre(db: Session, nombre: str):
 def buscar_evento_por_fechas(db: Session, fecha: datetime):
     return db.query(EventoModelo).filter(EventoModelo.fecha == fecha).all()
 
+def buscar_evento_por_estados(db: Session, id_estado: int):
+    return db.query(EventoModelo).filter(EventoModelo.id_estado == id_estado).all()
+
 def buscar_evento_por_lugar(db: Session, lugar: str):
     return db.query(EventoModelo).filter(EventoModelo.lugar == lugar).all()
 
@@ -40,8 +45,11 @@ def eliminar_evento(db:Session, id: str):
     existente = buscar_evento(db, int(id))
     if not existente:
         raise HTTPException(status_code=404, detail="Evento no encontrado")
-    db.delete(existente)
+
+    existente.id_estado = eliminado
+
     db.commit()
+    db.refresh(existente)
     return {"message": "Evento eliminado correctamente"}
 
 def actualizar_evento( db: Session, id_evento: str, evento: any):
