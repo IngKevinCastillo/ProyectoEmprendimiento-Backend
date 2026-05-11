@@ -10,3 +10,4 @@ class EstadoProyectoModelo(Base):
     
     # seguimientos = relationship("SeguimientoModelo", back_populates="estado_proyecto")
     proyecto = relationship("ProyectoModelo", back_populates="estado_proyecto")
+    seguimientos = relationship("SeguimientoModelo", back_populates="estado_proyecto")

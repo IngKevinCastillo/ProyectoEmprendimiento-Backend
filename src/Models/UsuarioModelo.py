@@ -41,4 +41,5 @@ class UsuarioModelo(Base):
     participaciones = relationship("ParticipacionEventoModelo", back_populates="usuarios")
     inscripciones =relationship("InscripcionModelo", back_populates="usuarios")
     usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="usuarios")
+    seguimientos = relationship("SeguimientoModelo", back_populates="usuario_responsable")
     

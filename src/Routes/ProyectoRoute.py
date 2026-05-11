@@ -1,16 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from Schemas.ProyectoSchema import ProyectoCrearSchema, ProyectoRespuestaSchema
+from Schemas.ProyectoSchema import ProyectoCrearSchema, ProyectoRespuestaSchema, ProyectoActualizarSchema
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual
 from Controllers.ProyectoControlador import (
     crear_emprendimiento_controlador,
     obtener_emprendimientos_controlador,
     obtener_emprendimientos_por_estado_controlador,
+    obtener_emprendimientos_por_categoria_controlador,
     buscar_emprendimiento_controlador,
+    buscar_emprendimiento_por_nombre_controlador,
     eliminar_emprendimiento_controlador,
-    actualizar_emprendimiento_controlador,
-    buscar_emprendimiento_por_nombre_controlador
+    actualizar_emprendimiento_controlador
 )
 
 router = APIRouter(
@@ -39,27 +40,6 @@ async def listar_proyectos(
     return obtener_emprendimientos_controlador(db)
 
 
-@router.get("/estado/{id_estado_proyecto}", response_model=list[ProyectoRespuestaSchema])
-async def listar_proyectos_por_estado(
-    id_estado_proyecto: int,
-    db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
-):
-    return obtener_emprendimientos_por_estado_controlador(db, id_estado_proyecto)
-
-
-@router.get("/{id_proyecto}", response_model=ProyectoRespuestaSchema)
-async def obtener_proyecto(
-    id_proyecto: int,
-    db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
-):
-    proyecto = buscar_emprendimiento_controlador(db, id_proyecto)
-    if not proyecto:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proyecto no encontrado")
-    return proyecto
-
-
 @router.get("/nombre/{nombre_proyecto}", response_model=ProyectoRespuestaSchema)
 async def obtener_proyecto_por_nombre(
     nombre_proyecto: str,
@@ -72,15 +52,44 @@ async def obtener_proyecto_por_nombre(
     return proyecto
 
 
-@router.put("/{id_proyecto}", response_model=ProyectoRespuestaSchema)
-async def actualizar_proyecto(
-    id_proyecto: int,
-    datos: ProyectoCrearSchema,
+@router.get("/estado/{id_estado_proyecto}", response_model=list[ProyectoRespuestaSchema])
+async def listar_proyectos_por_estado(
+    id_estado_proyecto: int,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    datos.id_proyecto = id_proyecto
-    proyecto = actualizar_emprendimiento_controlador(db, datos)
+    return obtener_emprendimientos_por_estado_controlador(db, id_estado_proyecto)
+
+
+@router.get("/categoria/{id_categoria}", response_model=list[ProyectoRespuestaSchema])
+async def listar_proyectos_por_categoria(
+    id_categoria: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    return obtener_emprendimientos_por_categoria_controlador(db, id_categoria)
+
+
+@router.get("/{id_proyecto}", response_model=ProyectoRespuestaSchema)
+async def obtener_proyecto(
+    id_proyecto: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    proyecto = buscar_emprendimiento_controlador(db, id_proyecto)
+    if not proyecto:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proyecto no encontrado")
+    return proyecto
+
+
+@router.put("/{id_proyecto}", response_model=ProyectoRespuestaSchema)
+async def actualizar_proyecto(
+    id_proyecto: str,
+    datos: ProyectoActualizarSchema,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    proyecto = actualizar_emprendimiento_controlador(db, datos, id_proyecto)
     if not proyecto:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Proyecto no encontrado")
     return proyecto
