@@ -1,0 +1,13 @@
+from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
+from sqlalchemy.orm import relationship
+from Configs.bd import Base
+
+class EstadosModelo(Base):
+    __tablename__ = "Estados"
+    
+    id_estado = Column(Integer, primary_key=True, nullable=False)
+    nombre = Column(String(40), nullable=False)
+    dedscripcion = Column(String(40), nullable=True)
+    
+    proyecto = relationship("ProyectoModelo", back_populates="estados")
+    seguimientos = relationship("SeguimientoModelo", back_populates="estados")

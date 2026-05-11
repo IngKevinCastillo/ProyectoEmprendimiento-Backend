@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, Numeric, Date, Text, text, ForeignKey
 from sqlalchemy.orm import relationship
 from Configs.bd import Base
-from Models.EstadoProyectoModelo import EstadoProyectoModelo
+from Models.EstadosModelo import EstadosModelo
 
 class ProyectoModelo(Base):
     __tablename__ = "Proyecto"
@@ -9,7 +9,7 @@ class ProyectoModelo(Base):
     id_proyecto = Column(Integer, primary_key=True, autoincrement=True)
     nombre_proyecto = Column(String(100), nullable=False)
     descripcion = Column(Text, nullable=False)
-    id_estado_proyecto = Column(Integer, ForeignKey("estado_proyecto.id_estado_proyecto", ondelete="RESTRICT"), nullable=False)
+    id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
     fecha_creacion = Column(Date, nullable=False, server_default=text("now()"))
     problematica = Column(Text, nullable=True)
     publico_objetivo = Column(Text, nullable=True)
@@ -22,7 +22,7 @@ class ProyectoModelo(Base):
 
 
     convocatorias = relationship("ConvocatoriasModelo", back_populates="proyecto")
-    estado_proyecto = relationship("EstadoProyectoModelo", back_populates="proyecto")
+    estados = relationship("EstadosModelo", back_populates="proyecto")
     categoria = relationship("CategoriaModelo", back_populates="proyecto")
     usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="proyecto")
     proyectopalabrasclave = relationship("ProyectoPalabraClaveModelo", back_populates="proyecto")

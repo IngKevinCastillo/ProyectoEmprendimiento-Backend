@@ -7,7 +7,7 @@ from Utils.Validacionesutilidades import validar_nombre_utils, validar_descripci
 class ProyectoBaseSchema(BaseModel):
     nombre_proyecto: Optional[str] = None
     descripcion: Optional[str] = None
-    id_estado_proyecto: Optional[int] = None
+    id_estado: Optional[int] = None
     id_categoria: Optional[int] = None
     problematica: Optional[str] = None
     publico_objetivo: Optional[str] = None
@@ -27,7 +27,7 @@ class ProyectoBaseSchema(BaseModel):
     def validar_descripcion_proyecto(cls, v: Optional[str]) -> str:
         return validar_descripcion_utils(v, min_len=20, max_len=2000, campo="Descripción del proyecto")
 
-    @field_validator("id_estado_proyecto")
+    @field_validator("id_estado")
     @classmethod
     def validar_id_estado(cls, v: Optional[int]) -> int:
         return validar_id_entero(v, campo="ID del estado del proyecto") 
@@ -45,13 +45,13 @@ class ProyectoBaseSchema(BaseModel):
     @field_validator("problematica", "publico_objetivo", "propuesta_de_valor", "solucion", "recursos_clave", "modelo_de_negocio", mode="before")
     @classmethod
     def validar_campos_opcionales(cls, v: Optional[str]) -> str:
-        return validar_descripcion(v, min_len=20, max_len=2000, campo="Campo opcional")
+        return validar_descripcion_utils(v, min_len=20, max_len=2000, campo="Campo opcional")
 
 
 class ProyectoCrearSchema(ProyectoBaseSchema):
     nombre_proyecto: str
     descripcion: str
-    id_estado_proyecto: int
+    id_estado: int
     id_categoria: int
 
 
@@ -59,7 +59,7 @@ class ProyectoRespuestaSchema(BaseModel):
     id_proyecto: int
     nombre_proyecto: str
     descripcion: str
-    id_estado_proyecto: int
+    id_estado: int
     id_categoria: int
     fecha_creacion: date
     problematica: Optional[str] = None
@@ -76,7 +76,7 @@ class ProyectoRespuestaSchema(BaseModel):
 class ProyectoActualizarSchema(ProyectoBaseSchema):
     nombre_proyecto: Optional[str] = None
     descripcion: Optional[str] = None
-    id_estado_proyecto: Optional[int] = None
+    id_estado: Optional[int] = None
     id_categoria: Optional[int] = None
     calificacion: Optional[float] = None
     problematica: Optional[str] = None

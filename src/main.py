@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from Configs.bd import engine, Base, get_db
 
 from Routes import (
-    AlianzaRoute, ParticipacionEventoRoute, TipoEntidadesRoute, UsuarioRoute, TipoDocumentoRoute, RolesRoute, ProgramasRoute,
+    AlianzaRoute, EstadosRoute, ParticipacionEventoRoute, TipoEntidadesRoute, UsuarioRoute, TipoDocumentoRoute, RolesRoute, ProgramasRoute,
     FacultadRoute, Eventoroute, CursoRoute, UsuarioProyectoRoute,
     SedeRoute, DepartamentosRoute, MunicipioRoute, ProyectoRoute,
     InscripcionRoute, ConvocatoriasRoute, CategoriaRoute, PalabraClaveRoute,
-    ProyectoPalabraClaveRoutes, EstadoProyectoRoute, SeguimientoRoute
+    ProyectoPalabraClaveRoutes, SeguimientoRoute
 )
 
 from Models.ProyectoModelo import ProyectoModelo
@@ -36,7 +36,7 @@ app.include_router(PalabraClaveRoute.router)
 app.include_router(ProyectoPalabraClaveRoutes.router)
 app.include_router(AlianzaRoute.router)
 app.include_router(TipoEntidadesRoute.router)
-app.include_router(EstadoProyectoRoute.router)
+app.include_router(EstadosRoute.router)
 app.include_router(SeguimientoRoute.router)
 
 @app.get("/")

@@ -21,7 +21,7 @@ def ObtenerSeguimientosPorProyecto(db: Session, id_proyecto: str):
     return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_proyecto == int(id_proyecto)).all()
 
 def ObtenerSeguimientosPorEstado(db: Session, id_estado: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado_proyecto == int(id_estado)).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado == int(id_estado)).all()
 
 def ObtenerSeguimientoPorUsuarioResponsable(db: Session, id: str):
     return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_usuario_responsable == int(id)).all()
@@ -38,7 +38,7 @@ def CrearSeguimiento(db: Session, seguimiento: SeguimientoCrearSchema) -> Seguim
         id_proyecto=seguimiento.id_proyecto,
         observaciones=seguimiento.observaciones,
         id_usuario_responsable=seguimiento.id_usuario_responsable,
-        id_estado_proyecto=seguimiento.id_estado_proyecto,
+        id_estado=seguimiento.id_estado,
         avance_porcentaje=seguimiento.avance_porcentaje,
         fecha_registro=datetime.now(timezone.utc)
         # fecha_registro se asigna automáticamente (default=func.now() en el modelo)
