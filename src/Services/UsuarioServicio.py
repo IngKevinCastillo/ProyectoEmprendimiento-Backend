@@ -3,8 +3,11 @@ from fastapi import HTTPException, status
 from Models.UsuarioModelo import UsuarioModelo
 from Utils.Mapeadorutilidades import auto_mapear
 from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
-from Schemas.Usuarioschema import UsuarioActualizarSchema, CambiarEstado
-eliminado = 6
+from Schemas.Usuarioschema import UsuarioActualizarSchema
+from Schemas.EstadosSchema import CambiarEstado
+from typing import Final
+
+ESTADO_ELIMINADO: Final = 6
 
 def buscar_usuario(db: Session, id: int):
     return db.query(UsuarioModelo).filter(UsuarioModelo.id_usuario == id).first()
@@ -19,7 +22,7 @@ def buscar_usuario_por_documento(db: Session, documento: int):
     return db.query(UsuarioModelo).filter(UsuarioModelo.numero_documento == str(documento)).first()
 
 def listar_usuarios(db: Session):
-    return db.query(UsuarioModelo).filter(UsuarioModelo.id_estado != eliminado).all()
+    return db.query(UsuarioModelo).filter(UsuarioModelo.id_estado != ESTADO_ELIMINADO).all()
 
 def cambiar_estado(db: Session, documento: int, estado: CambiarEstado):
     existente = buscar_usuario_por_documento(db, documento)
@@ -36,10 +39,10 @@ def cambiar_estado(db: Session, documento: int, estado: CambiarEstado):
 def eliminar_usuario(db: Session, numero_documento: int):
     usuario = buscar_usuario_por_documento(db, numero_documento)
     
-    if not usuario or usuario.id_estado  == eliminado:
+    if not usuario or usuario.id_estado  == ESTADO_ELIMINADO:
         raise HTTPException(status_code=404, detail="No se encontró el usuario")
 
-    usuario.id_estado = eliminado
+    usuario.id_estado = ESTADO_ELIMINADO
 
     db.commit()
     db.refresh(usuario)
@@ -47,7 +50,7 @@ def eliminar_usuario(db: Session, numero_documento: int):
 
 def actualizar_usuario_id(db: Session, usuario: UsuarioActualizarSchema, id_usuario: int):
     existente = buscar_usuario(db, id_usuario)
-    if not existente or existente.id_estado  == eliminado:
+    if not existente or existente.id_estado  == ESTADO_ELIMINADO:
         raise HTTPException(status_code=404, detail="No se encontró el usuario")
     
     if(existente.id_rol is None):
@@ -64,7 +67,7 @@ def actualizar_usuario_id(db: Session, usuario: UsuarioActualizarSchema, id_usua
 
 def actualizar_usuario_documento(db: Session, usuario: UsuarioActualizarSchema, documento: int):
     existente = buscar_usuario_por_documento(db, documento)
-    if not existente or existente.id_estado  == eliminado:
+    if not existente or existente.id_estado  == ESTADO_ELIMINADO:
         raise HTTPException(status_code=404, detail="No se encontró el usuario")
     
     if(existente.id_rol is None):

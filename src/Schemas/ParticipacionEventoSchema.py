@@ -17,6 +17,7 @@ class ParticipacionEventoRespuestaSchema(BaseModel):
     id_usuario: int
     id_evento: int
     Id_rol: int
+    id_estado: int
 
     class Config:
         from_attributes = True

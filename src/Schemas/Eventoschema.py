@@ -63,6 +63,10 @@ class EventoRespuestaSchema(BaseModel):
     class Config:
         from_attributes = True
         
+class ConsultarFechas(BaseModel):
+    fecha_inicio: date
+    fecha_fin: date
+
 class EventoActualizarSchema(BaseModel):
     nombre_evento: str
     tipo_evento: str

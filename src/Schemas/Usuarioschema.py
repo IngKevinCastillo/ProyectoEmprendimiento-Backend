@@ -163,9 +163,6 @@ class UsuarioCambiarContrasena(BaseModel):
     @classmethod
     def validar_contrasena(cls, v: str) -> str:
         return validar_contrasena_utils(v)
-    
-class CambiarEstado(BaseModel):
-    id_estado_cambiar: int 
 
 class LoginSchema(BaseModel):
     correo: EmailStr

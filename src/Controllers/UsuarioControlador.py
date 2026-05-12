@@ -1,6 +1,7 @@
 from Services.UsuarioServicio import buscar_usuario, buscar_telefono, actualizar_usuario_id, actualizar_usuario_documento, eliminar_usuario, buscar_usuario_por_correo, buscar_usuario_por_documento, cambiar_estado, listar_usuarios
 from sqlalchemy.orm import Session
-from Schemas.Usuarioschema import UsuarioActualizarSchema, CambiarEstado
+from Schemas.Usuarioschema import UsuarioActualizarSchema
+from Schemas.EstadosSchema import CambiarEstado
 
 def BuscarUsuarioControlador(db: Session, id: int):
     return buscar_usuario(db, id)
