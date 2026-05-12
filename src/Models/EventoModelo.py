@@ -12,7 +12,6 @@ class EventoModelo(Base):
     lugar = Column(String(60), nullable=False)
     descripcion = Column(String, nullable=False)
     id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
-    
+
     participaciones = relationship("ParticipacionEventoModelo", back_populates="evento")
     estados = relationship("EstadosModelo", back_populates="evento")
-    # alianzas = relationship("AlianzaModelo", back_populates="estado")
