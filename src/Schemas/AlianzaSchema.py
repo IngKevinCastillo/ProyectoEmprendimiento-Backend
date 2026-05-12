@@ -53,6 +53,7 @@ class AlianzaRespuestaSchema(BaseModel):
     fecha_inicio_alianza: date
     fecha_fin_alianza: date
     fecha_registro_alianza: date
+    id_estado: int
 
     class Config:
         from_attributes = True

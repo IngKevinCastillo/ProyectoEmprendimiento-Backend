@@ -11,7 +11,9 @@ class InscripcionModelo(Base):
     id_usuario = Column(Integer, ForeignKey("Usuario.id_usuario", ondelete="RESTRICT"), nullable=False, unique=True)
     id_curso = Column(Integer, ForeignKey("Curso.id_curso", ondelete="RESTRICT"), nullable=False, unique=True)
     fecha_inscripcion = Column(Date, nullable=False)
+    id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
     
     usuarios = relationship("UsuarioModelo", back_populates="inscripciones")
     curso = relationship("CursoModelo", back_populates="inscripciones")
+    estados = relationship("EstadosModelo", back_populates="inscripciones")
     

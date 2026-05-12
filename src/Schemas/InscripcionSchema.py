@@ -18,6 +18,7 @@ class InscripcionRespuestaSchema(BaseModel):
     id_usuario: int
     id_curso: int
     fecha_inscripcion: date
+    id_estado: int
     
     class Config:
         from_attributes = True

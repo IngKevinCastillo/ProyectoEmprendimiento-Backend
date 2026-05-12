@@ -29,8 +29,6 @@ async def obtener_curso(
     db: Session = Depends(get_db)
 ):
     curso = buscar_curso_controlador(db, id_curso)
-    if not curso:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Curso no encontrado")
     return curso
 
 @router.get("/nombre{nombre}", response_model=CursoRespuestaSchema)
@@ -39,8 +37,6 @@ async def obtener_curso_nombre(
     db: Session = Depends(get_db)
 ):
     curso = buscar_curso_nombre_contolador(db, nombre)
-    if not curso:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Curso no encontrado")
     return curso
 
 @router.get("/", response_model=list[CursoRespuestaSchema])
@@ -59,8 +55,6 @@ async def actualizar_curso(
 ):
     verificar_usuario_admin(usuario_actual)
     curso = actualizar_curso_controlador(db, id_curso, datos)
-    if not curso:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Curso no encontrado")
     return curso
 
 @router.delete("/{id_curso}", status_code=status.HTTP_200_OK)
@@ -71,6 +65,4 @@ async def eliminar_curso(
 ):
     verificar_usuario_admin(usuario_actual)
     eliminado = eliminar_curso_controlador(db, id_curso)
-    if not eliminado:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Curso no encontrado")
     return eliminado

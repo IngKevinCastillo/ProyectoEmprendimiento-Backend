@@ -18,7 +18,6 @@ class ConvocatoriasBaseSchema(BaseModel):
     fecha_cierre: date
     id_proyecto: int
     url_convocatoria: str
-    id_estado: int
     
     @field_validator("tipo_convocatoria", mode="before")
     @classmethod
@@ -34,11 +33,6 @@ class ConvocatoriasBaseSchema(BaseModel):
     @classmethod
     def validar_id_proyecto(cls, v: int) -> int:
         return validar_id_entero(v, campo="ID de usuario")
-    
-    @field_validator("id_estado")
-    @classmethod
-    def validar_id_estado(cls, v: int) -> int:
-        return validar_id_entero(v, campo="ID de estado")
 
     @field_validator("titulo_convocatoria")
     @classmethod

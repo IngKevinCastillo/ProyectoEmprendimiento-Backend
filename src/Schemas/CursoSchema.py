@@ -7,7 +7,6 @@ class CursoCrearSchema(BaseModel):
     descripcion: str
     fecha_inicio: date
     fecha_fin: date
-    id_estado: int
     
     @field_validator("nombre_curso")
     @classmethod
@@ -24,11 +23,6 @@ class CursoCrearSchema(BaseModel):
         if self.fecha_fin < self.fecha_inicio:
             raise ValueError("La fecha de fin debe ser mayor o igual a la fecha de inicio.")
         return self
-    
-    @field_validator("id_estado")
-    @classmethod
-    def validar_id_curso(cls, v: int) -> int:
-        return validar_id_entero(v, min_len=1, max_len=2147483647, campo="id curso")
 
 class CursoRespuestaSchema(BaseModel):
     id_curso: int
@@ -46,7 +40,6 @@ class CursoActualizarSchema(BaseModel):
     descripcion: str
     fecha_inicio: date
     fecha_fin: date
-    id_estado: int
     
     @field_validator("nombre_curso")
     @classmethod
@@ -63,8 +56,3 @@ class CursoActualizarSchema(BaseModel):
         if self.fecha_fin < self.fecha_inicio:
             raise ValueError("La fecha de fin debe ser mayor o igual a la fecha de inicio.")
         return self
-    
-    @field_validator("id_estado")
-    @classmethod
-    def validar_id_curso(cls, v: int) -> int:
-        return validar_id_entero(v, min_len=1, max_len=2147483647, campo="id curso")

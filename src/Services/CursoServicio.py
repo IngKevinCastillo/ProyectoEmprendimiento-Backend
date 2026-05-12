@@ -3,7 +3,10 @@ from fastapi import HTTPException, status
 from Utils.Mapeadorutilidades import auto_mapear
 from Models.CursoModelo import CursoModelo
 from Schemas.CursoSchema import CursoCrearSchema, CursoActualizarSchema
-eliminado = 6
+from typing import Final
+
+ESTADO_ELIMINADO: Final = 6
+ESTADO_ACTIVO: Final = 8
 
 def buscar_curso(db: Session, id_curso: int):
     return db.query(CursoModelo).filter(CursoModelo.id_curso == id_curso).first()
