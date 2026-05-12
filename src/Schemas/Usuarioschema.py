@@ -45,7 +45,7 @@ class UsuarioCrearSchema(BaseModel):
     @field_validator("segundo_apellido")
     @classmethod
     def validar_segundo_apellido(cls, v: str) -> str:
-        return validar_nombre_usuario_utils(v, 0, 30, "segundo_apellido")
+        return validar_nombre_usuario_utils(v, 1, 30, "segundo_apellido")
 
     # ──────────────── Contraseña ────────────────
 
