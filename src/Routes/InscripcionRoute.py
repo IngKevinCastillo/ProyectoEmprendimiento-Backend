@@ -18,6 +18,9 @@ async def verificar_registro(
     usuario_actual = Depends(obtener_usuario_actual)
 ):
     registro = verificar_registro_controlador(db, datos.id_usuario, datos.id_curso)
+    if not registro:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario no tiene ninguna inscripcion en ese curso especificado")
+    
     return registro
 
 @router.get("/listar-inscripciones-usuario/{id_usuario}", response_model=list[InscripcionRespuestaSchema], status_code=status.HTTP_200_OK)

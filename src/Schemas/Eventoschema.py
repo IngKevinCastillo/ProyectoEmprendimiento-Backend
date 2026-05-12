@@ -15,7 +15,6 @@ class EventoCrearSchema(BaseModel):
     tipo_evento: TipoEvento
     fecha: date
     lugar:str
-    id_estado: int
     descripcion: str
     
     @field_validator("tipo_evento", mode="before")
@@ -45,11 +44,6 @@ class EventoCrearSchema(BaseModel):
     @classmethod
     def validar_descripcion(cls, v: str) -> str:
         return validar_descripcion_no_nulo(v, 6, 100, "Descripcion")
-    
-    @field_validator("id_estado")
-    @classmethod
-    def validar_id_estado(cls, v: int) -> int:
-        return validar_id_entero(v, "id estado", 1, 2147483647)
 
 class EventoRespuestaSchema(BaseModel):
     id_evento: int
@@ -73,7 +67,6 @@ class EventoActualizarSchema(BaseModel):
     fecha: datetime
     lugar: str
     descripcion: str
-    id_estado: int
     
     @field_validator("tipo_evento", mode="before")
     @classmethod
@@ -102,8 +95,3 @@ class EventoActualizarSchema(BaseModel):
     @classmethod
     def validar_descripcion(cls, v: str) -> str:
         return validar_descripcion_no_nulo(v, 6, 100, "Descripcion")
-    
-    @field_validator("id_estado")
-    @classmethod
-    def validar_id_estado(cls, v: int) -> int:
-        return validar_id_entero(v, "id estado", 1, 2147483647)

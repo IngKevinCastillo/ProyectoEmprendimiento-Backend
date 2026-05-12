@@ -13,10 +13,6 @@ ESTADO_ELIMINADO: Final = 6
 ESTADO_ACTIVO: Final = 8
 
 def crear_participacion_evento(db: Session, participacion_evento: ParticipacionEventoCrearSchema):
-    existente = buscar_usuario_participacion_evento(db, participacion_evento.id_usuario, participacion_evento.id_evento)
-    
-    if existente:
-        raise HTTPException(status_code=400, detail="El usuario ya pertenece al proyecto")
     
     if not BuscarRol(db, participacion_evento.id_rol):
         raise HTTPException(status_code=400, detail="El rol especificado no existe")

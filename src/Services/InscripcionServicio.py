@@ -80,10 +80,6 @@ def verificar_registro(db: Session, id_usuario: int, id_curso: int):
         InscripcionModelo.id_usuario == id_usuario, InscripcionModelo.id_curso == id_curso,
         InscripcionModelo.id_estado != ESTADO_ELIMINADO
     ).first()
-    
-    if not existente:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario no tiene ninguna inscripcion en ese curso especificado")
-    
     return existente
 
 def actualizar_inscripcion(db: Session, id_inscripcion: int, inscripcion: InscripcionActualizarSchema):
