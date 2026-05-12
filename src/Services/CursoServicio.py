@@ -32,10 +32,6 @@ def buscar_curso_por_nombre_curso(db: Session, nombre: str):
     return existente
 
 def crear_curso(db: Session, curso: CursoCrearSchema):
-    existente = buscar_curso_por_nombre_curso(db, curso.nombre_curso)
-    
-    if existente:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ya existe un curso con ese nombre")
     
     nuevo_curso = CursoModelo(
         nombre_curso=curso.nombre_curso,
@@ -71,7 +67,7 @@ def eliminar_curso(db:Session, id_curso: int):
 def actualizar_curso(db: Session, id_curso: int, curso_actualizado: CursoActualizarSchema):
     existente = buscar_curso(db, id_curso)
     
-    auto_mapear(existente, curso_actualizado, exclude={"id_curso", "id_estado"})
+    auto_mapear(existente, curso_actualizado, excluir={"id_curso", "id_estado"})
     
     db.commit()
     db.refresh(existente)
