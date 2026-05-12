@@ -2,8 +2,9 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
-from Controllers.ConvocatoriasControlador import actualizar_convocatoria_controlador, buscar_convocatoria_controlador, buscar_convocatoria_titulo_controlador, crear_convocatoria_controlador, eliminar_convocatoria_controlador, listar_convocatorias_por_estado_controlador, listar_convocatorias_por_tipo_controlador
+from Controllers.ConvocatoriasControlador import cambiar_estado_controlador, actualizar_convocatoria_controlador, buscar_convocatoria_controlador, buscar_convocatoria_titulo_controlador, crear_convocatoria_controlador, eliminar_convocatoria_controlador, listar_convocatorias_por_estado_controlador, listar_convocatorias_por_tipo_controlador
 from Schemas.ConvocatoriasSchema import ConvocatoriasActualizarSchema, ConvocatoriasCrearSchema, ConvocatoriasRespuestaSchema
+from Schemas.EstadosSchema import CambiarEstado
 
 router = APIRouter(
     prefix="/convocatorias",
@@ -28,8 +29,6 @@ async def buscar_convocatoria_titulo(
     db: Session = Depends(get_db)
 ):
     convocatoria = buscar_convocatoria_titulo_controlador(db, titulo_convocatoria)
-    if not convocatoria:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convocatoria no encontrada")
     return convocatoria
 
 @router.get("/{id_convocatoria}", response_model=ConvocatoriasRespuestaSchema, status_code=status.HTTP_200_OK)
@@ -38,8 +37,6 @@ async def buscar_convocatoria(
     db: Session = Depends(get_db)
 ):
     convocatoria = buscar_convocatoria_controlador(db, id_convocatoria)
-    if not convocatoria:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convocatoria no encontrada")
     return convocatoria
 
 @router.get("/convocatorias-tipo/{tipo_convocatoria}", response_model=list[ConvocatoriasRespuestaSchema], status_code=status.HTTP_200_OK)
@@ -48,8 +45,6 @@ async def listar_convocatorias_por_tipo(
     db: Session = Depends(get_db)
 ):
     convocatoria = listar_convocatorias_por_tipo_controlador(db, tipo_convocatoria)
-    if not convocatoria:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convocatorias no encontradas")
     return convocatoria
 
 @router.get("/estado/{estado_convocatoria}", response_model=list[ConvocatoriasRespuestaSchema], status_code=status.HTTP_200_OK)
@@ -58,8 +53,6 @@ async def listar_convocatorias_por_estado(
     db: Session = Depends(get_db)
 ):
     convocatoria = listar_convocatorias_por_estado_controlador(db, estado_convocatoria)
-    if not convocatoria:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convocatorias no encontradas")
     return convocatoria
 
 @router.put("/{id_convocatoria}", response_model=ConvocatoriasActualizarSchema, status_code=status.HTTP_200_OK)
@@ -71,8 +64,17 @@ async def actualizar_convocatoria(
 ):
     verificar_usuario_admin(usuario_actual)
     convocatoria = actualizar_convocatoria_controlador(db, id_convocatoria, datos)
-    if not convocatoria:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convocatoria no encontrada")
+    return convocatoria
+
+@router.put("/cambiar-estado/{id_convocatoria}", response_model=ConvocatoriasRespuestaSchema, status_code=status.HTTP_200_OK)
+async def cambiar_estado(
+    id_convocatoria: int,
+    datos: CambiarEstado,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    verificar_usuario_admin(usuario_actual)
+    convocatoria = cambiar_estado_controlador(db, id_convocatoria, datos)
     return convocatoria
 
 @router.delete("/{id_convocatoria}", status_code=status.HTTP_200_OK)
@@ -83,6 +85,4 @@ async def eliminar_convocatoria(
 ):
     verificar_usuario_admin(usuario_actual)
     convocatoria = eliminar_convocatoria_controlador(db, id_convocatoria)
-    if not convocatoria:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convocatoria no encontrada")
     return convocatoria

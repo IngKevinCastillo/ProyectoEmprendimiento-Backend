@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
-from Services.InscripcionServicio import actualizar_inscripcion, buscar_inscripcion, crear_inscripcion, eliminar_inscripcion, listar_inscripciones_curso, listar_inscripciones_usuario, verificar_registro
+from Services.InscripcionServicio import cambiar_estado, actualizar_inscripcion, buscar_inscripcion, crear_inscripcion, eliminar_inscripcion, listar_inscripciones_curso, listar_inscripciones_usuario, verificar_registro
 from Schemas.InscripcionSchema import InscripcionCrearSchema, InscripcionActualizarSchema
+from Schemas.EstadosSchema import CambiarEstado
 
 def crear_inscripcion_controlador(db: Session, inscripcion: InscripcionCrearSchema):
     return crear_inscripcion(db, inscripcion)
@@ -22,3 +23,6 @@ def actualizar_inscripcion_controlador(db: Session, id_inscripcion: int, inscrip
 
 def eliminar_inscripcion_controlador(db: Session, id_inscripcion: int):
     return eliminar_inscripcion(db, id_inscripcion)
+
+def cambiar_estado_controlador(db: Session, id_inscripcion: int, estado: CambiarEstado):
+    return cambiar_estado(db, id_inscripcion, estado)

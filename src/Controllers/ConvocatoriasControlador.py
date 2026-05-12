@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from Schemas.ConvocatoriasSchema import ConvocatoriasActualizarSchema, ConvocatoriasCrearSchema
-from Services.ConvocatoriasServicio import actualizar_convocatoria, buscar_convocatoria, buscar_convocatoria_titulo, crear_convocatoria, eliminar_convocatoria, listar_convocatorias_por_estado, listar_convocatorias_por_tipo
+from Services.ConvocatoriasServicio import cambiar_estado, actualizar_convocatoria, buscar_convocatoria, buscar_convocatoria_titulo, crear_convocatoria, eliminar_convocatoria, listar_convocatorias_por_estado, listar_convocatorias_por_tipo
+from Schemas.EstadosSchema import CambiarEstado
 
 def crear_convocatoria_controlador(db: Session, convocatoria: ConvocatoriasCrearSchema):
     return  crear_convocatoria(db, convocatoria)
@@ -22,3 +23,6 @@ def actualizar_convocatoria_controlador(db: Session, id_convocatoria: int, convo
 
 def eliminar_convocatoria_controlador(db: Session, id_convocatoria: int):
     return eliminar_convocatoria(db, id_convocatoria)
+
+def cambiar_estado_controlador(db: Session, id_convocatoria: int, estado: CambiarEstado):
+    return cambiar_estado(db, id_convocatoria, estado)
