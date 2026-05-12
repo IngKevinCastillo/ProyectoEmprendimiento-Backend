@@ -46,7 +46,7 @@ class AlianzaRespuestaSchema(BaseModel):
     nombre_entidad: str
     sitio_web_url: HttpUrl
     id_tipo_entidad: int
-    estado: EstadosRespuestaSchema
+    estados: EstadosRespuestaSchema
     representante_entidad: str
     correo_contacto: EmailStr
     telefono_contacto: str

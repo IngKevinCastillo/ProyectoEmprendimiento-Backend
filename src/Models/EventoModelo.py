@@ -15,4 +15,3 @@ class EventoModelo(Base):
     
     participaciones = relationship("ParticipacionEventoModelo", back_populates="evento")
     estados = relationship("EstadosModelo", back_populates="evento")
-    alianzas = relationship("AlianzaModelo", back_populates="estado")
