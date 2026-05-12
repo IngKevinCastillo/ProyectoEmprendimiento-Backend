@@ -1,11 +1,16 @@
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from Models.ParticipacionEventoModelo import ParticipacionEventoModelo
 from Schemas.ParticipacionEventoSchema import ParticipacionEventoCrearSchema, ParticipacionActualizarSchema
 from Services.RolServicio import BuscarRol
 from Services.EventoServicio import buscar_evento
 from Services.UsuarioServicio import buscar_usuario
 from Utils.Mapeadorutilidades import auto_mapear
+from Schemas.EstadosSchema import CambiarEstado
+from typing import Final
+
+ESTADO_ELIMINADO: Final = 6
+ESTADO_ACTIVO: Final = 8
 
 def crear_participacion_evento(db: Session, participacion_evento: ParticipacionEventoCrearSchema):
     existente = buscar_usuario_participacion_evento(db, participacion_evento.id_usuario, participacion_evento.id_evento)
@@ -19,13 +24,14 @@ def crear_participacion_evento(db: Session, participacion_evento: ParticipacionE
     if not buscar_evento(db, participacion_evento.id_evento):
         raise HTTPException(status_code=400, detail="El evento especificado no existe")
     
-    if not BuscarUsuario(db, participacion_evento.id_usuario):
+    if not buscar_usuario(db, participacion_evento.id_usuario):
         raise HTTPException(status_code=400, detail="El usuario especificado no existe")
     
     nuevo_registro = ParticipacionEventoModelo(
         id_usuario=participacion_evento.id_usuario,
         id_evento=participacion_evento.id_evento,
         Id_rol=participacion_evento.Id_rol,
+        id_estado=ESTADO_ACTIVO
     )
     
     db.add(nuevo_registro)
@@ -34,27 +40,54 @@ def crear_participacion_evento(db: Session, participacion_evento: ParticipacionE
     return nuevo_registro
 
 def buscar_participacion_evento(db: Session, id_participacion_evento: int):
-    return db.query(ParticipacionEventoModelo).filter(ParticipacionEventoModelo.id_participacion_evento == id_participacion_evento).first()
-
-def buscar_usuario_participacion_evento(db: Session, id_usuario: int, id_evento: int):
-    return db.query(ParticipacionEventoModelo).filter(
-        ParticipacionEventoModelo.id_usuario == id_usuario,
-        ParticipacionEventoModelo.id_evento == id_evento
+    existente = db.query(ParticipacionEventoModelo).filter(
+        ParticipacionEventoModelo.id_participacion_evento == id_participacion_evento,
+        ParticipacionEventoModelo.id_estado != ESTADO_ELIMINADO
     ).first()
     
+    if not existente:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La participacion evento no existe.")
+    
+    return existente
+
+def buscar_usuario_participacion_evento(db: Session, id_usuario: int, id_evento: int):
+    existente = db.query(ParticipacionEventoModelo).filter(
+        ParticipacionEventoModelo.id_usuario == id_usuario,
+        ParticipacionEventoModelo.id_evento == id_evento,
+        ParticipacionEventoModelo.id_estado != ESTADO_ELIMINADO
+    ).first()
+    
+    if not existente:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La participacion evento no existe.")
+    
+    return existente
+    
 def buscar_usuario_participaciones_eventos(db: Session, id_usuario: int):
-    return db.query(ParticipacionEventoModelo).filter(ParticipacionEventoModelo.id_usuario == id_usuario).all()
+    existentes = db.query(ParticipacionEventoModelo).filter(
+        ParticipacionEventoModelo.id_usuario == id_usuario, 
+        ParticipacionEventoModelo.id_estado != ESTADO_ELIMINADO
+    ).all()
+    
+    if not existentes:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No existen participaciones eventos.")
+    
+    return existentes
 
 def listar_participaciones_en_evento(db: Session, id_evento: int):
-    return db.query(ParticipacionEventoModelo).filter(ParticipacionEventoModelo.id_evento == id_evento).all()
+    existentes = db.query(ParticipacionEventoModelo).filter(
+        ParticipacionEventoModelo.id_evento == id_evento,
+        ParticipacionEventoModelo.id_estado != ESTADO_ELIMINADO
+    ).all()
+    
+    if not existentes:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No existen participaciones eventos.")
+    
+    return existentes
 
 def actualizar_participacion_evento(db: Session, id_participacion_evento: int, participacion_evento: ParticipacionActualizarSchema):
     existente = buscar_participacion_evento(db, id_participacion_evento)
     
-    if not existente:
-        raise HTTPException(status_code=404, detail="El evento especificado no existe")
-    
-    auto_mapear(existente,participacion_evento, excluir=["id_participacion_evento"])
+    auto_mapear(existente,participacion_evento, excluir=["id_participacion_evento", "id_estado"])
     
     db.commit()
     db.refresh(existente)
@@ -63,9 +96,22 @@ def actualizar_participacion_evento(db: Session, id_participacion_evento: int, p
 def eliminar_participacion_proyecto(db: Session, id_participacion_evento: int):
     existente = buscar_participacion_evento(db, id_participacion_evento)
     
-    if not existente:
-        raise HTTPException(status_code=404, detail="El usuario especificado no existe")
+    existente.id_estado = ESTADO_ELIMINADO
     
-    db.delete(existente)
     db.commit()
+    db.refresh(existente)
     return {"detail": "Participacion evento eliminado"}
+
+def cambiar_estado(db: Session, id_participacion_evento: int, estado: CambiarEstado):
+    existente = db.query(ParticipacionEventoModelo).filter(
+        ParticipacionEventoModelo.id_participacion_evento == id_participacion_evento
+    ).first()
+    
+    if not existente:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La participacion evento no existe.")
+    
+    existente.id_estado = estado.id_estado_cambiar
+    
+    db.commit()
+    db.refresh(existente)
+    return existente

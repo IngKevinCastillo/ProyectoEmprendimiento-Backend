@@ -7,9 +7,10 @@ from Schemas.Usuarioschema import (
     UsuarioRespuestaSchema,
     LoginSchema,
     UsuarioActualizarSchema,
-    UsuarioCambiarContrasena,
-    CambiarEstado
+    UsuarioCambiarContrasena
 )
+
+from Schemas.EstadosSchema import CambiarEstado
 from Schemas.Autenticacionschema import Token
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoRespuestaSchema
 

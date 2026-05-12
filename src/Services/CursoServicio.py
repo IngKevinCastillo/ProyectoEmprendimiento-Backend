@@ -2,30 +2,47 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from Utils.Mapeadorutilidades import auto_mapear
 from Models.CursoModelo import CursoModelo
+from Schemas.EstadosSchema import CambiarEstado
 from Schemas.CursoSchema import CursoCrearSchema, CursoActualizarSchema
-eliminado = 6
+from typing import Final
+
+ESTADO_ELIMINADO: Final = 6
+ESTADO_ACTIVO: Final = 8
 
 def buscar_curso(db: Session, id_curso: int):
-    return db.query(CursoModelo).filter(CursoModelo.id_curso == id_curso).first()
+    existente = db.query(CursoModelo).filter(
+        CursoModelo.id_curso == id_curso,
+        CursoModelo.id_estado != ESTADO_ELIMINADO
+    ).first()
+    
+    if not existente:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El curso especificado no existe.")
+    
+    return existente
 
 def buscar_curso_por_nombre_curso(db: Session, nombre: str):
-    return db.query(CursoModelo).filter(CursoModelo.nombre_curso == nombre).first()
+    existente = db.query(CursoModelo).filter(
+        CursoModelo.nombre_curso == nombre,
+        CursoModelo.id_estado != ESTADO_ELIMINADO
+    ).first()
+    
+    if not existente:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El curso especificado no existe.")
+    
+    return existente
 
 def crear_curso(db: Session, curso: CursoCrearSchema):
     existente = buscar_curso_por_nombre_curso(db, curso.nombre_curso)
     
     if existente:
-        raise HTTPException(status_code=400, detail="Ya existe un curso con ese nombre")
-    
-    if not existente.id_estado:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El estado especificado no existe.")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Ya existe un curso con ese nombre")
     
     nuevo_curso = CursoModelo(
         nombre_curso=curso.nombre_curso,
         descripcion=curso.descripcion,
         fecha_inicio=curso.fecha_inicio,
         fecha_fin=curso.fecha_fin,
-        id_estado=curso.id_estado,
+        id_estado=ESTADO_ACTIVO
     )
     db.add(nuevo_curso)
     db.commit()
@@ -33,28 +50,43 @@ def crear_curso(db: Session, curso: CursoCrearSchema):
     return nuevo_curso
 
 def listar_cursos(db: Session):
-    return db.query(CursoModelo).all()
-
-def eliminar_curso(db:Session, id_curso: str):
-    existente = buscar_curso(db, int(id_curso))
-    if not existente:
-        raise HTTPException(status_code=404, detail="Curso no encontrado")
+    existentes = db.query(CursoModelo).filter(
+        CursoModelo.id_estado != ESTADO_ELIMINADO
+    ).all()
     
-    if(existente.id_estado == eliminado):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El curso no existe")
+    if not existentes:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No existen cursos.")
+    
+    return existentes
 
-    existente.id_estado = eliminado
+def eliminar_curso(db:Session, id_curso: int):
+    existente = buscar_curso(db, id_curso)
+
+    existente.id_estado = ESTADO_ELIMINADO
 
     db.commit()
     db.refresh(existente)
     return {"message": "Curso eliminado correctamente"}
 
-def actualizar_curso(db: Session, id_curso: str, curso_actualizado: CursoActualizarSchema):
-    existente = buscar_curso(db, int(id_curso))
-    if not existente:
-        raise HTTPException(status_code=404, detail="Curso no encontrado")
+def actualizar_curso(db: Session, id_curso: int, curso_actualizado: CursoActualizarSchema):
+    existente = buscar_curso(db, id_curso)
     
-    auto_mapear(existente, curso_actualizado, exclude={"id_curso"})
+    auto_mapear(existente, curso_actualizado, exclude={"id_curso", "id_estado"})
+    
+    db.commit()
+    db.refresh(existente)
+    return existente
+
+def cambiar_estado(db: Session, id_curso: int, estado: CambiarEstado):
+    existente = db.query(CursoModelo).filter(
+        CursoModelo.id_curso == id_curso
+    ).first()
+    
+    if not existente:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El curso especificado no existe.")
+    
+    existente.id_estado = estado.id_estado_cambiar
+    
     db.commit()
     db.refresh(existente)
     return existente

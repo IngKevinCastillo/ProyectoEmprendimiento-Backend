@@ -19,3 +19,4 @@ class AlianzaModelo(Base):
     fecha_registro_alianza = Column(Date, default=date.today)
 
     tipo_entidad = relationship("TipoEntidadesModelo", back_populates="alianzas")
+    estados = relationship("EstadosModelo", back_populates="alianzas")
