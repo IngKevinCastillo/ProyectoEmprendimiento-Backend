@@ -11,7 +11,7 @@ class ParticipacionEventoModelo(Base):
     id_participacion_evento = Column(Integer, primary_key=True, nullable=False)
     id_usuario = Column(Integer, ForeignKey("Usuario.id_usuario", ondelete="RESTRICT"), nullable=False)
     id_evento = Column(Integer, ForeignKey("Evento.id_evento", ondelete="RESTRICT"), nullable=False)
-    Id_rol = Column(Integer, ForeignKey("Roles.id_rol", ondelete="RESTRICT"), nullable=False)
+    id_rol = Column(Integer, ForeignKey("Roles.id_rol", ondelete="RESTRICT"), nullable=False)
     id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
     
     usuarios = relationship("UsuarioModelo", back_populates="participaciones")

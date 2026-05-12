@@ -18,7 +18,7 @@ def crear_participacion_evento(db: Session, participacion_evento: ParticipacionE
     if existente:
         raise HTTPException(status_code=400, detail="El usuario ya pertenece al proyecto")
     
-    if not BuscarRol(db, participacion_evento.Id_rol):
+    if not BuscarRol(db, participacion_evento.id_rol):
         raise HTTPException(status_code=400, detail="El rol especificado no existe")
     
     if not buscar_evento(db, participacion_evento.id_evento):
@@ -30,7 +30,7 @@ def crear_participacion_evento(db: Session, participacion_evento: ParticipacionE
     nuevo_registro = ParticipacionEventoModelo(
         id_usuario=participacion_evento.id_usuario,
         id_evento=participacion_evento.id_evento,
-        Id_rol=participacion_evento.Id_rol,
+        id_rol=participacion_evento.id_rol,
         id_estado=ESTADO_ACTIVO
     )
     
