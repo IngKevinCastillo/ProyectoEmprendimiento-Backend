@@ -7,7 +7,7 @@ class PalabraClaveCrearSchema(BaseModel):
     @field_validator("palabra")
     @classmethod
     def validar_palabra(cls, v: str) -> str:
-        return validar_string(v, 6, 50, "palabra")
+        return validar_string(v, 3, 50, "palabra")
     
 class PalabraClaveRespuestaSchema(BaseModel):
     id_palabra_clave: int
@@ -22,4 +22,4 @@ class PalabraClaveActualizarSchema(BaseModel):
     @field_validator("palabra")
     @classmethod
     def validar_palabra(cls, v: str) -> str:
-        return validar_string(v, 6, 50, "palabra")
+        return validar_string(v, 3, 50, "palabra")

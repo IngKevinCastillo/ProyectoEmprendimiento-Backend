@@ -47,6 +47,7 @@ class ProyectoBaseSchema(BaseModel):
     def validar_campos_opcionales(cls, v: Optional[str], info: ValidationInfo) -> Optional[str]:
         return validar_descripcion_utils(v, min_len=20, max_len=2000, campo=info.field_name)
 
+    
 
 class ProyectoCrearSchema(ProyectoBaseSchema):
     nombre_proyecto: str

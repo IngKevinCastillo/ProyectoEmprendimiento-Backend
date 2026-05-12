@@ -23,8 +23,9 @@ class SeguimientoBaseSchema(BaseModel):
         if v is None:
             return v
         v = v.strip()
-        if len(v) > 400 or not v:
-            raise ValueError("Las observaciones deben tener entre 1 y 400 caracteres.")
+        if not (20 <= len(v) <= 2000):
+            raise ValueError(
+                "Las observaciones deben tener entre 20 y 2000 caracteres.")
         return v
 
     @field_validator("avance_porcentaje")
@@ -32,8 +33,11 @@ class SeguimientoBaseSchema(BaseModel):
     def validar_avance(cls, v: Optional[Decimal]) -> Optional[Decimal]:
         if v is None:
             return v
-        if v < Decimal("0.00") or v > Decimal("100.00"):
+        v = Decimal(v)
+        if not (Decimal("0.00") <= v <= Decimal("100.00")):
             raise ValueError("El avance debe estar entre 0.00 y 100.00.")
+        if v.as_tuple().exponent < -2:
+            raise ValueError("El avance solo puede tener hasta 2 decimales.")
         return v
 
 class SeguimientoCrearSchema(SeguimientoBaseSchema):

@@ -1,8 +1,9 @@
-from pydantic import BaseModel, field_validator, model_validator, EmailStr, HttpUrl
+from pydantic import BaseModel, field_validator, model_validator, EmailStr, HttpUrl, ValidationInfo
 from datetime import date
 from typing import Optional
 from Schemas.EstadosSchema import EstadosRespuestaSchema
-from Utils.Validacionesutilidades import validar_nombre_utils, validar_telefono_utils
+from Utils.Validacionesutilidades import validar_nombre_utils, validar_telefono_utils, validar_id_entero
+import re
 
 class AlianzaBaseSchema(BaseModel):
     nombre_entidad: str
@@ -37,6 +38,28 @@ class AlianzaBaseSchema(BaseModel):
         if (self.fecha_inicio_alianza and self.fecha_fin_alianza and self.fecha_inicio_alianza > self.fecha_fin_alianza):
             raise ValueError("La fecha de inicio no puede ser mayor que la fecha de fin")
         return self
+
+    @field_validator("sitio_web_url")
+    @classmethod
+    def validar_sitio_web_url(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        v = v.strip()
+        if not (12 <= len(v) <= 255):
+            raise ValueError("La URL debe tener entre 12 y 255 caracteres.")
+        if " " in v:
+            raise ValueError("La URL no debe contener espacios.")
+        patron = re.compile(r"^https?://[^\s/$.?#].[^\s]*$", re.IGNORECASE)
+        if not patron.match(v):
+            raise ValueError("La URL debe ser válida y comenzar con http:// o https://.")
+        return v
+
+
+    @field_validator("id_tipo_entidad")
+    @classmethod
+    def validar_id_tipo_entidad(cls, v: int, info: ValidationInfo) -> int:
+        campo = info.field_name.replace("_", " ").capitalize()
+        return validar_id_entero(v, campo=campo)
 
 class AlianzaCrearSchema(AlianzaBaseSchema):
     pass
@@ -90,3 +113,23 @@ class AlianzaActualizarSchema(BaseModel):
             raise ValueError("La fecha de inicio no puede ser mayor que la fecha de fin")
         return self
     
+    @field_validator("sitio_web_url")
+    @classmethod
+    def validar_sitio_web_url(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        v = v.strip()
+        if not (12 <= len(v) <= 255):
+            raise ValueError("La URL debe tener entre 12 y 255 caracteres.")
+        if " " in v:
+            raise ValueError("La URL no debe contener espacios.")
+        patron = re.compile(r"^https?://[^\s/$.?#].[^\s]*$", re.IGNORECASE)
+        if not patron.match(v):
+            raise ValueError("La URL debe ser válida y comenzar con http:// o https://.")
+        return v
+
+    @field_validator("id_tipo_entidad")
+    @classmethod
+    def validar_id_tipo_entidad(cls, v: int, info: ValidationInfo) -> int:
+        campo = info.field_name.replace("_", " ").capitalize()
+        return validar_id_entero(v, campo=campo)

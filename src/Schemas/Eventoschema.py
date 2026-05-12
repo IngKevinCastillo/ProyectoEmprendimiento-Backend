@@ -43,7 +43,7 @@ class EventoCrearSchema(BaseModel):
     @field_validator("descripcion")
     @classmethod
     def validar_descripcion(cls, v: str) -> str:
-        return validar_descripcion_no_nulo(v, 6, 100, "Descripcion")
+        return validar_descripcion_no_nulo(v, 20, 2000, "Descripcion")
 
 class EventoRespuestaSchema(BaseModel):
     id_evento: int
@@ -94,4 +94,4 @@ class EventoActualizarSchema(BaseModel):
     @field_validator("descripcion")
     @classmethod
     def validar_descripcion(cls, v: str) -> str:
-        return validar_descripcion_no_nulo(v, 6, 100, "Descripcion")
+        return validar_descripcion_no_nulo(v, 20, 2000, "Descripcion")

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, field_validator
 from decimal import Decimal
 from Utils.Validacionesutilidades import validar_int, validar_nombre_utils
-
+import re
 
 class IndicadorCrearSchema(BaseModel):
     nombre_indicador: str
@@ -21,6 +21,11 @@ class IndicadorCrearSchema(BaseModel):
         v = v.strip()
         if not v:
             raise ValueError("La fórmula del indicador no puede estar vacía.")
+        if len(v) > 2000:
+            raise ValueError("La fórmula no puede superar los 2000 caracteres.")
+        patron = r"^[a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s+\-*/%=().,:<>!&|^_\[\]{}]+$"
+        if not re.match(patron, v):
+            raise ValueError("La fórmula contiene caracteres no permitidos.")
         return v
 
     @field_validator("meta", "valor_actual")

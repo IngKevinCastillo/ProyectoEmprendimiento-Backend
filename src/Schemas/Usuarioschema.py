@@ -106,8 +106,8 @@ class UsuarioCrearSchema(BaseModel):
     
     @field_validator("direccion")
     @classmethod
-    def validar_direccion(cls, v: str) -> str:
-        return validar_string_nulos(v, 6, 80, "direccion")
+    def validar_direccion(cls, v: Optional[str]) -> Optional[str]:
+        return validar_string_nulos(v, 0, 255, "direccion")
 
 
 class UsuarioRespuestaSchema(BaseModel):
