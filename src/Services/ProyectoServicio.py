@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Final
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from Schemas.ProyectoSchema import ProyectoCrearSchema, ProyectoActualizarSchema
@@ -7,21 +8,22 @@ from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
 from Services.EstadosServicio import BuscarEstadosPorNombre
 from Utils.Mapeadorutilidades import auto_mapear
 
+ESTADO_ELIMINADO: Final = "Eliminado"
+
 def buscarEmprendimiento(db: Session, id: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.id_proyecto == int(id), ProyectoModelo.id_estado != BuscarEstadosPorNombre(db, "Eliminado").id_estado).first()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_proyecto == int(id), ProyectoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado).first()
 
 def buscarEmprendimientoPorNombre(db: Session, nombre: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.nombre_proyecto == nombre, ProyectoModelo.id_estado != BuscarEstadosPorNombre(db, "Eliminado").id_estado).first()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.nombre_proyecto == nombre, ProyectoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado).first()
 
 def obtenerEmprendimientos(db: Session):
-    estado = BuscarEstadosPorNombre(db, "Eliminado")
-    return db.query(ProyectoModelo).filter(ProyectoModelo.id_estado != estado.id_estado).all()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado).all()
 
 def obtenerEmprendimientosPorEstado(db: Session, estado: str):
     return db.query(ProyectoModelo).filter(ProyectoModelo.id_estado == int(estado)).all()
 
 def obtenerEmprendimientosPorCategoria(db: Session, categoria: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.id_categoria == int(categoria), ProyectoModelo.id_estado != BuscarEstadosPorNombre(db, "Eliminado").id_estado).all()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_categoria == int(categoria), ProyectoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado).all()
 
 def crearEmprendimiento(db: Session, emprendimiento: ProyectoCrearSchema):
     existente = buscarEmprendimientoPorNombre(db, emprendimiento.nombre_proyecto)
@@ -44,7 +46,7 @@ def eliminarEmprendimiento(db: Session, id: int):
     if not emprendimiento:
         raise HTTPException(status_code=404, detail="No se encontró el emprendimiento")
 
-    estado = BuscarEstadosPorNombre(db, "Eliminado")
+    estado = BuscarEstadosPorNombre(db, ESTADO_ELIMINADO)
     if not estado:
         raise HTTPException(status_code=404, detail="No se encontró el estado 'Eliminado' en la base de datos")
 
@@ -58,12 +60,6 @@ def actualizarEmprendimiento(db: Session, emprendimiento: ProyectoActualizarSche
 
     if not existente:
         raise HTTPException(status_code=404, detail="No se encontró el emprendimiento")
-    
-    if existente.id_estado is None:
-        raise HTTPException(status_code=400, detail="El emprendimiento debe estar asociado a un estado")
-    
-    if existente.id_categoria is None:
-        raise HTTPException(status_code=400, detail="El emprendimiento debe estar asociado a una categoría")
     
     datos_a_actualizar = emprendimiento.model_dump(exclude_unset=True)
 

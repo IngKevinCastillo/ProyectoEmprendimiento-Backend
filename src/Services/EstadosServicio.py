@@ -6,7 +6,11 @@ def BuscarEstados(db: Session, id_estado: str):
     return db.query(EstadosModelo).filter(EstadosModelo.id_estado == int(id_estado)).first()
 
 def BuscarEstadosPorNombre(db: Session, nombre: str):
-    return db.query(EstadosModelo).filter(EstadosModelo.nombre == nombre).first()
+    estado = db.query(EstadosModelo).filter(EstadosModelo.nombre == nombre).first()
+    if not estado:
+        raise HTTPException(status_code=404, detail=f"No se encontró el estado con nombre '{nombre}'")
+    return estado
+    # return db.query(EstadosModelo).filter(EstadosModelo.nombre == nombre).first()
 
 def ObtenerEstados(db: Session):
     return db.query(EstadosModelo).all()
