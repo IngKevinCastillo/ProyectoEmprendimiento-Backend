@@ -32,7 +32,7 @@ async def obtener_curso(
     curso = buscar_curso_controlador(db, id_curso)
     return curso
 
-@router.get("/nombre{nombre}", response_model=CursoRespuestaSchema, status_code=status.HTTP_200_OK)
+@router.get("/nombre/{nombre}", response_model=CursoRespuestaSchema, status_code=status.HTTP_200_OK)
 async def obtener_curso_nombre(
     nombre: str, 
     db: Session = Depends(get_db)

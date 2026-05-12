@@ -100,7 +100,7 @@ def actualizar_evento( db: Session, id_evento: int, evento: any):
 
     db.commit()
     db.refresh(existente)
-    return 
+    return existente
 
 def cambiar_estado(db: Session, id_evento: int, estado: CambiarEstado):
     existente = db.query(EventoModelo).filter(
