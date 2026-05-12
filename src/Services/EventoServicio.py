@@ -11,14 +11,6 @@ ESTADO_ELIMINADO: Final = 6
 ESTADO_ACTIVO: Final = 8
 
 def crear_evento(db: Session, evento: EventoCrearSchema):
-    existente = buscar_evento_por_nombre(db, evento.nombre_evento)
-    
-    if existente:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="El evento especificado ya existe.")
-    
-    if(existente.id_estado == ESTADO_ELIMINADO):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El estado especificado no existe.")
-    
     nuevo_evento = EventoModelo(
         nombre_evento=evento.nombre_evento,
         tipo_evento=evento.tipo_evento,

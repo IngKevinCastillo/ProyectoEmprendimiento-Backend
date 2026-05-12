@@ -12,11 +12,7 @@ ESTADO_ELIMINADO: Final = 6
 ESTADO_ACTIVO: Final = 8
 
 def crear_convocatoria(db: Session, convocatoria: ConvocatoriasCrearSchema):
-    existente = buscar_convocatoria_titulo(db, convocatoria.titulo_convocatoria)
     proyecto = buscarEmprendimiento(db, convocatoria.id_proyecto)
-    
-    if existente:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="La convocatoria especificada ya existe.")
     
     if not proyecto or proyecto.id_estado != ESTADO_ELIMINADO:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El proyecto especificado no existe.")
