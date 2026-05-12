@@ -9,8 +9,10 @@ from Schemas.Usuarioschema import UsuarioCrearSchema
 from Core.Seguridad import CrearTokenAcceso, VerificarContrasena
 from Services.RolServicio import BuscarRol
 from Services.TipoDocumentoServicio import BuscarTipoDocumento
+from typing import Final
 
 contexto_password = CryptContext(schemes=["bcrypt"], deprecated="auto")
+ESTADO_ACTIVO: Final = 8
 
 def IniciarSesion(datos: UsuarioCrearSchema, db: Session) -> dict:
     usuario = buscar_usuario_por_correo(db, datos.correo)
@@ -62,7 +64,7 @@ def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
         "primer_nombre", "segundo_nombre",
         "primer_apellido", "segundo_apellido",
         "correo", "contrasena",
-        "id_rol", "estado",
+        "id_rol",
         "fecha_nacimiento", "ubicacion_semestral",
         "sexo", "id_programa", "id_tipodocumento",
         "numero_documento", "telefono", "id_facultad", "id_sede",
@@ -74,6 +76,7 @@ def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
     nuevo_usuario = UsuarioModelo(**data)
     nuevo_usuario.fecha_registro = datetime.now()
     nuevo_usuario.contrasena = HashearContrasena(nuevo_usuario.contrasena)
+    nuevo_usuario.id_estado = ESTADO_ACTIVO
     db.add(nuevo_usuario)
     db.commit()
     db.refresh(nuevo_usuario)
