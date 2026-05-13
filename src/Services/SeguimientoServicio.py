@@ -6,34 +6,35 @@ from fastapi import HTTPException
 from Models.SeguimientoModelo import SeguimientoModelo
 from Schemas.SeguimientoSchema import SeguimientoCrearSchema, SeguimientoRespuestaSchema, SeguimientoActualizarSchema
 from Services.EstadosServicio import BuscarEstadosPorNombre
+from Core.Cache import obtener_id_estado
 from Utils.Mapeadorutilidades import auto_mapear
 
 ESTADO_ELIMINADO: Final = "Eliminado"
 
 def BuscarSeguimiento(db: Session, id: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_seguimiento_emprendimiento == int(id), SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado).first()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_seguimiento_emprendimiento == int(id), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).first()
 
 def BuscarUltimoSeguimientoPorProyecto(db: Session, id_proyecto: int):
     return db.query(SeguimientoModelo)\
-        .filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado)\
+        .filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO))\
         .order_by(SeguimientoModelo.fecha_registro.desc())\
         .first()
 
 def ObtenerSeguimientos(db: Session):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
 
 def ObtenerSeguimientosPorProyecto(db: Session, id_proyecto: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
 
 def ObtenerSeguimientosPorEstado(db: Session, id_estado: str):
     return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado == int(id_estado)).all()
 
 def ObtenerSeguimientoPorUsuarioResponsable(db: Session, id: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_usuario_responsable == int(id), SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_usuario_responsable == int(id), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
 
 def ObtenerSeguimientoPorFecha(db: Session, fecha: str):
     fecha_dt = datetime.strptime(fecha, "%d-%m-%Y").date()
-    return db.query(SeguimientoModelo).filter(cast(SeguimientoModelo.fecha_registro, Date) == fecha_dt, SeguimientoModelo.id_estado != BuscarEstadosPorNombre(db, ESTADO_ELIMINADO).id_estado).all()
+    return db.query(SeguimientoModelo).filter(cast(SeguimientoModelo.fecha_registro, Date) == fecha_dt, SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
 
 def CrearSeguimiento(db: Session, seguimiento: SeguimientoCrearSchema) -> SeguimientoModelo:
 
@@ -59,11 +60,11 @@ def EliminarSeguimiento(db: Session, id: int):
     if not seguimiento:
         raise HTTPException(status_code=404, detail="No se encontró el seguimiento")
 
-    estado = BuscarEstadosPorNombre(db, ESTADO_ELIMINADO)
+    estado = obtener_id_estado(db, ESTADO_ELIMINADO)
     if not estado:
         raise HTTPException(status_code=404, detail="No se encontró el estado 'Eliminado' en la base de datos")
     
-    seguimiento.id_estado = estado.id_estado
+    seguimiento.id_estado = estado
     db.commit()
     db.refresh(seguimiento)
     return {"detail": "Seguimiento eliminado"}

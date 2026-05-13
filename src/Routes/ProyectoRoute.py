@@ -5,6 +5,7 @@ from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual
 from Controllers.ProyectoControlador import (
     crear_emprendimiento_controlador,
+    crear_emprendimiento_con_vinculo_controlador,
     obtener_emprendimientos_controlador,
     obtener_emprendimientos_por_estado_controlador,
     obtener_emprendimientos_por_categoria_controlador,
@@ -31,6 +32,16 @@ async def crear_proyecto(
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="No fue posible crear el proyecto")
     return proyecto
 
+@router.post("/con-vinculo/", response_model=ProyectoRespuestaSchema, status_code=status.HTTP_201_CREATED)
+async def crear_proyecto_con_vinculo(
+    datos: ProyectoCrearSchema,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    proyecto = crear_emprendimiento_con_vinculo_controlador(db, datos, usuario_actual.id_usuario)
+    if not proyecto:
+        raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="No fue posible crear el proyecto")
+    return proyecto
 
 @router.get("/", response_model=list[ProyectoRespuestaSchema])
 async def listar_proyectos(
