@@ -1,9 +1,12 @@
 from sqlalchemy.orm import Session
 from Schemas.ProyectoSchema import ProyectoCrearSchema, ProyectoActualizarSchema
-from Services.ProyectoServicio import crearEmprendimiento, buscarEmprendimiento, obtenerEmprendimientos, obtenerEmprendimientosPorEstado, eliminarEmprendimiento, actualizarEmprendimiento, buscarEmprendimientoPorNombre, obtenerEmprendimientosPorCategoria
+from Services.ProyectoServicio import crearEmprendimiento, buscarEmprendimiento, obtenerEmprendimientos, obtenerEmprendimientosPorEstado, eliminarEmprendimiento, actualizarEmprendimiento, buscarEmprendimientoPorNombre, obtenerEmprendimientosPorCategoria, crearEmprendimientoConVinculo
 
 def crear_emprendimiento_controlador(db: Session, emprendimiento: ProyectoCrearSchema):
     return crearEmprendimiento(db, emprendimiento)
+
+def crear_emprendimiento_con_vinculo_controlador(db: Session, emprendimiento: ProyectoCrearSchema, id_usuario: int):
+    return crearEmprendimientoConVinculo(db, emprendimiento, id_usuario)
 
 def obtener_emprendimientos_controlador(db: Session):
     return obtenerEmprendimientos(db)

@@ -1,8 +1,13 @@
+from typing import Final
 from sqlalchemy.orm import Session
 from Schemas.ProyectoPalabraClaveSchema import ProyectoPalabraClaveCrearSchema, ProyectoPalabraClaveActualizarSchema
 from Models.ProyectoPalabraClaveModelo import ProyectoPalabraClaveModelo
 from fastapi import HTTPException, status
 from Utils.Mapeadorutilidades import auto_mapear
+from Models.ProyectoModelo import ProyectoModelo
+from Core.Cache import obtener_id_estado
+
+ESTADO_ELIMINADO: Final = "Eliminado"
 
 def crear_proyecto_palabra_clave(db: Session, proyecto_palabra_clave: ProyectoPalabraClaveCrearSchema):
     existentes = listar_proyecto_palabra_clave(db, proyecto_palabra_clave.id_proyecto)
@@ -21,10 +26,12 @@ def crear_proyecto_palabra_clave(db: Session, proyecto_palabra_clave: ProyectoPa
     return proyecto_palabra_clave_nuevo
 
 def buscar_proyecto_palabra_clave(db: Session, id_proyecto_palabra_clave: int):
-    return db.query(ProyectoPalabraClaveModelo).filter(ProyectoPalabraClaveModelo.id_proyecto_palabra_clave == id_proyecto_palabra_clave).first()
+    return db.query(ProyectoPalabraClaveModelo).join(
+        ProyectoModelo, ProyectoPalabraClaveModelo.id_proyecto == ProyectoModelo.id_proyecto).filter(ProyectoPalabraClaveModelo.id_proyecto_palabra_clave == id_proyecto_palabra_clave, ProyectoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).first()
 
 def listar_proyecto_palabra_clave(db: Session, id_proyecto: int):
-    return db.query(ProyectoPalabraClaveModelo).filter(ProyectoPalabraClaveModelo.id_proyecto == id_proyecto).all()
+    return db.query(ProyectoPalabraClaveModelo).join(
+        ProyectoModelo, ProyectoPalabraClaveModelo.id_proyecto == ProyectoModelo.id_proyecto).filter(ProyectoPalabraClaveModelo.id_proyecto == id_proyecto,ProyectoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
 
 def actualizar_proyecto_palabra_clave(db: Session, id_proyecto_palabra_clave: int, proyecto_palabra_clave: ProyectoPalabraClaveActualizarSchema):
     existente = buscar_proyecto_palabra_clave(db, id_proyecto_palabra_clave)
