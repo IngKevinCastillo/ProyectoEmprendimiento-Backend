@@ -10,6 +10,8 @@ from Core.Seguridad import CrearTokenAcceso, VerificarContrasena
 from Services.RolServicio import BuscarRol
 from Services.TipoDocumentoServicio import BuscarTipoDocumento
 from typing import Final
+from Services.SupabaseClienteServicio import supabase
+from gotrue.errors import AuthApiError
 
 contexto_password = CryptContext(schemes=["bcrypt"], deprecated="auto")
 ESTADO_ACTIVO: Final = 8
@@ -81,3 +83,14 @@ def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
     db.commit()
     db.refresh(nuevo_usuario)
     return nuevo_usuario
+
+def crear_usuario_supabase_service(correo: str, contrasena: str):
+    try:
+        contrasena_hasheada: str = HashearContrasena(contrasena)
+        supabase.auth.admin.create_user({
+            "email": correo,
+            "password": contrasena_hasheada,
+            "email_confirm": True
+        })
+    except AuthApiError as e:
+        raise HTTPException(status_code=e.status, detail=f"Error al crear en la nube: {str(e)}")

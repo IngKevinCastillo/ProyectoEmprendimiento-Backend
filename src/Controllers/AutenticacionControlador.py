@@ -1,9 +1,11 @@
-from Services.AutenticacionServicio import CrearUsuario, IniciarSesion, CambiarContrasena
+from Services.AutenticacionServicio import CrearUsuario, IniciarSesion, CambiarContrasena, crear_usuario_supabase_service
 from sqlalchemy.orm import Session
 from Schemas.Usuarioschema import UsuarioCrearSchema
 
 def CrearUsuarioControlador(db: Session, usuario: UsuarioCrearSchema):
-    return CrearUsuario(db, usuario)
+    nuevo_usuario = CrearUsuario(db, usuario)
+    crear_usuario_supabase_service(usuario.correo, usuario.contrasena)
+    return nuevo_usuario
 
 def IniciarSesionControlador(db: Session, datos: UsuarioCrearSchema):
     return IniciarSesion(datos, db)
