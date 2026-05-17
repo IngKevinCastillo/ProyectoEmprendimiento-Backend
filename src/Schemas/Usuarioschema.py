@@ -140,7 +140,6 @@ class UsuarioActualizarSchema(BaseModel):
     segundo_nombre: Optional[str]
     primer_apellido: str
     segundo_apellido: str
-    correo: str
     fecha_nacimiento: date
     ubicacion_semestral: Optional[int] = None
     id_rol: int
@@ -163,6 +162,9 @@ class UsuarioCambiarContrasena(BaseModel):
     @classmethod
     def validar_contrasena(cls, v: str) -> str:
         return validar_contrasena_utils(v)
+    
+class UsuarioCambiarCorreo(BaseModel):
+    correo_nuevo: str
 
 class LoginSchema(BaseModel):
     correo: EmailStr

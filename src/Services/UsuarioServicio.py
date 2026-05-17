@@ -2,10 +2,10 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from Models.UsuarioModelo import UsuarioModelo
 from Utils.Mapeadorutilidades import auto_mapear
-from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
 from Schemas.Usuarioschema import UsuarioActualizarSchema
 from Schemas.EstadosSchema import CambiarEstado
 from typing import Final
+from Services.SupabaseClienteServicio import supabase
 
 ESTADO_ELIMINADO: Final = 6
 
@@ -76,8 +76,55 @@ def actualizar_usuario_documento(db: Session, usuario: UsuarioActualizarSchema, 
     if(existente.id_tipodocumento is None):
         raise HTTPException(status_code=400, detail="El usuario debe estar asociado a un tipo de documento")
     
-    auto_mapear(existente, usuario, excluir=["id_usuario", "contrasena"])
+    auto_mapear(existente, usuario, excluir=["id_usuario", "contrasena", "correo"])
 
     db.commit()
     db.refresh(existente)
+    return 
+
+def CambiarContrasena(db: Session, correo: str, contrasena_anterior: str, contrasena_nueva: str):
+    from Core.Seguridad import HashearContrasena, VerificarContrasena
+    existente = buscar_usuario_por_correo(db, correo)
+    if not existente:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    if not VerificarContrasena(contrasena_anterior, existente.contrasena):
+        raise HTTPException(status_code=401, detail="Credenciales incorrectas. No se puede cambiar la contraseña")
+
+    existente.contrasena = HashearContrasena(contrasena_nueva)
+    db.commit()
+    db.refresh(existente)
+
+    try:
+        usuario_supabase = supabase.auth.admin.list_users()
+        usuario = next((u for u in usuario_supabase if u.email == correo), None)
+        if usuario:
+            supabase.auth.admin.update_user_by_id(
+                usuario.id,
+                {"password": contrasena_nueva}
+            )
+    except Exception as e:
+        raise Exception(f"Error al actualizar en la nube: {str(e)}")
+
+    return 
+
+def CambiarCorreo(db: Session, correo_actual: str, correo_nuevo: str):
+    existente = buscar_usuario_por_correo(db, correo_actual)
+    if not existente:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    existente.correo = correo_nuevo
+
+    db.commit()
+    db.refresh(existente)
+
+    try:
+        usuario_supabase = supabase.auth.admin.list_users()
+        usuario = next((u for u in usuario_supabase if u.email == correo_actual), None)
+        if usuario:
+            supabase.auth.admin.update_user_by_id(
+                usuario.id,
+                {"email": correo_nuevo}
+            )
+    except Exception as e:
+        raise Exception(f"Error al actualizar en la nube: {str(e)}")
     return existente

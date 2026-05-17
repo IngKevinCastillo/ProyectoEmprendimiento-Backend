@@ -7,7 +7,8 @@ from Schemas.Usuarioschema import (
     UsuarioRespuestaSchema,
     LoginSchema,
     UsuarioActualizarSchema,
-    UsuarioCambiarContrasena
+    UsuarioCambiarContrasena,
+    UsuarioCambiarCorreo
 )
 
 from Schemas.EstadosSchema import CambiarEstado
@@ -24,7 +25,9 @@ from Controllers.UsuarioControlador import (
     BuscarUsuarioControlador,
     CambiarEstadoControlador,
     BuscarUsuarioPorDocumentoControlador,
-    BuscarUsuarioPorCorreoControlador
+    BuscarUsuarioPorCorreoControlador,
+    CambiarCorreoControlador,
+    CambiarContrasenaControlador
 )
 
 from Controllers.AutenticacionControlador import (
@@ -118,20 +121,36 @@ async def cambiar_estado(
     return nuevo_valor
 
 
-@router.put("/cambiarcontrasena", response_model=UsuarioRespuestaSchema)
+@router.put("/cambiar-contrasena/{correo}", response_model=UsuarioRespuestaSchema)
 async def cambiar_contrasena(
+    correo: str,
     datos: UsuarioCambiarContrasena,
     db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
 ):
-    nuevo_valor = CambiarContrasena(
+    nuevo_valor = CambiarContrasenaControlador(
         db,
-        usuario_actual.id_usuario,
+        correo,
         datos.contasena_anterior,
         datos.contrasena_nueva
     )
     if not nuevo_valor:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al cambiar la contraseña")
+    return nuevo_valor
+
+
+@router.put("/cambiar-correo/yo", response_model=UsuarioRespuestaSchema)
+async def cambiar_correo(
+    datos: UsuarioCambiarCorreo,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    nuevo_valor = CambiarCorreoControlador(
+        db,
+        usuario_actual.correo,
+        datos.correo_nuevo
+    )
+    if not nuevo_valor:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Error al cambiar la correo")
     return nuevo_valor
 
 

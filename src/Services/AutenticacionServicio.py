@@ -4,7 +4,7 @@ from passlib.context import CryptContext
 from fastapi import HTTPException, status
 from Models.UsuarioModelo import UsuarioModelo
 from Core.Seguridad import HashearContrasena
-from Services.UsuarioServicio import buscar_usuario_por_documento, buscar_usuario_por_correo, buscar_usuario, buscar_telefono
+from Services.UsuarioServicio import buscar_usuario_por_documento, buscar_usuario_por_correo, buscar_telefono
 from Schemas.Usuarioschema import UsuarioCrearSchema
 from Core.Seguridad import CrearTokenAcceso, VerificarContrasena
 from Services.RolServicio import BuscarRol
@@ -22,19 +22,6 @@ def IniciarSesion(datos: UsuarioCrearSchema, db: Session) -> dict:
         raise HTTPException(status_code=401, detail="Credenciales incorrectas")
     token = CrearTokenAcceso({"sub": str(usuario.id_usuario)})
     return {"access_token": token, "token_type": "bearer"}
-
-def CambiarContrasena(db: Session, id_usuario: int, contasena_anterior: str, contrasena_nueva: str):
-    existente = buscar_usuario(db, id_usuario)
-    if not existente:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    if not VerificarContrasena(contasena_anterior, existente.contrasena):
-        raise HTTPException(status_code=401, detail="Credenciales incorrectas. No se puede cambiar la contraseña")
-
-    existente.contrasena = HashearContrasena(contrasena_nueva)
-    
-    db.commit()
-    db.refresh(existente)
-    return existente
 
 def CrearUsuario(db: Session, usuario: UsuarioCrearSchema):
     existente = buscar_usuario_por_documento(db, int(usuario.numero_documento))
