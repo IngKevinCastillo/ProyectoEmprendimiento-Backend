@@ -1,8 +1,8 @@
 from pydantic import BaseModel, EmailStr
 
-class EnviarOTPSchema(BaseModel):
+class OTPEnviarSchema(BaseModel):
     correo: EmailStr
 
-class VerificarOTPSchema(BaseModel):
+class OTPVerificarSchema(BaseModel):
     correo: EmailStr
-    token: str
+    codigo: str

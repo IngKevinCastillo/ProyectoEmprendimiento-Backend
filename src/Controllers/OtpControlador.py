@@ -1,7 +1,8 @@
+from sqlalchemy.orm import Session
 from Services.OtpServicio import enviar_otp_servicio, verificar_otp_servicio
 
-def EnviarOTPControlador(correo: str):
-    return enviar_otp_servicio(correo)
+async def enviar_otp_controlador(correo: str, db: Session):
+    return await enviar_otp_servicio(correo, db)
 
-def VerificarOTPControlador(correo: str, token: str) -> bool:
-    return verificar_otp_servicio(correo, token)
+def verificar_otp_controlador(correo: str, codigo: str, db: Session):
+    return verificar_otp_servicio(correo, codigo, db)
