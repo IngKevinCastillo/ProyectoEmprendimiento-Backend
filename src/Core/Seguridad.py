@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Security
 from jose import jwt, JWTError
 from fastapi import Depends, HTTPException
 from Core.Configuracion import settings , Settings
@@ -12,7 +13,8 @@ from fastapi import status
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-esquema_oauth2 = OAuth2PasswordBearer(tokenUrl="/usuarios/login")
+# esquema_oauth2 = OAuth2PasswordBearer(tokenUrl="/usuarios/login")
+esquema_oauth2 = HTTPBearer()
 usuarioAdmin = 2
 
 def HashearContrasena(contrasena: str) -> str:
@@ -53,19 +55,35 @@ def CrearTokenAcceso(datos: dict):
 
     return jwt_codificado
 
+# def obtener_usuario_actual(
+#     token: str = Depends(esquema_oauth2),
+#     db: Session = Depends(get_db)
+# ):
+#     try:
+#         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+#         id_usuario = int(payload.get("sub"))
+#     except (JWTError, TypeError):
+#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+
+#     usuario = BuscarUsuarioControlador(db, id_usuario)
+#     if not usuario:
+#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+#     return usuario
+
 def obtener_usuario_actual(
-    token: str = Depends(esquema_oauth2),
+    credentials: HTTPAuthorizationCredentials = Security(esquema_oauth2),
     db: Session = Depends(get_db)
 ):
+    token = credentials.credentials  # extrae el token del header
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         id_usuario = int(payload.get("sub"))
     except (JWTError, TypeError):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
+        raise HTTPException(status_code=401, detail="Token inválido")
 
     usuario = BuscarUsuarioControlador(db, id_usuario)
     if not usuario:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return usuario
 
 
