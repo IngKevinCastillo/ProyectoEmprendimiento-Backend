@@ -80,7 +80,7 @@ def actualizar_usuario_documento(db: Session, usuario: UsuarioActualizarSchema, 
 
     db.commit()
     db.refresh(existente)
-    return 
+    return existente
 
 def CambiarContrasena(db: Session, correo: str, contrasena_anterior: str, contrasena_nueva: str):
     from Core.Seguridad import HashearContrasena, VerificarContrasena
@@ -105,7 +105,30 @@ def CambiarContrasena(db: Session, correo: str, contrasena_anterior: str, contra
     except Exception as e:
         raise Exception(f"Error al actualizar en la nube: {str(e)}")
 
-    return 
+    return existente
+
+def RecuperarContrasena(db: Session, correo: str, contrasena_nueva: str):
+    from Core.Seguridad import HashearContrasena
+    existente = buscar_usuario_por_correo(db, correo)
+    if not existente:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    existente.contrasena = HashearContrasena(contrasena_nueva)
+    db.commit()
+    db.refresh(existente)
+
+    try:
+        usuario_supabase = supabase.auth.admin.list_users()
+        usuario = next((u for u in usuario_supabase if u.email == correo), None)
+        if usuario:
+            supabase.auth.admin.update_user_by_id(
+                usuario.id,
+                {"password": contrasena_nueva}
+            )
+    except Exception as e:
+        raise Exception(f"Error al actualizar en la nube: {str(e)}")
+
+    return existente
 
 def CambiarCorreo(db: Session, correo_actual: str, correo_nuevo: str):
     existente = buscar_usuario_por_correo(db, correo_actual)

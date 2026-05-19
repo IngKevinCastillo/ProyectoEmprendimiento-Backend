@@ -143,7 +143,6 @@ class UsuarioActualizarSchema(BaseModel):
     fecha_nacimiento: date
     ubicacion_semestral: Optional[int] = None
     id_rol: int
-    fecha_registro: datetime
     sexo: str
     id_programa: Optional[int] = None
     id_tipodocumento: int
@@ -156,6 +155,15 @@ class UsuarioActualizarSchema(BaseModel):
 
 class UsuarioCambiarContrasena(BaseModel):
     contrasena_anterior: str
+    contrasena_nueva: str
+    
+    @field_validator("contrasena_nueva")
+    @classmethod
+    def validar_contrasena(cls, v: str) -> str:
+        return validar_contrasena_utils(v)
+    
+class UsuarioRecuperarContrasena(BaseModel):
+    correo: str
     contrasena_nueva: str
     
     @field_validator("contrasena_nueva")
