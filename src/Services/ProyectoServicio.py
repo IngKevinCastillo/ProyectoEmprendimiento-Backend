@@ -27,6 +27,12 @@ def obtenerEmprendimientosPorEstado(db: Session, estado: str):
 def obtenerEmprendimientosPorCategoria(db: Session, categoria: str):
     return db.query(ProyectoModelo).filter(ProyectoModelo.id_categoria == int(categoria), ProyectoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
 
+def obtenerEmprendimientosPorTipoProyecto(db: Session, tipo_proyecto: str):
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_tipo_proyecto == int(tipo_proyecto), ProyectoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
+
+def obtenerEmprendimientosPorEscala(db: Session, escala: str):
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_escala == int(escala), ProyectoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
+
 def crearEmprendimiento(db: Session, emprendimiento: ProyectoCrearSchema):
     existente = buscarEmprendimientoPorNombre(db, emprendimiento.nombre_proyecto)
 

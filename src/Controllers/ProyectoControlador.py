@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from Schemas.ProyectoSchema import ProyectoCrearSchema, ProyectoActualizarSchema
-from Services.ProyectoServicio import crearEmprendimiento, buscarEmprendimiento, obtenerEmprendimientos, obtenerEmprendimientosPorEstado, eliminarEmprendimiento, actualizarEmprendimiento, buscarEmprendimientoPorNombre, obtenerEmprendimientosPorCategoria, crearEmprendimientoConVinculo
+from Services.ProyectoServicio import crearEmprendimiento, buscarEmprendimiento, obtenerEmprendimientos, obtenerEmprendimientosPorEstado, eliminarEmprendimiento, actualizarEmprendimiento, buscarEmprendimientoPorNombre, obtenerEmprendimientosPorCategoria, crearEmprendimientoConVinculo, obtenerEmprendimientosPorTipoProyecto, obtenerEmprendimientosPorEscala
 
 def crear_emprendimiento_controlador(db: Session, emprendimiento: ProyectoCrearSchema):
     return crearEmprendimiento(db, emprendimiento)
@@ -16,6 +16,12 @@ def obtener_emprendimientos_por_estado_controlador(db: Session, id_estado: int):
 
 def obtener_emprendimientos_por_categoria_controlador(db: Session, id_categoria: int):
     return obtenerEmprendimientosPorCategoria(db, id_categoria)
+
+def obtener_emprendimientos_por_tipo_proyecto_controlador(db: Session, id_tipo_proyecto: int):
+    return obtenerEmprendimientosPorTipoProyecto(db, id_tipo_proyecto)
+
+def obtener_emprendimientos_por_escala_controlador(db: Session, id_escala: int):
+    return obtenerEmprendimientosPorEscala(db, id_escala)
 
 def buscar_emprendimiento_controlador(db: Session, id_emprendimiento: str):
     return buscarEmprendimiento(db, id_emprendimiento)

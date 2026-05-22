@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from Schemas.SeguimientoSchema import SeguimientoCrearSchema, SeguimientoRespuestaSchema, SeguimientoActualizarSchema
-from Services.SeguimientoServicio import CrearSeguimiento, BuscarSeguimiento, ObtenerSeguimientosPorProyecto, ObtenerSeguimientoPorUsuarioResponsable, EliminarSeguimiento, ActualizarSeguimiento, ObtenerSeguimientos, ObtenerSeguimientosPorEstado, BuscarUltimoSeguimientoPorProyecto
+from Services.SeguimientoServicio import CrearSeguimiento, BuscarSeguimiento, ObtenerSeguimientosPorProyecto, ObtenerSeguimientoPorUsuarioResponsable, EliminarSeguimiento, ActualizarSeguimiento, ObtenerSeguimientos, ObtenerSeguimientosPorEstado, BuscarUltimoSeguimientoPorProyecto, ObtenerSeguimientosPorMesas
 
 def crear_seguimiento_controlador(db: Session, seguimiento: SeguimientoCrearSchema):
     return CrearSeguimiento(db, seguimiento)
@@ -16,6 +16,9 @@ def obtener_seguimiento_por_usuario_responsable_controlador(db: Session, id_usua
 
 def obtener_seguimientos_por_proyecto_controlador(db: Session, id_proyecto: str):
     return ObtenerSeguimientosPorProyecto(db, id_proyecto)
+
+def obtener_seguimientos_por_mesas_controlador(db: Session, id_mesas: str):
+    return ObtenerSeguimientosPorMesas(db, id_mesas)
 
 def buscar_seguimiento_controlador(db: Session, id_seguimiento: str):
     return BuscarSeguimiento(db, id_seguimiento)

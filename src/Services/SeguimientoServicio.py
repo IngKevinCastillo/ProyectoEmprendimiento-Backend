@@ -36,20 +36,18 @@ def ObtenerSeguimientoPorFecha(db: Session, fecha: str):
     fecha_dt = datetime.strptime(fecha, "%d-%m-%Y").date()
     return db.query(SeguimientoModelo).filter(cast(SeguimientoModelo.fecha_registro, Date) == fecha_dt, SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
 
+def ObtenerSeguimientosPorMesas(db: Session, id_mesas: str):
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_mesas == int(id_mesas), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
+
 def CrearSeguimiento(db: Session, seguimiento: SeguimientoCrearSchema) -> SeguimientoModelo:
 
     if seguimiento.id_proyecto is None:
         raise HTTPException(status_code=400, detail="El id_proyecto es obligatorio")
 
-    nuevo_seguimiento = SeguimientoModelo(
-        id_proyecto=seguimiento.id_proyecto,
-        observaciones=seguimiento.observaciones,
-        id_usuario_responsable=seguimiento.id_usuario_responsable,
-        id_estado=seguimiento.id_estado,
-        avance_porcentaje=seguimiento.avance_porcentaje,
-        fecha_registro=datetime.now(timezone.utc)
-        # fecha_registro se asigna automáticamente (default=func.now() en el modelo)
-    )
+    nuevo_seguimiento = SeguimientoModelo()
+    auto_mapear(nuevo_seguimiento, seguimiento, excluir=["id_seguimiento_emprendimiento"])
+    nuevo_seguimiento.fecha_registro = datetime.now(timezone.utc)
+    
     db.add(nuevo_seguimiento)
     db.commit()
     db.refresh(nuevo_seguimiento)
