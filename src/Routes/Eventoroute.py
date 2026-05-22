@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from Schemas.Eventoschema import EventoCrearSchema, EventoRespuestaSchema, EventoActualizarSchema, ConsultarFechas
 from Configs.bd import get_db
@@ -6,6 +6,8 @@ from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from datetime import datetime
 from Controllers.EventoControlador import cambiar_estado_controlador, buscar_evento_por_rango_fechas_controlador, buscar_eventos_por_estados, crear_evento_controlador, buscar_evento_controlador, buscar_evento_por_fecha_controlador, buscar_evento_por_nombre_controlador, buscar_evento_por_lugar_controlador, eliminar_evento_controlador, actualizar_evento_controlador, listar_eventos_controlador
 from Schemas.EstadosSchema import CambiarEstado
+from Controllers import FotosControlador
+import json
 
 router = APIRouter(
     prefix="/eventos",
@@ -15,12 +17,24 @@ router = APIRouter(
 
 @router.post("/", response_model=EventoRespuestaSchema, status_code=status.HTTP_201_CREATED)
 async def crear_evento(
-    datos: EventoCrearSchema,
+    datos: str = Form(...),
+    foto: UploadFile = File(...),
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     verificar_usuario_admin(usuario_actual)
-    evento = crear_evento_controlador(db, datos)
+
+    try:
+        evento_data = EventoCrearSchema(**json.loads(datos))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=f"Datos inválidos: {str(e)}")
+
+    if foto:
+        contenido = await foto.read()
+        foto_url = FotosControlador.subir_foto_controlador(contenido, foto.filename)
+        evento_data.foto_url = foto_url 
+        
+    evento = crear_evento_controlador(db, evento_data)
     if not evento:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
     return evento
