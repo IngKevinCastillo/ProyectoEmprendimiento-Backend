@@ -9,7 +9,7 @@ from Routes import (
     SedeRoute, DepartamentosRoute, MunicipioRoute, ProyectoRoute,
     InscripcionRoute, ConvocatoriasRoute, CategoriaRoute, PalabraClaveRoute,
     ProyectoPalabraClaveRoutes, SeguimientoRoute, OtpRoute,
-    MesasRoute
+    MesasRoute, EscalaRoute, TipoProyectoRoute
 )
 
 from Models.ProyectoModelo import ProyectoModelo
@@ -42,6 +42,8 @@ app.include_router(EstadosRoute.router)
 app.include_router(SeguimientoRoute.router)
 app.include_router(OtpRoute.router)
 app.include_router(MesasRoute.router)
+app.include_router(EscalaRoute.router)
+app.include_router(TipoProyectoRoute.router)
 
 @app.get("/")
 def root(db: Session = Depends(get_db)):
