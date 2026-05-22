@@ -16,6 +16,8 @@ class ProyectoBaseSchema(BaseModel):
     recursos_clave: Optional[str] = None
     modelo_de_negocio: Optional[str] = None
     calificacion: Optional[float] = None
+    id_tipo_proyecto: Optional[int] = None
+    id_escala: Optional[int] = None
 
     @field_validator("nombre_proyecto")
     @classmethod
@@ -37,6 +39,16 @@ class ProyectoBaseSchema(BaseModel):
     def validar_id_categoria(cls, v: Optional[int]) -> int:
         return validar_id_entero(v, campo="ID de la categoría")
 
+    @field_validator("id_tipo_proyecto")
+    @classmethod
+    def validar_id_tipo_proyecto(cls, v: Optional[int]) -> int:
+        return validar_id_entero(v, campo="ID del tipo de proyecto")
+
+    @field_validator("id_escala")
+    @classmethod
+    def validar_id_escala(cls, v: Optional[int]) -> int:
+        return validar_id_entero(v, campo="ID de la escala")
+
     @field_validator("calificacion")
     @classmethod
     def validar_calificacion(cls, v: Optional[float]) -> float:
@@ -54,6 +66,8 @@ class ProyectoCrearSchema(ProyectoBaseSchema):
     descripcion: str
     id_estado: int
     id_categoria: int
+    id_tipo_proyecto: int
+    id_escala: int
 
 
 class ProyectoRespuestaSchema(BaseModel):
@@ -62,6 +76,8 @@ class ProyectoRespuestaSchema(BaseModel):
     descripcion: str
     id_estado: int
     id_categoria: int
+    id_tipo_proyecto: int
+    id_escala: int
     fecha_creacion: date
     problematica: Optional[str] = None
     publico_objetivo: Optional[str] = None
@@ -79,6 +95,8 @@ class ProyectoActualizarSchema(ProyectoBaseSchema):
     descripcion: Optional[str] = None
     id_estado: Optional[int] = None
     id_categoria: Optional[int] = None
+    id_tipo_proyecto: Optional[int] = None
+    id_escala: Optional[int] = None
     calificacion: Optional[float] = None
     problematica: Optional[str] = None
     publico_objetivo: Optional[str] = None

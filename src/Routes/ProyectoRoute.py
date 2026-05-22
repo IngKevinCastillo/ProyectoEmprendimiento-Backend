@@ -9,6 +9,8 @@ from Controllers.ProyectoControlador import (
     obtener_emprendimientos_controlador,
     obtener_emprendimientos_por_estado_controlador,
     obtener_emprendimientos_por_categoria_controlador,
+    obtener_emprendimientos_por_tipo_proyecto_controlador,
+    obtener_emprendimientos_por_escala_controlador,
     buscar_emprendimiento_controlador,
     buscar_emprendimiento_por_nombre_controlador,
     eliminar_emprendimiento_controlador,
@@ -79,6 +81,22 @@ async def listar_proyectos_por_categoria(
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     return obtener_emprendimientos_por_categoria_controlador(db, id_categoria)
+
+@router.get("/tipo-proyecto/{id_tipo_proyecto}", response_model=list[ProyectoRespuestaSchema])
+async def listar_proyectos_por_tipo_proyecto(
+    id_tipo_proyecto: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    return obtener_emprendimientos_por_tipo_proyecto_controlador(db, id_tipo_proyecto)
+
+@router.get("/escala/{id_escala}", response_model=list[ProyectoRespuestaSchema])
+async def listar_proyectos_por_escala(
+    id_escala: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    return obtener_emprendimientos_por_escala_controlador(db, id_escala)
 
 
 @router.get("/{id_proyecto}", response_model=ProyectoRespuestaSchema)

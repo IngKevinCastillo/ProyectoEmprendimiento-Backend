@@ -19,6 +19,8 @@ class ProyectoModelo(Base):
     modelo_de_negocio = Column(Text, nullable=True)
     calificacion = Column(Numeric(precision=3, scale=1), nullable=True)
     id_categoria = Column(Integer, ForeignKey("Categoria.id_categoria", ondelete="RESTRICT"), nullable=False)
+    id_tipo_proyecto = Column(Integer, ForeignKey("TipoProyecto.id", ondelete="RESTRICT"), nullable=False)
+    id_escala = Column(Integer, ForeignKey("Escala.id", ondelete="RESTRICT"), nullable=False)
 
 
     convocatorias = relationship("ConvocatoriasModelo", back_populates="proyecto")
@@ -27,3 +29,5 @@ class ProyectoModelo(Base):
     usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="proyecto")
     proyectopalabrasclave = relationship("ProyectoPalabraClaveModelo", back_populates="proyecto")
     seguimientos = relationship("SeguimientoModelo", back_populates="proyecto")
+    tipo_proyecto = relationship("TipoProyectoModelo", back_populates="proyecto")
+    escala = relationship("EscalaModelo", back_populates="proyecto")

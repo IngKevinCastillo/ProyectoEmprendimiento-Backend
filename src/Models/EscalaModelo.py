@@ -7,3 +7,5 @@ class EscalaModelo(Base):
     
     id = Column(Integer, primary_key=True, nullable=False)
     nombre = Column(String, nullable=False)
+
+    proyecto = relationship("ProyectoModelo", back_populates="escala")

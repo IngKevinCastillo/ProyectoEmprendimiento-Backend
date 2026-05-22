@@ -14,7 +14,10 @@ class SeguimientoModelo(Base):
     fecha_registro = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
     id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
     avance_porcentaje = Column(Numeric(5, 2), nullable=False)
+    aspecto_revisado = Column(String(200), nullable=False)
+    id_mesas = Column(Integer, ForeignKey("Mesas.id", ondelete="RESTRICT"), nullable=False)
     
     proyecto = relationship("ProyectoModelo", back_populates="seguimientos")
     usuario_responsable = relationship("UsuarioModelo", back_populates="seguimientos")
     estados = relationship("EstadosModelo", back_populates="seguimientos")
+    mesas = relationship("MesasModelo", back_populates="seguimientos")

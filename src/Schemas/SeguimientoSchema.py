@@ -10,14 +10,16 @@ class SeguimientoBaseSchema(BaseModel):
     id_usuario_responsable: Optional[int] = None
     id_estado: Optional[int] = None
     avance_porcentaje: Optional[Decimal] = None
+    aspecto_revisado: Optional[str] = None
+    id_mesas: Optional[int] = None
 
-    @field_validator("id_proyecto", "id_usuario_responsable", "id_estado")
+    @field_validator("id_proyecto", "id_usuario_responsable", "id_estado", "id_mesas")
     @classmethod
     def validar_ids_positivos(cls, v: int, info: ValidationInfo) -> int:
         campo = info.field_name.replace("_", " ").capitalize()
         return validar_id_entero(v, campo=campo)
 
-    @field_validator("observaciones")
+    @field_validator("observaciones", "aspecto_revisado")
     @classmethod
     def validar_observaciones(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
@@ -46,6 +48,8 @@ class SeguimientoCrearSchema(SeguimientoBaseSchema):
     id_usuario_responsable: int
     id_estado: int
     avance_porcentaje: Decimal
+    aspecto_revisado: str
+    id_mesas: int
 
 
 class SeguimientoRespuestaSchema(BaseModel):
@@ -56,6 +60,8 @@ class SeguimientoRespuestaSchema(BaseModel):
     fecha_registro: datetime
     id_estado: int
     avance_porcentaje: Decimal
+    aspecto_revisado: Optional[str] = None
+    id_mesas: int
 
     class Config:
         from_attributes = True
@@ -65,3 +71,5 @@ class SeguimientoActualizarSchema(SeguimientoBaseSchema):
     id_usuario_responsable: Optional[int] = None
     id_estado: Optional[int] = None
     avance_porcentaje: Optional[Decimal] = None
+    aspecto_revisado: Optional[str] = None
+    id_mesas: Optional[int] = None

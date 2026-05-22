@@ -9,6 +9,7 @@ from Controllers.SeguimientoControlador import (
     obtener_seguimientos_por_estado_controlador,
     obtener_seguimiento_por_usuario_responsable_controlador,
     obtener_seguimientos_por_proyecto_controlador,
+    obtener_seguimientos_por_mesas_controlador,
     buscar_seguimiento_controlador,
     buscar_ultimo_seguimiento_por_proyecto_controlador,
     eliminar_seguimiento_controlador,
@@ -63,6 +64,15 @@ async def listar_seguimientos_por_responsable(
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     return obtener_seguimiento_por_usuario_responsable_controlador(db, id_usuario_responsable)
+
+
+@router.get("/mesas/{id_mesas}", response_model=list[SeguimientoRespuestaSchema])
+async def listar_seguimientos_por_mesas(
+    id_mesas: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    return obtener_seguimientos_por_mesas_controlador(db, id_mesas)
 
 
 @router.get("/{id_seguimiento}", response_model=SeguimientoRespuestaSchema)

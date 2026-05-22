@@ -8,7 +8,8 @@ class MesasModelo(Base):
     
     id = Column(Integer, primary_key=True)
     nombre = Column(String(50), nullable=False)
-    cedula_tutor = Column(String, ForeignKey("Usuario.id_usuario", ondelete="RESTRICT"), nullable=False)
+    cedula_tutor = Column(String, ForeignKey("Usuario.numero_documento", ondelete="RESTRICT"), nullable=False)
     cedulas_docentes = Column(ARRAY(String), nullable=True)
 
     usuarios = relationship("UsuarioModelo", foreign_keys=[cedula_tutor], back_populates="mesas")
+    seguimientos = relationship("SeguimientoModelo", back_populates="mesas")
