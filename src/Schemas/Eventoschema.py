@@ -2,6 +2,7 @@ from pydantic import BaseModel, field_validator
 from datetime import date, datetime
 from Utils.Validacionesutilidades import validar_nombre_utils, validar_descripcion_no_nulo, validar_id_entero
 from enum import Enum
+from typing import Optional
 
 class TipoEvento(str, Enum):
     INTERNA = "Interna"
@@ -16,6 +17,7 @@ class EventoCrearSchema(BaseModel):
     fecha: date
     lugar:str
     descripcion: str
+    url_evento: Optional[str]
     
     @field_validator("tipo_evento", mode="before")
     @classmethod
@@ -53,6 +55,7 @@ class EventoRespuestaSchema(BaseModel):
     lugar: str
     descripcion: str
     id_estado: int
+    url_evento: Optional[str]
 
     class Config:
         from_attributes = True
@@ -67,6 +70,7 @@ class EventoActualizarSchema(BaseModel):
     fecha: datetime
     lugar: str
     descripcion: str
+    url_evento: Optional[str]
     
     @field_validator("tipo_evento", mode="before")
     @classmethod
