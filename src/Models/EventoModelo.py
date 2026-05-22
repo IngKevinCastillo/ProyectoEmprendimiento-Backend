@@ -13,6 +13,7 @@ class EventoModelo(Base):
     descripcion = Column(String, nullable=False)
     id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
     url_evento = Column(String, nullable=True)
+    foto_url = Column(String, nullable=False)
 
     participaciones = relationship("ParticipacionEventoModelo", back_populates="evento")
     estados = relationship("EstadosModelo", back_populates="evento")

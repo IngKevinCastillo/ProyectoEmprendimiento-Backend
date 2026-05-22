@@ -17,7 +17,9 @@ def crear_evento(db: Session, evento: EventoCrearSchema):
         fecha=evento.fecha,
         lugar=evento.lugar,
         descripcion=evento.descripcion,
-        id_estado=ESTADO_ACTIVO
+        id_estado=ESTADO_ACTIVO,
+        url_evento=evento.url_evento,
+        foto_url=evento.foto_url
     )
     db.add(nuevo_evento)
     db.commit()

@@ -18,6 +18,7 @@ class EventoCrearSchema(BaseModel):
     lugar:str
     descripcion: str
     url_evento: Optional[str]
+    foto_url: str | None = None
     
     @field_validator("tipo_evento", mode="before")
     @classmethod
@@ -56,6 +57,7 @@ class EventoRespuestaSchema(BaseModel):
     descripcion: str
     id_estado: int
     url_evento: Optional[str]
+    foto_url: str
 
     class Config:
         from_attributes = True
@@ -71,6 +73,7 @@ class EventoActualizarSchema(BaseModel):
     lugar: str
     descripcion: str
     url_evento: Optional[str]
+    foto_url: str
     
     @field_validator("tipo_evento", mode="before")
     @classmethod
