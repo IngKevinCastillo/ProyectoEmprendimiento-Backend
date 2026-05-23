@@ -1,6 +1,7 @@
 from pydantic import BaseModel, field_validator, model_validator
 from datetime import date
 from Utils.Validacionesutilidades import validar_nombre_utils, validar_descripcion_utils, validar_id_entero
+from typing import Optional
 
 class CursoCrearSchema(BaseModel):
     nombre_curso: str
@@ -36,10 +37,10 @@ class CursoRespuestaSchema(BaseModel):
         from_attributes = True
         
 class CursoActualizarSchema(BaseModel):
-    nombre_curso: str
-    descripcion: str
-    fecha_inicio: date
-    fecha_fin: date
+    nombre_curso: Optional[str] = None
+    descripcion: Optional[str] = None
+    fecha_inicio: Optional[date] = None
+    fecha_fin: Optional[date] = None
     
     @field_validator("nombre_curso")
     @classmethod

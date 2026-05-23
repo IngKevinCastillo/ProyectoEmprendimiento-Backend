@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator
 from Utils.Validacionesutilidades import validar_id_entero
+from typing import Optional
 
 class ProyectoPalabraClaveCrearSchema(BaseModel):
     id_proyecto: int
@@ -12,8 +13,8 @@ class ProyectoPalabraClaveCrearSchema(BaseModel):
 
 
 class ProyectoPalabraClaveActualizarSchema(BaseModel):
-    id_proyecto: int
-    id_palabra_clave: int
+    id_proyecto: Optional[int] = None
+    id_palabra_clave: Optional[int] = None
     
     @field_validator("id_proyecto", "id_palabra_clave")
     @classmethod
