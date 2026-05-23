@@ -11,6 +11,7 @@ from typing import Final
 
 ESTADO_ELIMINADO: Final = 6
 ESTADO_ACTIVO: Final = 8
+CONFIRMAR_ESTADO: Final = 26
 
 def crear_participacion_evento(db: Session, participacion_evento: ParticipacionEventoCrearSchema):
     
@@ -98,15 +99,9 @@ def eliminar_participacion_proyecto(db: Session, id_participacion_evento: int):
     db.refresh(existente)
     return {"detail": "Participacion evento eliminado"}
 
-def cambiar_estado(db: Session, id_participacion_evento: int, estado: CambiarEstado):
-    existente = db.query(ParticipacionEventoModelo).filter(
-        ParticipacionEventoModelo.id_participacion_evento == id_participacion_evento
-    ).first()
-    
-    if not existente:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La participacion evento no existe.")
-    
-    existente.id_estado = estado.id_estado_cambiar
+def confirmar_asistencia(db: Session, id_usuario: int, id_evento: int):
+    existente = buscar_usuario_participacion_evento(db, id_usuario, id_evento)
+    existente.id_estado = CONFIRMAR_ESTADO
     
     db.commit()
     db.refresh(existente)
