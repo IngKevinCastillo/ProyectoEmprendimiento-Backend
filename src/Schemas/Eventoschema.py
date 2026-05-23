@@ -67,13 +67,13 @@ class ConsultarFechas(BaseModel):
     fecha_fin: date
 
 class EventoActualizarSchema(BaseModel):
-    nombre_evento: str
-    tipo_evento: str
-    fecha: datetime
-    lugar: str
-    descripcion: str
-    url_evento: Optional[str]
-    foto_url: str
+    nombre_evento: Optional[str] = None
+    tipo_evento: Optional[str] = None
+    fecha: Optional[datetime] = None
+    lugar: Optional[str] = None
+    descripcion: Optional[str] = None
+    url_evento: Optional[str] = None
+    foto_url: Optional[str] = None
     
     @field_validator("tipo_evento", mode="before")
     @classmethod

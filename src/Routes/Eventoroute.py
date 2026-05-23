@@ -6,7 +6,7 @@ from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from datetime import datetime
 from Controllers.EventoControlador import cambiar_estado_controlador, buscar_evento_por_rango_fechas_controlador, buscar_eventos_por_estados, crear_evento_controlador, buscar_evento_controlador, buscar_evento_por_fecha_controlador, buscar_evento_por_nombre_controlador, buscar_evento_por_lugar_controlador, eliminar_evento_controlador, actualizar_evento_controlador, listar_eventos_controlador
 from Schemas.EstadosSchema import CambiarEstado
-from Controllers import FotosControlador
+from Controllers import StotageControlador
 import json
 
 router = APIRouter(
@@ -31,7 +31,7 @@ async def crear_evento(
 
     if foto:
         contenido = await foto.read()
-        foto_url = FotosControlador.subir_foto_controlador(contenido, foto.filename)
+        foto_url = StotageControlador.subir_foto_controlador(contenido, foto.filename)
         evento_data.foto_url = foto_url 
         
     evento = crear_evento_controlador(db, evento_data)
@@ -97,12 +97,29 @@ async def obtener_evento_lugar(
 @router.put("/{id_evento}", response_model=EventoRespuestaSchema, status_code=status.HTTP_200_OK)
 async def actualizar_evento(
     id_evento: int,
-    datos: EventoActualizarSchema,
+    datos: str = Form(...),
+    foto: UploadFile = File(None),
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     verificar_usuario_admin(usuario_actual)
-    evento = actualizar_evento_controlador(db, id_evento , datos)
+    
+    try:
+        evento_data =  EventoActualizarSchema(**json.loads(datos))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=f"Datos inválidos: {str(e)}")
+    
+    if foto:
+        existente = buscar_evento_controlador(db, id_evento)
+        contenido = await foto.read()
+        
+        if(existente.foto_url != None):
+            StotageControlador.eliminar_foto_controlador(existente.foto_url)
+            
+        foto_url = StotageControlador.subir_foto_controlador(contenido, foto.filename)
+        evento_data.foto_url = foto_url
+    
+    evento = actualizar_evento_controlador(db, id_evento , evento_data)
     return evento
 
 @router.put("/cambiar-estado/{id_evento}", response_model=EventoRespuestaSchema, status_code=status.HTTP_200_OK)
