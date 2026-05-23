@@ -1,6 +1,7 @@
 from pydantic import BaseModel, field_validator, ValidationInfo
 from datetime import date
 from Utils.Validacionesutilidades import validar_id_entero
+from typing import Optional
 
 class InscripcionCrearSchema(BaseModel):
     id_usuario: int
@@ -24,9 +25,9 @@ class InscripcionRespuestaSchema(BaseModel):
         from_attributes = True
         
 class InscripcionActualizarSchema(BaseModel):
-    id_usuario: int
-    id_curso: int
-    fecha_inscripcion: date
+    id_usuario: Optional[int] = None
+    id_curso: Optional[int] = None
+    fecha_inscripcion: Optional[date] = None
 
 class DatosVerificar(BaseModel):
     id_usuario: int

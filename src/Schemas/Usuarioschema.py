@@ -136,22 +136,22 @@ class UsuarioRespuestaSchema(BaseModel):
         from_attributes = True
         
 class UsuarioActualizarSchema(BaseModel):
-    primer_nombre: str
-    segundo_nombre: Optional[str]
-    primer_apellido: str
-    segundo_apellido: str
-    fecha_nacimiento: date
+    primer_nombre: Optional[str] = None
+    segundo_nombre: Optional[str] = None
+    primer_apellido: Optional[str] = None
+    segundo_apellido: Optional[str] = None
+    fecha_nacimiento: Optional[date] = None
     ubicacion_semestral: Optional[int] = None
-    id_rol: int
-    sexo: str
+    id_rol: Optional[int] = None
+    sexo: Optional[str] = None
     id_programa: Optional[int] = None
-    id_tipodocumento: int
-    numero_documento: str
-    telefono: str
+    id_tipodocumento: Optional[int] = None
+    numero_documento: Optional[str] = None
+    telefono: Optional[str] = None
     id_facultad: Optional[int] = None
-    id_sede: int
+    id_sede: Optional[int] = None
     direccion: Optional[str] = None
-    id_municipio: int
+    id_municipio: Optional[int] = None
 
 class UsuarioCambiarContrasena(BaseModel):
     contrasena_anterior: str

@@ -1,5 +1,6 @@
 from pydantic import BaseModel, field_validator, ValidationInfo
 from Utils.Validacionesutilidades import validar_id_entero
+from typing import Optional
 
 class ParticipacionEventoCrearSchema(BaseModel):
     id_usuario: int
@@ -23,6 +24,6 @@ class ParticipacionEventoRespuestaSchema(BaseModel):
         from_attributes = True
         
 class ParticipacionActualizarSchema(BaseModel):
-    id_usuario: int
-    id_evento: int
-    id_rol: int
+    id_usuario: Optional[int] = None
+    id_evento: Optional[int] = None
+    id_rol: Optional[int] = None
