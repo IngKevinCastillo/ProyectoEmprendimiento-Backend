@@ -4,6 +4,9 @@ def auto_mapear(origen, destino, excluir=None):
     for campo, valor in vars(destino).items():
         if campo.startswith("_") or campo in excluir:
             continue
+        
+        if valor is None:
+            continue
 
         if hasattr(origen, campo):
             setattr(origen, campo, valor)
