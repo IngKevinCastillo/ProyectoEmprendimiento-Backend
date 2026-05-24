@@ -14,7 +14,7 @@ class TipoEvento(str, Enum):
 class EventoCrearSchema(BaseModel):
     nombre_evento: str
     tipo_evento: TipoEvento
-    fecha: date
+    fecha: datetime
     lugar:str
     descripcion: str
     url_evento: Optional[str]

@@ -10,10 +10,18 @@ from Schemas.EstadosSchema import CambiarEstado
 from typing import Final
 
 ESTADO_ELIMINADO: Final = 6
-ESTADO_ACTIVO: Final = 8
+ESTADO_INSCRITO: Final = 25
 CONFIRMAR_ESTADO: Final = 26
 
 def crear_participacion_evento(db: Session, participacion_evento: ParticipacionEventoCrearSchema):
+    existente = db.query(ParticipacionEventoModelo).filter(
+        ParticipacionEventoModelo.id_usuario == participacion_evento.id_usuario,
+        ParticipacionEventoModelo.id_evento == participacion_evento.id_evento,
+        ParticipacionEventoModelo.id_estado != ESTADO_ELIMINADO
+    ).first()
+    
+    if existente:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El usuario ya participa en este evento.")        
     
     if not BuscarRol(db, participacion_evento.id_rol):
         raise HTTPException(status_code=400, detail="El rol especificado no existe")
@@ -28,7 +36,7 @@ def crear_participacion_evento(db: Session, participacion_evento: ParticipacionE
         id_usuario=participacion_evento.id_usuario,
         id_evento=participacion_evento.id_evento,
         id_rol=participacion_evento.id_rol,
-        id_estado=ESTADO_ACTIVO
+        id_estado=ESTADO_INSCRITO
     )
     
     db.add(nuevo_registro)
