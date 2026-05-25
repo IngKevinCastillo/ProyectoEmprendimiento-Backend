@@ -8,6 +8,7 @@ class CursoCrearSchema(BaseModel):
     descripcion: str
     fecha_inicio: date
     fecha_fin: date
+    foto_url: str | None = None
     
     @field_validator("nombre_curso")
     @classmethod
@@ -32,6 +33,7 @@ class CursoRespuestaSchema(BaseModel):
     fecha_inicio: date
     fecha_fin: date
     id_estado: int
+    foto_url: Optional[str] = None
     
     class Config:
         from_attributes = True
@@ -41,19 +43,25 @@ class CursoActualizarSchema(BaseModel):
     descripcion: Optional[str] = None
     fecha_inicio: Optional[date] = None
     fecha_fin: Optional[date] = None
+    foto_url: Optional[str] = None
     
     @field_validator("nombre_curso")
     @classmethod
     def validar_nombre(cls, v: str) -> str:
+        if v is None: 
+            return v
         return validar_nombre_utils(v, min_len=3, max_len=100, campo="Nombre del curso")
 
     @field_validator("descripcion")
     @classmethod
     def validar_descripcion(cls, v: str) -> str:
+        if v is None:
+            return v
         return validar_descripcion_utils(v, min_len=20, max_len=2000, campo="Descripción del curso")
 
     @model_validator(mode="after")
     def validar_fechas(self):
-        if self.fecha_fin < self.fecha_inicio:
-            raise ValueError("La fecha de fin debe ser mayor o igual a la fecha de inicio.")
+        if self.fecha_inicio is not None and self.fecha_fin is not None:
+            if self.fecha_fin < self.fecha_inicio:
+                raise ValueError("La fecha de fin debe ser mayor o igual a la fecha de inicio.")
         return self
