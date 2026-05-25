@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from typing import Final
-from sqlalchemy import Date, cast
+from sqlalchemy import Date, and_, cast, func
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from Models.SeguimientoModelo import SeguimientoModelo
@@ -22,6 +22,15 @@ def BuscarUltimoSeguimientoPorProyecto(db: Session, id_proyecto: int):
 
 def ObtenerSeguimientos(db: Session):
     return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
+
+def ObtenerUltimoSeguimientoDeCadaProyecto(db: Session):
+    subquery_max_fecha = db.query(SeguimientoModelo.id_proyecto, func.max(SeguimientoModelo.fecha_registro).label("ultima_fecha"))\
+        .filter(SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO))\
+        .group_by(
+            SeguimientoModelo.id_proyecto
+        )\
+        .subquery("max_fechas")
+    return db.query(SeguimientoModelo).join(subquery_max_fecha, and_(SeguimientoModelo.id_proyecto == subquery_max_fecha.c.id_proyecto, SeguimientoModelo.fecha_registro == subquery_max_fecha.c.ultima_fecha)).all()
 
 def ObtenerSeguimientosPorProyecto(db: Session, id_proyecto: str):
     return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
