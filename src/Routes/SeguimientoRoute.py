@@ -6,6 +6,7 @@ from Core.Seguridad import obtener_usuario_actual
 from Controllers.SeguimientoControlador import (
     crear_seguimiento_controlador,
     obtener_seguimientos_controlador,
+    obtener_ultimo_seguimiento_de_cada_proyecto_controlador,
     obtener_seguimientos_por_estado_controlador,
     obtener_seguimiento_por_usuario_responsable_controlador,
     obtener_seguimientos_por_proyecto_controlador,
@@ -37,6 +38,13 @@ async def listar_seguimientos(
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     return obtener_seguimientos_controlador(db)
+
+@router.get("/proyecto/ultimo-cada", response_model=list[SeguimientoRespuestaSchema])
+async def listar_ultimo_seguimiento_de_cada_proyecto(
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    return obtener_ultimo_seguimiento_de_cada_proyecto_controlador(db)
 
 
 @router.get("/estado/{id_estado}", response_model=list[SeguimientoRespuestaSchema])
