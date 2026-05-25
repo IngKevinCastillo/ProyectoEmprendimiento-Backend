@@ -44,4 +44,4 @@ class UsuarioModelo(Base):
     seguimientos = relationship("SeguimientoModelo", back_populates="usuario_responsable")
     estados = relationship("EstadosModelo", back_populates="usuarios")
     mesas = relationship("MesasModelo", foreign_keys="[MesasModelo.cedula_tutor]", back_populates="usuarios")
-    
+    asignaciones = relationship("AsignacionEvaluadorModelo", back_populates="evaluador")

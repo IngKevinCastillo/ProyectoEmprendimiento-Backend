@@ -22,8 +22,6 @@ class ProyectoModelo(Base):
     id_tipo_proyecto = Column(Integer, ForeignKey("TipoProyecto.id", ondelete="RESTRICT"), nullable=False)
     id_escala = Column(Integer, ForeignKey("Escala.id", ondelete="RESTRICT"), nullable=False)
 
-
-    convocatorias = relationship("ConvocatoriasModelo", back_populates="proyecto")
     estados = relationship("EstadosModelo", back_populates="proyecto")
     categoria = relationship("CategoriaModelo", back_populates="proyecto")
     usuarioproyecto = relationship("UsuarioProyectoModelo", back_populates="proyecto")
@@ -31,3 +29,5 @@ class ProyectoModelo(Base):
     seguimientos = relationship("SeguimientoModelo", back_populates="proyecto")
     tipo_proyecto = relationship("TipoProyectoModelo", back_populates="proyecto")
     escala = relationship("EscalaModelo", back_populates="proyecto")
+    postulaciones = relationship("PostulacionModelo", back_populates="proyecto")
+    beneficios_asignados = relationship("BeneficioAsignadoModelo", back_populates="proyecto")
