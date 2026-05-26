@@ -9,11 +9,14 @@ class PostulacionCrearSchema(BaseModel):
 class PostulacionActualizarSchema(BaseModel):
     respuestas: Optional[str] = None
 
+class PostulacionCambiarEstadoSchema(BaseModel):
+    id_estado: int
+
 class PostulacionRespuestaSchema(BaseModel):
     id_postulacion: int
     id_convocatoria: int
     id_proyecto: int
-    estado: str
+    id_estado: int
     respuestas: Optional[str]
     fecha_postulacion: Optional[datetime]
 

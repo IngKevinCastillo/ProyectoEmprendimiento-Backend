@@ -10,7 +10,7 @@ class EvaluacionRespuestaSchema(BaseModel):
     id_asignacion: int
     comentario_general: Optional[str]
     puntaje_total: Optional[int]
-    estado: str
+    id_estado: int
     fecha_evaluacion: Optional[datetime]
 
     class Config:

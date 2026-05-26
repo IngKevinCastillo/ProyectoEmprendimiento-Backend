@@ -17,3 +17,6 @@ class EstadosModelo(Base):
     participaciones = relationship("ParticipacionEventoModelo", back_populates="estados")
     inscripciones = relationship("InscripcionModelo", back_populates="estados")
     alianzas = relationship("AlianzaModelo", back_populates="estados")
+    convocatorias = relationship("ConvocatoriaModelo", back_populates="estado")
+    evaluaciones = relationship("EvaluacionModelo", back_populates="estado")
+    postulaciones = relationship("PostulacionModelo", back_populates="estado")

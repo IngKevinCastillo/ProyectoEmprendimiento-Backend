@@ -17,8 +17,8 @@ def crear_postulacion_controlador(db: Session, id_convocatoria: int, datos: Post
 def actualizar_postulacion_controlador(db: Session, id_postulacion: int, datos: PostulacionActualizarSchema):
     return ActualizarPostulacion(db, id_postulacion, datos)
 
-def cambiar_estado_postulacion_controlador(db: Session, id_postulacion: int, nuevo_estado: str):
-    return CambiarEstadoPostulacion(db, id_postulacion, nuevo_estado)
+def cambiar_estado_postulacion_controlador(db: Session, id_postulacion: int, id_estado: int):
+    return CambiarEstadoPostulacion(db, id_postulacion, id_estado)
 
 def eliminar_postulacion_controlador(db: Session, id_postulacion: int):
     return EliminarPostulacion(db, id_postulacion)

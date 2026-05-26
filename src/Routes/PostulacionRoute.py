@@ -2,15 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
-from Schemas.PostulacionSchema import PostulacionCrearSchema, PostulacionActualizarSchema, PostulacionRespuestaSchema
+from Schemas.PostulacionSchema import (PostulacionCrearSchema, PostulacionActualizarSchema, PostulacionCambiarEstadoSchema, PostulacionRespuestaSchema)
 from Controllers import PostulacionControlador
 
 router = APIRouter(
     prefix="/convocatorias/{id_convocatoria}/postulaciones",
     tags=["Postulaciones"],
 )
-
-# --- Emprendedor ---
 
 @router.post("/", response_model=PostulacionRespuestaSchema, status_code=status.HTTP_201_CREATED)
 async def crear_postulacion(
@@ -21,47 +19,8 @@ async def crear_postulacion(
 ):
     return PostulacionControlador.crear_postulacion_controlador(db, id_convocatoria, datos)
 
-@router.put("/{id_postulacion}", response_model=PostulacionRespuestaSchema)
-async def actualizar_postulacion(
-    id_convocatoria: int,
-    id_postulacion: int,
-    datos: PostulacionActualizarSchema,
-    db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
-):
-    postulacion = PostulacionControlador.actualizar_postulacion_controlador(db, id_postulacion, datos)
-    if not postulacion:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Postulación no encontrada")
-    return postulacion
-
-@router.patch("/{id_postulacion}/estado", response_model=PostulacionRespuestaSchema)
-async def cambiar_estado_postulacion(
-    id_convocatoria: int,
-    id_postulacion: int,
-    nuevo_estado: str,
-    db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
-):
-    postulacion = PostulacionControlador.cambiar_estado_postulacion_controlador(db, id_postulacion, nuevo_estado)
-    if not postulacion:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Postulación no encontrada")
-    return postulacion
-
-@router.delete("/{id_postulacion}", status_code=status.HTTP_204_NO_CONTENT)
-async def eliminar_postulacion(
-    id_convocatoria: int,
-    id_postulacion: int,
-    db: Session = Depends(get_db),
-    usuario_actual=Depends(obtener_usuario_actual)
-):
-    resultado = PostulacionControlador.eliminar_postulacion_controlador(db, id_postulacion)
-    if not resultado:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Postulación no encontrada")
-
-# --- Admin ---
-
 @router.get("/", response_model=list[PostulacionRespuestaSchema])
-async def listar_postulaciones_por_convocatoria(
+async def listar_postulaciones(
     id_convocatoria: int,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
@@ -82,8 +41,44 @@ async def obtener_postulacion(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Postulación no encontrada")
     return postulacion
 
+@router.put("/{id_postulacion}", response_model=PostulacionRespuestaSchema)
+async def actualizar_postulacion(
+    id_convocatoria: int,
+    id_postulacion: int,
+    datos: PostulacionActualizarSchema,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    postulacion = PostulacionControlador.actualizar_postulacion_controlador(db, id_postulacion, datos)
+    if not postulacion:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Postulación no encontrada")
+    return postulacion
 
-# --- Router secundario para postulaciones por proyecto ---
+@router.patch("/{id_postulacion}/estado", response_model=PostulacionRespuestaSchema)
+async def cambiar_estado_postulacion(
+    id_convocatoria: int,
+    id_postulacion: int,
+    datos: PostulacionCambiarEstadoSchema,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    verificar_usuario_admin(usuario_actual)
+    postulacion = PostulacionControlador.cambiar_estado_postulacion_controlador(db, id_postulacion, datos.id_estado)
+    if not postulacion:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Postulación no encontrada")
+    return postulacion
+
+@router.delete("/{id_postulacion}", status_code=status.HTTP_204_NO_CONTENT)
+async def eliminar_postulacion(
+    id_convocatoria: int,
+    id_postulacion: int,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    resultado = PostulacionControlador.eliminar_postulacion_controlador(db, id_postulacion)
+    if not resultado:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Postulación no encontrada")
+
 router_proyecto = APIRouter(
     prefix="/proyectos/{id_proyecto}/postulaciones",
     tags=["Postulaciones"],

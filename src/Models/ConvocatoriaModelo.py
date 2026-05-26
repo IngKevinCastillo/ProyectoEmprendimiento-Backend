@@ -12,11 +12,12 @@ class ConvocatoriaModelo(Base):
     fecha_cierre = Column(Date, nullable=False)
     cupos = Column(Integer, nullable=True)
     requisitos = Column(Text, nullable=True)
-    estado = Column(String(20), nullable=False, server_default=text("'borrador'"))
+    id_estado = Column(Integer, ForeignKey("Estados.id_estado"), nullable=False, server_default=text("19"))
     creado_por = Column(Integer, ForeignKey("Usuario.id_usuario"), nullable=False)
     id_tipo_convocatoria = Column(Integer, ForeignKey("TipoConvocatoria.id_tipo_convocatoria"), nullable=False)
     fecha_creacion = Column(TIMESTAMP, server_default=text("CURRENT_TIMESTAMP"))
 
+    estado = relationship("EstadosModelo", back_populates="convocatorias")
     tipo_convocatoria = relationship("TipoConvocatoriaModelo", back_populates="convocatorias")
     criterios = relationship("CriterioEvaluacionModelo", back_populates="convocatoria", cascade="all, delete-orphan")
     postulaciones = relationship("PostulacionModelo", back_populates="convocatoria")

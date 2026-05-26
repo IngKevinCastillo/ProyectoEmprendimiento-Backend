@@ -28,10 +28,10 @@ class ConvocatoriaRespuestaSchema(BaseModel):
     fecha_cierre: date
     cupos: Optional[int]
     requisitos: Optional[str]
-    estado: str
+    id_estado: int
     creado_por: int
-    fecha_creacion: Optional[datetime]
     id_tipo_convocatoria: int
+    fecha_creacion: Optional[datetime]
 
     class Config:
         from_attributes = True

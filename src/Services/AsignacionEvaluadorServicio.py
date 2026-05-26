@@ -6,6 +6,8 @@ from Models.UsuarioModelo import UsuarioModelo
 from Models.RolesModelo import RolesModelo
 from Schemas.AsignacionEvaluadorSchema import AsignacionCrearSchema
 
+ID_ESTADO_POSTULACION_ENVIADA = 27
+
 def _validar_evaluador(db: Session, id_evaluador: int):
     usuario = db.query(UsuarioModelo).filter(
         UsuarioModelo.id_usuario == id_evaluador
@@ -28,10 +30,10 @@ def _validar_postulacion(db: Session, id_postulacion: int):
     ).first()
     if not postulacion:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Postulación no encontrada")
-    if postulacion.estado not in ("enviada", "en_revision"):
+    if postulacion.id_estado != ID_ESTADO_POSTULACION_ENVIADA:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Solo se puede asignar evaluador a postulaciones enviadas o en revisión"
+            detail="Solo se puede asignar evaluador a postulaciones enviadas"
         )
     return postulacion
 
@@ -69,13 +71,6 @@ def CrearAsignacion(db: Session, id_postulacion: int, datos: AsignacionCrearSche
         id_evaluador=datos.id_evaluador
     )
     db.add(nueva)
-
-    postulacion = db.query(PostulacionModelo).filter(
-        PostulacionModelo.id_postulacion == id_postulacion
-    ).first()
-    if postulacion.estado == "enviada":
-        postulacion.estado = "en_revision"
-
     db.commit()
     db.refresh(nueva)
     return nueva

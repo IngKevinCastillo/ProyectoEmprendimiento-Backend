@@ -1,17 +1,15 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
+from datetime import date
 from Models.PostulacionModelo import PostulacionModelo
 from Models.ConvocatoriaModelo import ConvocatoriaModelo
 from Models.ProyectoModelo import ProyectoModelo
 from Schemas.PostulacionSchema import PostulacionCrearSchema, PostulacionActualizarSchema
 
-TRANSICIONES_VALIDAS = {
-    "borrador": ["enviada"],
-    "enviada": ["en_revision"],
-    "en_revision": ["aprobada", "rechazada"],
-    "aprobada": [],
-    "rechazada": []
-}
+ID_ESTADO_ENVIADA = 27
+ID_ESTADO_APROBADA = 4
+ID_ESTADO_RECHAZADA = 15
+ID_ESTADO_PUBLICADA = 19
 
 def _validar_convocatoria_abierta(db: Session, id_convocatoria: int):
     convocatoria = db.query(ConvocatoriaModelo).filter(
@@ -19,10 +17,15 @@ def _validar_convocatoria_abierta(db: Session, id_convocatoria: int):
     ).first()
     if not convocatoria:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convocatoria no encontrada")
-    if convocatoria.estado != "publicada":
+    if convocatoria.id_estado != ID_ESTADO_PUBLICADA:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Solo se puede postular a convocatorias publicadas"
+        )
+    if convocatoria.fecha_cierre < date.today():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La convocatoria ya cerró"
         )
     return convocatoria
 
@@ -69,7 +72,7 @@ def CrearPostulacion(db: Session, id_convocatoria: int, datos: PostulacionCrearS
         id_convocatoria=id_convocatoria,
         id_proyecto=datos.id_proyecto,
         respuestas=datos.respuestas,
-        estado="borrador"
+        id_estado=ID_ESTADO_ENVIADA
     )
     db.add(nueva)
     db.commit()
@@ -80,10 +83,10 @@ def ActualizarPostulacion(db: Session, id_postulacion: int, datos: PostulacionAc
     postulacion = BuscarPostulacion(db, id_postulacion)
     if not postulacion:
         return None
-    if postulacion.estado != "borrador":
+    if postulacion.id_estado != ID_ESTADO_ENVIADA:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Solo se puede editar una postulación en estado borrador"
+            detail="Solo se puede editar una postulación en estado enviada"
         )
     for campo, valor in datos.model_dump(exclude_unset=True).items():
         setattr(postulacion, campo, valor)
@@ -91,17 +94,21 @@ def ActualizarPostulacion(db: Session, id_postulacion: int, datos: PostulacionAc
     db.refresh(postulacion)
     return postulacion
 
-def CambiarEstadoPostulacion(db: Session, id_postulacion: int, nuevo_estado: str):
+def CambiarEstadoPostulacion(db: Session, id_postulacion: int, id_estado: int):
     postulacion = BuscarPostulacion(db, id_postulacion)
     if not postulacion:
         return None
-    estados_permitidos = TRANSICIONES_VALIDAS.get(postulacion.estado, [])
-    if nuevo_estado not in estados_permitidos:
+    if id_estado not in (ID_ESTADO_APROBADA, ID_ESTADO_RECHAZADA):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"No se puede pasar de '{postulacion.estado}' a '{nuevo_estado}'"
+            detail="El estado debe ser aprobada o rechazada"
         )
-    postulacion.estado = nuevo_estado
+    if postulacion.id_estado != ID_ESTADO_ENVIADA:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Solo se puede cambiar el estado de una postulación enviada"
+        )
+    postulacion.id_estado = id_estado
     db.commit()
     db.refresh(postulacion)
     return postulacion
@@ -110,10 +117,10 @@ def EliminarPostulacion(db: Session, id_postulacion: int):
     postulacion = BuscarPostulacion(db, id_postulacion)
     if not postulacion:
         return None
-    if postulacion.estado != "borrador":
+    if postulacion.id_estado != ID_ESTADO_ENVIADA:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Solo se puede eliminar una postulación en estado borrador"
+            detail="Solo se puede eliminar una postulación en estado enviada"
         )
     db.delete(postulacion)
     db.commit()
