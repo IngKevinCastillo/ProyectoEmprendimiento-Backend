@@ -1,3 +1,4 @@
+from decimal import Decimal
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -9,7 +10,7 @@ class EvaluacionRespuestaSchema(BaseModel):
     id_evaluacion: int
     id_asignacion: int
     comentario_general: Optional[str]
-    puntaje_total: Optional[int]
+    puntaje_total: Decimal
     id_estado: int
     fecha_evaluacion: Optional[datetime]
 

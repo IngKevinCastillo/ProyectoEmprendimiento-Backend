@@ -2,11 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual
-from Schemas.PuntajeCriterioSchema import (
-    PuntajeCriterioCrearSchema,
-    PuntajeCriterioActualizarSchema,
-    PuntajeCriterioRespuestaSchema
-)
+from Schemas.PuntajeCriterioSchema import (PuntajeCriterioCrearSchema, PuntajeCriterioActualizarSchema, PuntajeCriterioRespuestaSchema)
 from Controllers import PuntajeCriterioControlador
 
 router = APIRouter(

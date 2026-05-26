@@ -19,6 +19,5 @@ class ConvocatoriaModelo(Base):
 
     estado = relationship("EstadosModelo", back_populates="convocatorias")
     tipo_convocatoria = relationship("TipoConvocatoriaModelo", back_populates="convocatorias")
-    criterios = relationship("CriterioEvaluacionModelo", back_populates="convocatoria", cascade="all, delete-orphan")
     postulaciones = relationship("PostulacionModelo", back_populates="convocatoria")
     beneficios_asignados = relationship("BeneficioAsignadoModelo", back_populates="convocatoria")
