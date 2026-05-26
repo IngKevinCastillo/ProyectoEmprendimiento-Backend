@@ -17,4 +17,3 @@ class CursoModelo(Base):
 
     inscripciones = relationship("InscripcionModelo", back_populates="curso")
     estados = relationship("EstadosModelo", back_populates="curso")
-    # certificaciones = relationship("CertificacionModelo", back_populates="curso")

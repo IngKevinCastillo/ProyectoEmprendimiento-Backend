@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Text, ForeignKey, TIMESTAMP, text, Numeric
+from sqlalchemy import Column, Integer, Numeric, Text, ForeignKey, TIMESTAMP, text
 from sqlalchemy.orm import relationship
 from Configs.bd import Base
 

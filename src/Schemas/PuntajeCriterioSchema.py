@@ -5,7 +5,6 @@ from decimal import Decimal
 class PuntajeCriterioCrearSchema(BaseModel):
     id_criterio: int
     nota: Decimal
-    comentario: Optional[str] = None
 
     @field_validator("nota")
     @classmethod
@@ -16,7 +15,6 @@ class PuntajeCriterioCrearSchema(BaseModel):
 
 class PuntajeCriterioActualizarSchema(BaseModel):
     nota: Optional[Decimal] = None
-    comentario: Optional[str] = None
 
     @field_validator("nota")
     @classmethod
@@ -30,7 +28,6 @@ class PuntajeCriterioRespuestaSchema(BaseModel):
     id_evaluacion: int
     id_criterio: int
     nota: Decimal
-    comentario: Optional[str]
 
     class Config:
         from_attributes = True
