@@ -39,12 +39,12 @@ class AlianzaBaseSchema(BaseModel):
             raise ValueError("La fecha de inicio no puede ser mayor que la fecha de fin")
         return self
 
-    @field_validator("sitio_web_url")
+    @field_validator("sitio_web_url", mode="before") 
     @classmethod
     def validar_sitio_web_url(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return v
-        v = v.strip()
+        v = str(v).strip()
         if not (12 <= len(v) <= 255):
             raise ValueError("La URL debe tener entre 12 y 255 caracteres.")
         if " " in v:
@@ -79,7 +79,7 @@ class AlianzaRespuestaSchema(BaseModel):
     fecha_registro_alianza: date
     id_estado: int
     convenio_pdf_url: Optional[str] = None
-    
+
     class Config:
         from_attributes = True
 
@@ -116,12 +116,12 @@ class AlianzaActualizarSchema(BaseModel):
             raise ValueError("La fecha de inicio no puede ser mayor que la fecha de fin")
         return self
     
-    @field_validator("sitio_web_url")
+    @field_validator("sitio_web_url", mode="before") 
     @classmethod
     def validar_sitio_web_url(cls, v: Optional[str]) -> Optional[str]:
         if v is None:
             return v
-        v = v.strip()
+        v = str(v).strip()
         if not (12 <= len(v) <= 255):
             raise ValueError("La URL debe tener entre 12 y 255 caracteres.")
         if " " in v:
