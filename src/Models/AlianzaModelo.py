@@ -16,7 +16,8 @@ class AlianzaModelo(Base):
     telefono_contacto         = Column(String, nullable=False)
     fecha_inicio_alianza      = Column(Date, nullable=False)
     fecha_fin_alianza         = Column(Date, nullable=False) 
-    fecha_registro_alianza = Column(Date, default=date.today)
+    fecha_registro_alianza    = Column(Date, default=date.today)
+    convenio_pdf_url          = Column(String, nullable=True)
 
     tipo_entidad = relationship("TipoEntidadesModelo", back_populates="alianzas")
     estados = relationship("EstadosModelo", back_populates="alianzas")

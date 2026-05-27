@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from Schemas.AlianzaSchema import AlianzaCrearSchema, AlianzaRespuestaSchema, AlianzaActualizarSchema
 from Controllers.AlianzaControlador import crear_alianza_controlador, buscar_alianza_controlador, listar_alianzas_controlador, actualizar_alianza_controlador, cambiar_estado_alianza_controlador
+from Controllers import StotageControlador
+import json
 
 router = APIRouter(
     prefix="/alianzas",
@@ -12,12 +14,24 @@ router = APIRouter(
 
 @router.post("/", response_model=AlianzaRespuestaSchema, status_code=status.HTTP_201_CREATED)
 async def crear_alianza(
-    alianza: AlianzaCrearSchema,
+    datos: str = Form(...),
+    convenio: UploadFile = File(None),
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     verificar_usuario_admin(usuario_actual)
-    nueva_alianza = crear_alianza_controlador(db, alianza)
+
+    try:
+        alianza_data = AlianzaCrearSchema(**json.loads(datos))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"Datos inválidos: {str(e)}")
+
+    if convenio:
+        contenido = await convenio.read()
+        pdf_url = StotageControlador.subir_foto_controlador(contenido, convenio.filename)
+        alianza_data.convenio_pdf_url = pdf_url
+
+    nueva_alianza = crear_alianza_controlador(db, alianza_data)
     if not nueva_alianza:
         raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Controller pendiente")
     return nueva_alianza
@@ -36,12 +50,29 @@ async def obtener_alianza(id_alianza: str, db: Session = Depends(get_db)):
 @router.put("/{id_alianza}", response_model=AlianzaRespuestaSchema)
 async def actualizar_alianza(
     id_alianza: str,
-    datos: AlianzaActualizarSchema,
+    datos: str = Form(...),
+    convenio: UploadFile = File(None),
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
-    ):
+):
     verificar_usuario_admin(usuario_actual)
-    alianza = actualizar_alianza_controlador(db, id_alianza, datos)
+
+    try:
+        alianza_data = AlianzaActualizarSchema(**json.loads(datos))
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f"Datos inválidos: {str(e)}")
+
+    if convenio:
+        existente = buscar_alianza_controlador(db, id_alianza)
+        contenido = await convenio.read()
+
+        if existente.convenio_pdf_url is not None:
+            StotageControlador.eliminar_foto_controlador(existente.convenio_pdf_url)
+
+        pdf_url = StotageControlador.subir_foto_controlador(contenido, convenio.filename)
+        alianza_data.convenio_pdf_url = pdf_url
+
+    alianza = actualizar_alianza_controlador(db, id_alianza, alianza_data)
     if not alianza:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Alianza no encontrada")
     return alianza

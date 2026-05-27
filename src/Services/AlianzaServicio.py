@@ -28,6 +28,7 @@ def crear_alianza(db: Session, alianza: AlianzaCrearSchema):
         telefono_contacto=alianza.telefono_contacto,
         fecha_inicio_alianza=alianza.fecha_inicio_alianza,
         fecha_fin_alianza=alianza.fecha_fin_alianza,
+        convenio_pdf_url=alianza.convenio_pdf_url,
     )
     db.add(nueva_alianza)
     db.commit()

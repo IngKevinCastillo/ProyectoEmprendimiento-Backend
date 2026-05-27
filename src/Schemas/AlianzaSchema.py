@@ -62,6 +62,7 @@ class AlianzaBaseSchema(BaseModel):
         return validar_id_entero(v, campo=campo)
 
 class AlianzaCrearSchema(AlianzaBaseSchema):
+    convenio_pdf_url: Optional[str] = None
     pass
 
 class AlianzaRespuestaSchema(BaseModel):
@@ -77,7 +78,8 @@ class AlianzaRespuestaSchema(BaseModel):
     fecha_fin_alianza: date
     fecha_registro_alianza: date
     id_estado: int
-
+    convenio_pdf_url: Optional[str] = None
+    
     class Config:
         from_attributes = True
 
@@ -92,6 +94,7 @@ class AlianzaActualizarSchema(BaseModel):
     telefono_contacto: Optional[str] = None
     fecha_inicio_alianza: Optional[date] = None
     fecha_fin_alianza: Optional[date] = None
+    convenio_pdf_url: Optional[str] = None
 
     @field_validator("nombre_entidad")
     @classmethod
