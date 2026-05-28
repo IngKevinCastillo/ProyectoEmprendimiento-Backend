@@ -190,20 +190,17 @@ def validar_fecha(valor: str, campo: str = "Fecha") -> datetime:
         raise ValueError(f"{campo} no es una fecha valida (ej. 31/02/2000 no existe).")
     
 
-def validar_nombre_utils(valor: str, min_len: int = 3, max_len: int = 100, campo: str = "Nombre") -> str:
-    if not isinstance(valor, str):
-        raise TypeError(f"{campo} debe ser un texto.")
-    valor = " ".join(valor.split())
-    if not valor:
-        raise ValueError(f"{campo} no puede estar vacío.")
-    if not (min_len <= len(valor) <= max_len):
+def validar_nombre_utils(v: str, min_len: int, max_len: int, campo: str) -> str:
+    v = v.strip()
+    if not (min_len <= len(v) <= max_len):
         raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
-    caracteres = r"[A-Za-záéíóúÁÉÍÓÚàèìòùäëïöüÄËÏÖÜñÑ]"
-    if not re.fullmatch(rf"{caracteres}+(\s{caracteres}+)*", valor):
-        raise ValueError(
-            f"{campo} solo puede contener letras y espacios simples entre palabras."
-        )
-    return valor    
+    # Permite letras, números, espacios simples, puntos, guiones y ampersand
+    import re
+    if not re.match(r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9][a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\s\.\-\&]*$", v):
+        raise ValueError(f"{campo} contiene caracteres no permitidos.")
+    if "  " in v:
+        raise ValueError(f"{campo} no puede tener espacios dobles.")
+    return v 
 
 def validar_descripcion_utils(
     valor: Optional[str],

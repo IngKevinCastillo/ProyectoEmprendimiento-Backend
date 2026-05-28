@@ -19,6 +19,8 @@ class AlianzaBaseSchema(BaseModel):
     @field_validator("nombre_entidad")
     @classmethod
     def validar_nombre_entidad(cls, v: str) -> str:
+        if v is None:
+            return v
         return validar_nombre_utils(v, 3, 100, "Nombre de la entidad")
 
     @field_validator("representante_entidad")
