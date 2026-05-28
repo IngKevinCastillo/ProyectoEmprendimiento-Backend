@@ -10,12 +10,12 @@ from Services.UsuarioServicio import buscar_usuario_por_correo
 from Configs.bd import get_db
 from Controllers.UsuarioControlador import BuscarUsuarioControlador
 from fastapi import status
+from typing import Final
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-# esquema_oauth2 = OAuth2PasswordBearer(tokenUrl="/usuarios/login")
 esquema_oauth2 = HTTPBearer()
-usuarioAdmin = 2
+USUARIO_ADMIN: Final = 2
 
 def HashearContrasena(contrasena: str) -> str:
     return pwd_context.hash(contrasena)
@@ -55,26 +55,11 @@ def CrearTokenAcceso(datos: dict):
 
     return jwt_codificado
 
-# def obtener_usuario_actual(
-#     token: str = Depends(esquema_oauth2),
-#     db: Session = Depends(get_db)
-# ):
-#     try:
-#         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-#         id_usuario = int(payload.get("sub"))
-#     except (JWTError, TypeError):
-#         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido")
-
-#     usuario = BuscarUsuarioControlador(db, id_usuario)
-#     if not usuario:
-#         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
-#     return usuario
-
 def obtener_usuario_actual(
     credentials: HTTPAuthorizationCredentials = Security(esquema_oauth2),
     db: Session = Depends(get_db)
 ):
-    token = credentials.credentials  # extrae el token del header
+    token = credentials.credentials
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         id_usuario = int(payload.get("sub"))
@@ -88,5 +73,5 @@ def obtener_usuario_actual(
 
 
 def verificar_usuario_admin(usuario_actual):
-    if usuario_actual.id_rol != usuarioAdmin:
+    if usuario_actual.id_rol != USUARIO_ADMIN:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")

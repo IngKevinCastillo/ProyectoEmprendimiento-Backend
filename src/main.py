@@ -1,6 +1,11 @@
 from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from Configs.bd import engine, Base, get_db
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from Middlewares.Registro_Solicitudes import RegistroSolicitudesMiddleware
+from Middlewares.Error_Middlewares import ManejoErroresMiddleware
 
 from Routes import (
     AlianzaRoute, AsignacionEvaluadorRoute, BeneficioAsignadoRoute, BeneficioRoute, CriterioEvaluacionRoute, EstadosRoute, EvaluacionRoute, ParticipacionEventoRoute, PostulacionRoute, PuntajeCriterioRoute, TipoConvocatoriaRoute, TipoEntidadesRoute, 
@@ -17,6 +22,10 @@ from Models.ProyectoModelo import ProyectoModelo
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="API Emprendimientos", version="1.0", docs_url="/docs")
+
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(RegistroSolicitudesMiddleware)
+app.add_middleware(ManejoErroresMiddleware)
 
 app.include_router(UsuarioRoute.router)
 app.include_router(TipoDocumentoRoute.router)
