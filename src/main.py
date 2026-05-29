@@ -23,9 +23,9 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="API Emprendimientos", version="1.0", docs_url="/docs")
 
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
-app.add_middleware(RegistroSolicitudesMiddleware)
-app.add_middleware(ManejoErroresMiddleware)
+# app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+# app.add_middleware(RegistroSolicitudesMiddleware)
+# app.add_middleware(ManejoErroresMiddleware)
 
 app.include_router(UsuarioRoute.router)
 app.include_router(TipoDocumentoRoute.router)
