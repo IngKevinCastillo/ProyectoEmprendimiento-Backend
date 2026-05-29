@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from Services.ParticipacionEventoServicio import confirmar_asistencia, actualizar_participacion_evento, buscar_participacion_evento, buscar_usuario_participacion_evento, buscar_usuario_participaciones_eventos, eliminar_participacion_proyecto, crear_participacion_evento, listar_participaciones_en_evento
+from Services.ParticipacionEventoServicio import listar_asistencia_evento, confirmar_asistencia, actualizar_participacion_evento, buscar_participacion_evento, buscar_usuario_participacion_evento, buscar_usuario_participaciones_eventos, eliminar_participacion_proyecto, crear_participacion_evento, listar_participaciones_en_evento
 from Schemas.ParticipacionEventoSchema import ParticipacionActualizarSchema, ParticipacionEventoCrearSchema
 from Schemas.EstadosSchema import CambiarEstado
 
@@ -17,6 +17,9 @@ def buscar_usuarios_participaciones_eventos_controlador(db: Session, id_usuario:
 
 def listar_participaciones_en_evento_controlador(db: Session, id_evento: int):
     return listar_participaciones_en_evento(db, id_evento)
+
+def listar_asistencia_evento_controlador(db: Session, id_evento: int):
+    return listar_asistencia_evento(db, id_evento)
 
 def actualizar_participacion_evento_controlador(db: Session, id_participacion_evento: int, participacion_evento: ParticipacionActualizarSchema):
     return actualizar_participacion_evento(db, id_participacion_evento, participacion_evento)

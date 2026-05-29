@@ -89,6 +89,17 @@ def listar_participaciones_en_evento(db: Session, id_evento: int):
     
     return existentes
 
+def listar_asistencia_evento(db: Session, id_evento: int):
+    existentes = db.query(ParticipacionEventoModelo).filter(
+        ParticipacionEventoModelo.id_evento == id_evento,
+        ParticipacionEventoModelo.id_estado == CONFIRMAR_ESTADO
+    ).all()
+    
+    if not existentes:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No hay asistencias registradas en el evento.")
+    
+    return existentes
+
 def actualizar_participacion_evento(db: Session, id_participacion_evento: int, participacion_evento: ParticipacionActualizarSchema):
     existente = buscar_participacion_evento(db, id_participacion_evento)
     
