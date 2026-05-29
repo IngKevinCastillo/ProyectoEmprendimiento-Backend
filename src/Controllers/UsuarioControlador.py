@@ -1,4 +1,4 @@
-from Services.UsuarioServicio import RecuperarContrasena, CambiarContrasena, CambiarCorreo, buscar_usuario, buscar_telefono, actualizar_usuario_id, actualizar_usuario_documento, eliminar_usuario, buscar_usuario_por_correo, buscar_usuario_por_documento, cambiar_estado, listar_usuarios
+from Services.UsuarioServicio import RecuperarContrasena, CambiarContrasena, CambiarCorreo, buscar_usuario, buscar_telefono, actualizar_usuario_id, actualizar_usuario_documento, eliminar_usuario, buscar_usuario_por_correo, buscar_usuario_por_documento, cambiar_estado, listar_usuarios, ListarUsuariosPorProyecto, BuscarTutorDeMesa
 from sqlalchemy.orm import Session
 from Schemas.Usuarioschema import UsuarioActualizarSchema
 from Schemas.EstadosSchema import CambiarEstado
@@ -29,6 +29,12 @@ def BuscarUsuarioPorDocumentoControlador(db: Session, numero_documento: int):
 
 def CambiarEstadoControlador(db, documento: int, estado: CambiarEstado):
     return cambiar_estado(db, documento, estado)
+
+def ObtenerUsuariosPorProyectoControlador(db: Session, id_proyecto: int):
+    return ListarUsuariosPorProyecto(db, id_proyecto)
+
+def BuscarTutorDeMesaControlador(db: Session, id_mesa: int):
+    return BuscarTutorDeMesa(db, id_mesa)
 
 def CambiarCorreoControlador(db: Session, correo_actual: str, correo_nuevo: str):
     return CambiarCorreo(db, correo_actual, correo_nuevo)
