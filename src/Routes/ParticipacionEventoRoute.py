@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
 from Configs.bd import get_db
 from Schemas.ParticipacionEventoSchema import ParticipacionActualizarSchema, ParticipacionEventoCrearSchema, ParticipacionEventoRespuestaSchema
-from Controllers.ParticipacionEventoControlador import confirmar_asistencia_controlador, actualizar_participacion_evento_controlador, buscar_participacion_evento_controlador, buscar_usuario_participacion_evento_controlador, buscar_usuarios_participaciones_eventos_controlador, eliminar_participacion_proyecto_controlador, crear_participacion_evento_controlador, listar_participaciones_en_evento_controlador
+from Controllers.ParticipacionEventoControlador import listar_asistencia_evento_controlador, confirmar_asistencia_controlador, actualizar_participacion_evento_controlador, buscar_participacion_evento_controlador, buscar_usuario_participacion_evento_controlador, buscar_usuarios_participaciones_eventos_controlador, eliminar_participacion_proyecto_controlador, crear_participacion_evento_controlador, listar_participaciones_en_evento_controlador
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from Schemas.EstadosSchema import CambiarEstado
 
@@ -41,6 +41,16 @@ async def listar_participaciones_en_evento(
     verificar_usuario_admin(usuario_actual)
     participacion_evento = listar_participaciones_en_evento_controlador(db, id_evento)
     return participacion_evento
+
+@router.get("/asistencia/evento/{id_evento}", response_model=list[ParticipacionEventoRespuestaSchema], status_code=status.HTTP_200_OK)
+async def listar_asistencia_evento(
+    id_evento: int,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    verificar_usuario_admin(usuario_actual)
+    existentes = listar_asistencia_evento_controlador(db, id_evento)
+    return existentes
 
 @router.get("/usuario/{id_usuario}/{id_evento}", response_model=ParticipacionEventoRespuestaSchema, status_code=status.HTTP_200_OK)
 async def obtener_usuario_participacion_evento(
