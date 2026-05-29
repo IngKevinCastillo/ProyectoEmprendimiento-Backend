@@ -20,3 +20,4 @@ class EstadosModelo(Base):
     convocatorias = relationship("ConvocatoriaModelo", back_populates="estado")
     evaluaciones = relationship("EvaluacionModelo", back_populates="estado")
     postulaciones = relationship("PostulacionModelo", back_populates="estado")
+    rol = relationship("RolesModelo", back_populates="estado")

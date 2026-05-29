@@ -12,6 +12,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+estructura_bd.py
+generar_excel_bd.py
+generar_pdf_bd.py
+
 # =========================
 # 📦 Entornos virtuales
 # =========================
