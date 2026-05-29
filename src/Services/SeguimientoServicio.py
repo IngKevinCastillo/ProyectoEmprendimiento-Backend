@@ -50,18 +50,15 @@ def ObtenerSeguimientosPorMesas(db: Session, id_mesas: str):
 
 def ValidarMesaPermitida(db: Session, id_proyecto: int, id_mesa_solicitada: int) -> None:
     ultimo = BuscarUltimoSeguimientoPorProyecto(db, id_proyecto)
-    mesa_esperada = ultimo.id_mesas + 1
-    actual = obtener_nombre_mesa_por_id(db, ultimo.id_mesas) if ultimo else "Ninguna"
-    esperada = obtener_nombre_mesa_por_id(db, mesa_esperada)
-    solicitante = obtener_nombre_mesa_por_id(db, id_mesa_solicitada)
 
     if ultimo is None:
         if id_mesa_solicitada != 1:
             raise HTTPException(status_code=400, detail="El primer seguimiento de un proyecto debe registrarse en la mesa Diagnostica.")
         return
-
+    
     if not ultimo.transferir_mesa:
         if id_mesa_solicitada != ultimo.id_mesas:
+            actual = obtener_nombre_mesa_por_id(db, ultimo.id_mesas) if ultimo else "Ninguna"
             raise HTTPException(status_code=400,
                 detail=(
                     f"El proyecto continúa en la mesa {actual}. "
@@ -70,7 +67,10 @@ def ValidarMesaPermitida(db: Session, id_proyecto: int, id_mesa_solicitada: int)
                 ),
             )
     else:
+        mesa_esperada = ultimo.id_mesas + 1
         if id_mesa_solicitada != mesa_esperada:
+            esperada = obtener_nombre_mesa_por_id(db, mesa_esperada)
+            solicitante = obtener_nombre_mesa_por_id(db, id_mesa_solicitada)    
             raise HTTPException(status_code=400,
                 detail=(
                     f"La mesa anterior autorizó la transferencia. "
