@@ -6,7 +6,7 @@ from Schemas.ProyectoSchema import ProyectoCrearSchema, ProyectoActualizarSchema
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoCrearSchema
 from Models.ProyectoModelo import ProyectoModelo
 from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
-from Core.Cache import obtener_id_rol, obtener_id_estado
+from Core.CacheResolver import obtener_id_rol, obtener_id_estado
 from Services.UsuarioProyectoServicio import CrearUsuarioProyecto
 from Utils.Mapeadorutilidades import auto_mapear
 

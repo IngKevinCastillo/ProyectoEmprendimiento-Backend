@@ -5,7 +5,7 @@ from Models.ProyectoPalabraClaveModelo import ProyectoPalabraClaveModelo
 from fastapi import HTTPException, status
 from Utils.Mapeadorutilidades import auto_mapear
 from Models.ProyectoModelo import ProyectoModelo
-from Core.Cache import obtener_id_estado
+from Core.CacheResolver import obtener_id_estado
 
 ESTADO_ELIMINADO: Final = "Eliminado"
 

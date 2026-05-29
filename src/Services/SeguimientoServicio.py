@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from Models.SeguimientoModelo import SeguimientoModelo
 from Schemas.SeguimientoSchema import SeguimientoCrearSchema, SeguimientoRespuestaSchema, SeguimientoActualizarSchema
 from Services.EstadosServicio import BuscarEstadosPorNombre
-from Core.Cache import obtener_id_estado
+from Core.CacheResolver import obtener_id_estado, obtener_nombre_mesa_por_id
 from Utils.Mapeadorutilidades import auto_mapear
 
 ESTADO_ELIMINADO: Final = "Eliminado"
@@ -48,10 +48,43 @@ def ObtenerSeguimientoPorFecha(db: Session, fecha: str):
 def ObtenerSeguimientosPorMesas(db: Session, id_mesas: str):
     return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_mesas == int(id_mesas), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
 
+def ValidarMesaPermitida(db: Session, id_proyecto: int, id_mesa_solicitada: int) -> None:
+    ultimo = BuscarUltimoSeguimientoPorProyecto(db, id_proyecto)
+    mesa_esperada = ultimo.id_mesas + 1
+    actual = obtener_nombre_mesa_por_id(db, ultimo.id_mesas) if ultimo else "Ninguna"
+    esperada = obtener_nombre_mesa_por_id(db, mesa_esperada)
+    solicitante = obtener_nombre_mesa_por_id(db, id_mesa_solicitada)
+
+    if ultimo is None:
+        if id_mesa_solicitada != 1:
+            raise HTTPException(status_code=400, detail="El primer seguimiento de un proyecto debe registrarse en la mesa Diagnostica.")
+        return
+
+    if not ultimo.transferir_mesa:
+        if id_mesa_solicitada != ultimo.id_mesas:
+            raise HTTPException(status_code=400,
+                detail=(
+                    f"El proyecto continúa en la mesa {actual}. "
+                    "Para avanzar a la siguiente, el seguimiento anterior "
+                    "debe marcar 'transferir_mesa' en verdadero."
+                ),
+            )
+    else:
+        if id_mesa_solicitada != mesa_esperada:
+            raise HTTPException(status_code=400,
+                detail=(
+                    f"La mesa anterior autorizó la transferencia. "
+                    f"El próximo seguimiento debe registrarse en la mesa {esperada}, "
+                    f"no en la mesa {solicitante}."
+                ),
+            )
+
 def CrearSeguimiento(db: Session, seguimiento: SeguimientoCrearSchema) -> SeguimientoModelo:
 
     if seguimiento.id_proyecto is None:
         raise HTTPException(status_code=400, detail="El id_proyecto es obligatorio")
+    
+    ValidarMesaPermitida(db, seguimiento.id_proyecto, seguimiento.id_mesas)    
 
     nuevo_seguimiento = SeguimientoModelo()
     auto_mapear(nuevo_seguimiento, seguimiento, excluir=["id_seguimiento_emprendimiento"])
