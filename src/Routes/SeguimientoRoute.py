@@ -11,6 +11,8 @@ from Controllers.SeguimientoControlador import (
     obtener_seguimiento_por_usuario_responsable_controlador,
     obtener_seguimientos_por_proyecto_controlador,
     obtener_seguimientos_por_mesas_controlador,
+    obtener_seguimiento_por_fecha_controlador,
+    validar_mesa_permitida_controlador,
     buscar_seguimiento_controlador,
     buscar_ultimo_seguimiento_por_proyecto_controlador,
     eliminar_seguimiento_controlador,
@@ -104,6 +106,25 @@ async def obtener_ultimo_seguimiento_por_proyecto(
     if not seguimiento:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No se encontró ningún seguimiento para este proyecto")
     return seguimiento
+
+
+@router.get("/fecha/{fecha}", response_model=list[SeguimientoRespuestaSchema])
+async def obtener_seguimiento_por_fecha(
+    fecha: str,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    return obtener_seguimiento_por_fecha_controlador(db, fecha)
+
+
+@router.get("/validar-mesa/{id_proyecto}/{id_mesa_solicitada}")
+async def validar_mesa_permitida(
+    id_proyecto: int,
+    id_mesa_solicitada: int,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    return validar_mesa_permitida_controlador(db, id_proyecto, id_mesa_solicitada)
 
 
 @router.put("/{id_seguimiento}", response_model=SeguimientoRespuestaSchema)

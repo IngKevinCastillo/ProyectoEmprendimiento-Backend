@@ -12,6 +12,7 @@ class SeguimientoBaseSchema(BaseModel):
     avance_porcentaje: Optional[Decimal] = None
     aspecto_revisado: Optional[str] = None
     id_mesas: Optional[int] = None
+    transferir_mesa: Optional[bool] = None
 
     @field_validator("id_proyecto", "id_usuario_responsable", "id_estado", "id_mesas")
     @classmethod
@@ -41,6 +42,15 @@ class SeguimientoBaseSchema(BaseModel):
         if v.as_tuple().exponent < -2:
             raise ValueError("El avance solo puede tener hasta 2 decimales.")
         return v
+    
+    @field_validator("transferir_mesa")
+    @classmethod
+    def validar_transferir_mesa(cls, v: Optional[bool]) -> bool:
+        if v is None:
+            return v
+        if not isinstance(v, bool):
+            raise ValueError("El campo 'transferir_mesa' debe ser un valor booleano (true/false).")
+        return v
 
 class SeguimientoCrearSchema(SeguimientoBaseSchema):
     id_proyecto: int
@@ -50,6 +60,7 @@ class SeguimientoCrearSchema(SeguimientoBaseSchema):
     avance_porcentaje: Decimal
     aspecto_revisado: str
     id_mesas: int
+    transferir_mesa: bool = False
 
 
 class SeguimientoRespuestaSchema(BaseModel):
@@ -62,6 +73,7 @@ class SeguimientoRespuestaSchema(BaseModel):
     avance_porcentaje: Decimal
     aspecto_revisado: Optional[str] = None
     id_mesas: int
+    transferir_mesa: bool
 
     class Config:
         from_attributes = True
@@ -73,3 +85,4 @@ class SeguimientoActualizarSchema(SeguimientoBaseSchema):
     avance_porcentaje: Optional[Decimal] = None
     aspecto_revisado: Optional[str] = None
     id_mesas: Optional[int] = None
+    transferir_mesa: Optional[bool] = None

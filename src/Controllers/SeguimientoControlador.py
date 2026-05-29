@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from Schemas.SeguimientoSchema import SeguimientoCrearSchema, SeguimientoRespuestaSchema, SeguimientoActualizarSchema
-from Services.SeguimientoServicio import CrearSeguimiento, BuscarSeguimiento, ObtenerSeguimientosPorProyecto, ObtenerSeguimientoPorUsuarioResponsable, EliminarSeguimiento, ActualizarSeguimiento, ObtenerSeguimientos, ObtenerSeguimientosPorEstado, BuscarUltimoSeguimientoPorProyecto, ObtenerSeguimientosPorMesas, ObtenerUltimoSeguimientoDeCadaProyecto
+from Services.SeguimientoServicio import CrearSeguimiento, BuscarSeguimiento, ObtenerSeguimientosPorProyecto, ObtenerSeguimientoPorUsuarioResponsable, EliminarSeguimiento, ActualizarSeguimiento, ObtenerSeguimientos, ObtenerSeguimientosPorEstado, BuscarUltimoSeguimientoPorProyecto, ObtenerSeguimientosPorMesas, ObtenerUltimoSeguimientoDeCadaProyecto, ObtenerSeguimientoPorFecha ,ValidarMesaPermitida
 
 def crear_seguimiento_controlador(db: Session, seguimiento: SeguimientoCrearSchema):
     return CrearSeguimiento(db, seguimiento)
@@ -22,6 +22,12 @@ def obtener_seguimientos_por_proyecto_controlador(db: Session, id_proyecto: str)
 
 def obtener_seguimientos_por_mesas_controlador(db: Session, id_mesas: str):
     return ObtenerSeguimientosPorMesas(db, id_mesas)
+
+def obtener_seguimiento_por_fecha_controlador(db: Session, fecha: str):
+    return ObtenerSeguimientoPorFecha(db, fecha)
+
+def validar_mesa_permitida_controlador(db: Session, id_proyecto: int, id_mesa_solicitada: int):
+    return ValidarMesaPermitida(db, id_proyecto, id_mesa_solicitada)
 
 def buscar_seguimiento_controlador(db: Session, id_seguimiento: str):
     return BuscarSeguimiento(db, id_seguimiento)

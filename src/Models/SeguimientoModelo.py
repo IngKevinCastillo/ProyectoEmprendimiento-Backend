@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
+from sqlalchemy import Boolean, Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
 from sqlalchemy.orm import relationship
 from Configs.bd import Base
 from Models.ProyectoModelo import ProyectoModelo
@@ -16,6 +16,7 @@ class SeguimientoModelo(Base):
     avance_porcentaje = Column(Numeric(5, 2), nullable=False)
     aspecto_revisado = Column(String(200), nullable=False)
     id_mesas = Column(Integer, ForeignKey("Mesas.id", ondelete="RESTRICT"), nullable=False)
+    transferir_mesa = Column(Boolean, nullable=False, server_default=text("false"))
     
     proyecto = relationship("ProyectoModelo", back_populates="seguimientos")
     usuario_responsable = relationship("UsuarioModelo", back_populates="seguimientos")
