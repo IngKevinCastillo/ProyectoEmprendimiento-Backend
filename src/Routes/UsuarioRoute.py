@@ -20,6 +20,7 @@ from Configs.bd import get_db
 
 from Controllers.UsuarioControlador import (
     ObtenerUsuariosControlador,
+    ObtenerUsuariosPorProyectoControlador,    
     ActualizarUsuarioIdControlador,
     ActualizarUsuarioDocumentoControlador,
     EliminarUsuarioControlador,
@@ -27,6 +28,7 @@ from Controllers.UsuarioControlador import (
     CambiarEstadoControlador,
     BuscarUsuarioPorDocumentoControlador,
     BuscarUsuarioPorCorreoControlador,
+    BuscarTutorDeMesaControlador,
     CambiarCorreoControlador,
     CambiarContrasenaControlador,
     RecuperarContrasenaControlador
@@ -68,6 +70,15 @@ async def buscar_usuario_por_documento(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario especificado no existe.")
     return usuario
 
+@router.get("/buscar-tutor-mesa/{id_mesa}", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_200_OK)
+async def buscar_tutor_de_mesa(
+    id_mesa: int,
+    db: Session = Depends(get_db),
+):
+    tutor = BuscarTutorDeMesaControlador(db, id_mesa)
+    if not tutor or tutor.id_estado == eliminado:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El tutor especificado no existe.")
+    return tutor
 
 @router.post("/", response_model=UsuarioRespuestaSchema, status_code=status.HTTP_201_CREATED)
 async def crear_usuario(
@@ -85,17 +96,6 @@ async def obtener_mi_cuenta(usuario_actual=Depends(obtener_usuario_actual)):
     return usuario_actual
 
 
-@router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
-async def login(datos: LoginSchema, db: Session = Depends(get_db)):
-    token = IniciarSesionControlador(db, datos)
-    if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
-    usuario = BuscarUsuarioPorCorreoControlador(db, datos.correo)
-    if(usuario.id_estado == eliminado):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La cuenta no existe...por favor crea tu cuenta.")
-    return token
-
-
 @router.get("/", response_model=list[UsuarioRespuestaSchema])
 async def listar_usuarios(
     db: Session = Depends(get_db),
@@ -106,6 +106,29 @@ async def listar_usuarios(
     if not existentes:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No existen usuarios.")
     return existentes
+
+
+@router.get("/proyecto/{id_proyecto}", response_model=list[UsuarioRespuestaSchema])
+async def listar_usuarios_por_proyecto(
+    id_proyecto: int,
+    db: Session = Depends(get_db),
+):
+    existentes = ObtenerUsuariosPorProyectoControlador(db, id_proyecto)
+    if not existentes:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No existen usuarios para este proyecto.")
+    return existentes
+
+
+@router.post("/login", response_model=Token, status_code=status.HTTP_200_OK)
+async def login(datos: LoginSchema, db: Session = Depends(get_db)):
+    token = IniciarSesionControlador(db, datos)
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
+    usuario = BuscarUsuarioPorCorreoControlador(db, datos.correo)
+    if(usuario.id_estado == eliminado):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La cuenta no existe...por favor crea tu cuenta.")
+    return token
+
 
 @router.put("/cambiar-estado/{numero_documento}", response_model=UsuarioRespuestaSchema)
 async def cambiar_estado(

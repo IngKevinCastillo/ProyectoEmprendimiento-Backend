@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
+from Models.MesasModelo import MesasModelo
 from Models.UsuarioModelo import UsuarioModelo
+from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
 from Utils.Mapeadorutilidades import auto_mapear
 from Schemas.Usuarioschema import UsuarioActualizarSchema
 from Schemas.EstadosSchema import CambiarEstado
@@ -20,6 +22,12 @@ def buscar_usuario_por_correo(db: Session, correo: str):
 
 def buscar_usuario_por_documento(db: Session, documento: int):
     return db.query(UsuarioModelo).filter(UsuarioModelo.numero_documento == str(documento)).first()
+
+def BuscarTutorDeMesa(db: Session, id_mesa: int):
+    return db.query(UsuarioModelo).join(MesasModelo, MesasModelo.cedula_tutor == UsuarioModelo.numero_documento).filter(MesasModelo.id == id_mesa).first()
+
+def ListarUsuariosPorProyecto(db: Session, id_proyecto: int):
+    return (db.query(UsuarioModelo).join(UsuarioProyectoModelo, UsuarioModelo.id_usuario == UsuarioProyectoModelo.id_usuario).filter(UsuarioProyectoModelo.id_proyecto == id_proyecto).all())
 
 def listar_usuarios(db: Session):
     return db.query(UsuarioModelo).filter(UsuarioModelo.id_estado != ESTADO_ELIMINADO).all()

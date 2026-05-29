@@ -2,6 +2,7 @@ from typing import Final
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from Core.CacheResolver import obtener_id_estado, obtener_id_rol
+from Models import UsuarioModelo
 from Models.ProyectoModelo import ProyectoModelo
 from Utils.Mapeadorutilidades import auto_mapear
 from Models.UsuarioProyectoModelo import UsuarioProyectoModelo
