@@ -22,3 +22,27 @@ class PostulacionRespuestaSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+#Integrantes postulacion
+class IntegranteProyectoSchema(BaseModel):
+    id_usuario: int
+    primer_nombre: str
+    segundo_nombre: Optional[str]
+    primer_apellido: str
+    segundo_apellido: str
+    correo: str
+    numero_documento: str
+    telefono: str
+    id_rol: int
+
+    class Config:
+        from_attributes = True
+
+class IntegrantesPostulacionRespuestaSchema(BaseModel):
+    id_proyecto: int
+    propietario: IntegranteProyectoSchema
+    integrantes: list[IntegranteProyectoSchema]
+
+    class Config:
+        from_attributes = True

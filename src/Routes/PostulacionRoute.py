@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
-from Schemas.PostulacionSchema import (PostulacionCrearSchema, PostulacionActualizarSchema, PostulacionCambiarEstadoSchema, PostulacionRespuestaSchema)
+from Schemas.PostulacionSchema import (PostulacionCrearSchema, PostulacionActualizarSchema, PostulacionCambiarEstadoSchema, PostulacionRespuestaSchema, IntegrantesPostulacionRespuestaSchema)
 from Controllers import PostulacionControlador
+
 
 router = APIRouter(
     prefix="/convocatorias/{id_convocatoria}/postulaciones",
@@ -40,6 +41,16 @@ async def obtener_postulacion(
     if not postulacion:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Postulación no encontrada")
     return postulacion
+
+@router.get("/{id_postulacion}/integrantes", response_model=IntegrantesPostulacionRespuestaSchema)
+async def obtener_integrantes_postulacion(
+    id_convocatoria: int,
+    id_postulacion: int,
+    db: Session = Depends(get_db),
+    usuario_actual=Depends(obtener_usuario_actual)
+):
+    verificar_usuario_admin(usuario_actual)
+    return PostulacionControlador.obtener_integrantes_postulacion_controlador(db, id_postulacion)
 
 @router.put("/{id_postulacion}", response_model=PostulacionRespuestaSchema)
 async def actualizar_postulacion(

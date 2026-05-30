@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from Schemas.PostulacionSchema import PostulacionCrearSchema, PostulacionActualizarSchema
-from Services.PostulacionServicio import (ObtenerPostulacionesPorConvocatoria, ObtenerPostulacionesPorProyecto, BuscarPostulacion, CrearPostulacion, ActualizarPostulacion, CambiarEstadoPostulacion, EliminarPostulacion)
+from Services.PostulacionServicio import (ObtenerPostulacionesPorConvocatoria, ObtenerPostulacionesPorProyecto, BuscarPostulacion, CrearPostulacion, ActualizarPostulacion, CambiarEstadoPostulacion, EliminarPostulacion, ObtenerIntegrantesPostulacion)
 
 def obtener_postulaciones_por_convocatoria_controlador(db: Session, id_convocatoria: int):
     return ObtenerPostulacionesPorConvocatoria(db, id_convocatoria)
@@ -22,3 +22,6 @@ def cambiar_estado_postulacion_controlador(db: Session, id_postulacion: int, id_
 
 def eliminar_postulacion_controlador(db: Session, id_postulacion: int):
     return EliminarPostulacion(db, id_postulacion)
+
+def obtener_integrantes_postulacion_controlador(db: Session, id_postulacion: int):
+    return ObtenerIntegrantesPostulacion(db, id_postulacion)
