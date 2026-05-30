@@ -10,6 +10,7 @@ from Core.CacheResolver import obtener_id_estado, obtener_nombre_mesa_por_id
 from Utils.Mapeadorutilidades import auto_mapear
 
 ESTADO_ELIMINADO: Final = "Eliminado"
+MESA_FINAL: Final = 4
 
 def BuscarSeguimiento(db: Session, id: str):
     return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_seguimiento_emprendimiento == int(id), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).first()
@@ -67,10 +68,16 @@ def ValidarMesaPermitida(db: Session, id_proyecto: int, id_mesa_solicitada: int)
                 ),
             )
     else:
+        if ultimo.id_mesas >= MESA_FINAL:
+            raise HTTPException(
+                status_code=400,
+                detail="El proyecto ya se encuentra en la mesa final y no puede avanzar a una siguiente."
+            )
+        
         mesa_esperada = ultimo.id_mesas + 1
         if id_mesa_solicitada != mesa_esperada:
             esperada = obtener_nombre_mesa_por_id(db, mesa_esperada)
-            solicitante = obtener_nombre_mesa_por_id(db, id_mesa_solicitada)    
+            solicitante = obtener_nombre_mesa_por_id(db, id_mesa_solicitada)
             raise HTTPException(status_code=400,
                 detail=(
                     f"La mesa anterior autorizó la transferencia. "
