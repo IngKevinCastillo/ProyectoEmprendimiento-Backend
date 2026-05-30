@@ -13,3 +13,14 @@ class AsignacionRespuestaSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class AsignacionEvaluadorDetalleSchema(BaseModel):
+    id_asignacion: int
+    id_postulacion: int
+    id_evaluador: int
+    fecha_asignacion: Optional[datetime]
+    nombre_proyecto: str
+    id_proyecto: int
+
+    class Config:
+        from_attributes = True

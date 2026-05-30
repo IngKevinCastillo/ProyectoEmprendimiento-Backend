@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
-from Schemas.AsignacionEvaluadorSchema import AsignacionCrearSchema, AsignacionRespuestaSchema
+from Schemas.AsignacionEvaluadorSchema import AsignacionCrearSchema, AsignacionEvaluadorDetalleSchema, AsignacionRespuestaSchema
 from Controllers import AsignacionEvaluadorControlador
 
 router = APIRouter(
@@ -49,7 +49,7 @@ router_evaluador = APIRouter(
     tags=["Asignación de Evaluadores"],
 )
 
-@router_evaluador.get("/", response_model=list[AsignacionRespuestaSchema])
+@router_evaluador.get("/", response_model=list[AsignacionEvaluadorDetalleSchema])
 async def listar_mis_asignaciones(
     id_evaluador: int,
     db: Session = Depends(get_db),

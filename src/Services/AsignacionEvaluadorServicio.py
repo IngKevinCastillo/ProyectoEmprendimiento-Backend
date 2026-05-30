@@ -5,6 +5,8 @@ from Models.PostulacionModelo import PostulacionModelo
 from Models.UsuarioModelo import UsuarioModelo
 from Models.RolesModelo import RolesModelo
 from Schemas.AsignacionEvaluadorSchema import AsignacionCrearSchema
+from Models.PostulacionModelo import PostulacionModelo
+from Models.ProyectoModelo import ProyectoModelo
 
 ID_ESTADO_POSTULACION_ENVIADA = 27
 
@@ -43,9 +45,27 @@ def ObtenerAsignacionesPorPostulacion(db: Session, id_postulacion: int):
     ).all()
 
 def ObtenerAsignacionesPorEvaluador(db: Session, id_evaluador: int):
-    return db.query(AsignacionEvaluadorModelo).filter(
+    asignaciones = db.query(AsignacionEvaluadorModelo).filter(
         AsignacionEvaluadorModelo.id_evaluador == id_evaluador
     ).all()
+
+    resultado = []
+    for asignacion in asignaciones:
+        postulacion = db.query(PostulacionModelo).filter(
+            PostulacionModelo.id_postulacion == asignacion.id_postulacion
+        ).first()
+        proyecto = db.query(ProyectoModelo).filter(
+            ProyectoModelo.id_proyecto == postulacion.id_proyecto
+        ).first()
+        resultado.append({
+            "id_asignacion": asignacion.id_asignacion,
+            "id_postulacion": asignacion.id_postulacion,
+            "id_evaluador": asignacion.id_evaluador,
+            "fecha_asignacion": asignacion.fecha_asignacion,
+            "nombre_proyecto": proyecto.nombre_proyecto,
+            "id_proyecto": proyecto.id_proyecto
+        })
+    return resultado
 
 def BuscarAsignacion(db: Session, id_asignacion: int):
     return db.query(AsignacionEvaluadorModelo).filter(
@@ -87,3 +107,4 @@ def EliminarAsignacion(db: Session, id_asignacion: int):
     db.delete(asignacion)
     db.commit()
     return True
+
