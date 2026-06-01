@@ -19,11 +19,6 @@ def _validar_convocatoria(db: Session, id_convocatoria: int):
     ).first()
     if not convocatoria:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Convocatoria no encontrada")
-    if convocatoria.estado not in ("cerrada", "finalizada"):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Solo se pueden asignar beneficios en convocatorias cerradas o finalizadas"
-        )
     return convocatoria
 
 def _validar_proyecto_postulado(db: Session, id_convocatoria: int, id_proyecto: int):
