@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from Configs.bd import get_db
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
 from Schemas.BeneficioAsignadoSchema import (
+    BeneficioAsignadoCambiarEstadoSchema,
     BeneficioAsignadoCrearSchema,
     BeneficioAsignadoActualizarSchema,
     BeneficioAsignadoRespuestaSchema
@@ -64,12 +65,14 @@ async def actualizar_beneficio_asignado(
 async def cambiar_estado_beneficio_asignado(
     id_convocatoria: int,
     id_beneficio_asignado: int,
-    nuevo_estado: str,
+    datos: BeneficioAsignadoCambiarEstadoSchema,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
     verificar_usuario_admin(usuario_actual)
-    beneficio_asignado = BeneficioAsignadoControlador.cambiar_estado_beneficio_asignado_controlador(db, id_beneficio_asignado, nuevo_estado)
+    beneficio_asignado = BeneficioAsignadoControlador.cambiar_estado_beneficio_asignado_controlador(
+        db, id_beneficio_asignado, datos.id_estado
+    )
     if not beneficio_asignado:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Beneficio asignado no encontrado")
     return beneficio_asignado

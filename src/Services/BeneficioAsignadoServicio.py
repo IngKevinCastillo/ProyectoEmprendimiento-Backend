@@ -4,13 +4,18 @@ from Models.BeneficioAsignadoModelo import BeneficioAsignadoModelo
 from Models.ConvocatoriaModelo import ConvocatoriaModelo
 from Models.PostulacionModelo import PostulacionModelo
 from Models.BeneficioModelo import BeneficioModelo
-from Models.ProyectoModelo import ProyectoModelo
+from Models.AsignacionEvaluadorModelo import AsignacionEvaluadorModelo
+from Models.EvaluacionModelo import EvaluacionModelo
 from Schemas.BeneficioAsignadoSchema import BeneficioAsignadoCrearSchema, BeneficioAsignadoActualizarSchema
 
+ID_ESTADO_POSTULACION_APROBADA = 4
+ID_ESTADO_EVALUACION_COMPLETADA = 28
+ID_ESTADO_BENEFICIO_PENDIENTE = 13
+
 TRANSICIONES_VALIDAS = {
-    "pendiente": ["entregado"],
-    "entregado": ["confirmado"],
-    "confirmado": []
+    13: [27],   # pendiente → entregado
+    27: [28],   # entregado → confirmado
+    28: []      # confirmado
 }
 
 def _validar_convocatoria(db: Session, id_convocatoria: int):
@@ -25,13 +30,33 @@ def _validar_proyecto_postulado(db: Session, id_convocatoria: int, id_proyecto: 
     postulacion = db.query(PostulacionModelo).filter(
         PostulacionModelo.id_convocatoria == id_convocatoria,
         PostulacionModelo.id_proyecto == id_proyecto,
-        PostulacionModelo.estado == "aprobada"
+        PostulacionModelo.id_estado == ID_ESTADO_POSTULACION_APROBADA
     ).first()
     if not postulacion:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="El proyecto no tiene una postulación aprobada en esta convocatoria"
         )
+
+    asignaciones = db.query(AsignacionEvaluadorModelo).filter(
+        AsignacionEvaluadorModelo.id_postulacion == postulacion.id_postulacion
+    ).all()
+
+    if not asignaciones:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="La postulación no tiene evaluadores asignados"
+        )
+
+    for asignacion in asignaciones:
+        evaluacion = db.query(EvaluacionModelo).filter(
+            EvaluacionModelo.id_asignacion == asignacion.id_asignacion
+        ).first()
+        if not evaluacion or evaluacion.id_estado != ID_ESTADO_EVALUACION_COMPLETADA:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Todas las evaluaciones deben estar completadas antes de asignar beneficios"
+            )
     return postulacion
 
 def _validar_beneficio(db: Session, id_beneficio: int):
@@ -61,13 +86,12 @@ def CrearBeneficioAsignado(db: Session, id_convocatoria: int, datos: BeneficioAs
     _validar_convocatoria(db, id_convocatoria)
     _validar_proyecto_postulado(db, id_convocatoria, datos.id_proyecto)
     _validar_beneficio(db, datos.id_beneficio)
-
     nuevo = BeneficioAsignadoModelo(
         id_convocatoria=id_convocatoria,
         id_proyecto=datos.id_proyecto,
         id_beneficio=datos.id_beneficio,
         descripcion_entrega=datos.descripcion_entrega,
-        estado="pendiente",
+        id_estado=ID_ESTADO_BENEFICIO_PENDIENTE,
         asignado_por=id_admin
     )
     db.add(nuevo)
@@ -79,7 +103,7 @@ def ActualizarBeneficioAsignado(db: Session, id_beneficio_asignado: int, datos: 
     beneficio_asignado = BuscarBeneficioAsignado(db, id_beneficio_asignado)
     if not beneficio_asignado:
         return None
-    if beneficio_asignado.estado != "pendiente":
+    if beneficio_asignado.id_estado != ID_ESTADO_BENEFICIO_PENDIENTE:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Solo se puede editar un beneficio asignado en estado pendiente"
@@ -90,17 +114,17 @@ def ActualizarBeneficioAsignado(db: Session, id_beneficio_asignado: int, datos: 
     db.refresh(beneficio_asignado)
     return beneficio_asignado
 
-def CambiarEstadoBeneficioAsignado(db: Session, id_beneficio_asignado: int, nuevo_estado: str):
+def CambiarEstadoBeneficioAsignado(db: Session, id_beneficio_asignado: int, nuevo_estado: int):
     beneficio_asignado = BuscarBeneficioAsignado(db, id_beneficio_asignado)
     if not beneficio_asignado:
         return None
-    estados_permitidos = TRANSICIONES_VALIDAS.get(beneficio_asignado.estado, [])
+    estados_permitidos = TRANSICIONES_VALIDAS.get(beneficio_asignado.id_estado, [])
     if nuevo_estado not in estados_permitidos:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"No se puede pasar de '{beneficio_asignado.estado}' a '{nuevo_estado}'"
+            detail=f"Transición de estado no permitida"
         )
-    beneficio_asignado.estado = nuevo_estado
+    beneficio_asignado.id_estado = nuevo_estado
     db.commit()
     db.refresh(beneficio_asignado)
     return beneficio_asignado
@@ -109,7 +133,7 @@ def EliminarBeneficioAsignado(db: Session, id_beneficio_asignado: int):
     beneficio_asignado = BuscarBeneficioAsignado(db, id_beneficio_asignado)
     if not beneficio_asignado:
         return None
-    if beneficio_asignado.estado != "pendiente":
+    if beneficio_asignado.id_estado != ID_ESTADO_BENEFICIO_PENDIENTE:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Solo se puede eliminar un beneficio asignado en estado pendiente"

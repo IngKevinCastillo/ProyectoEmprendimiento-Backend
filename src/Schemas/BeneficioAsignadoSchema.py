@@ -10,13 +10,16 @@ class BeneficioAsignadoCrearSchema(BaseModel):
 class BeneficioAsignadoActualizarSchema(BaseModel):
     descripcion_entrega: Optional[str] = None
 
+class BeneficioAsignadoCambiarEstadoSchema(BaseModel):
+    id_estado: int
+
 class BeneficioAsignadoRespuestaSchema(BaseModel):
     id_beneficio_asignado: int
     id_convocatoria: int
     id_proyecto: int
     id_beneficio: int
     descripcion_entrega: Optional[str]
-    estado: str
+    id_estado: int
     fecha_asignacion: Optional[datetime]
     asignado_por: int
 
