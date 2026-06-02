@@ -67,7 +67,6 @@ def CrearPuntaje(db: Session, id_evaluacion: int, datos: PuntajeCriterioCrearSch
         id_evaluacion=id_evaluacion,
         id_criterio=datos.id_criterio,
         nota=datos.nota,
-        comentario=datos.comentario
     )
     db.add(nuevo)
     db.flush()
