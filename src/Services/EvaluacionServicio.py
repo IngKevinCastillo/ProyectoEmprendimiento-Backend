@@ -49,7 +49,7 @@ def CrearEvaluacion(db: Session, id_asignacion: int, datos: EvaluacionCrearSchem
     nueva = EvaluacionModelo(
         id_asignacion=id_asignacion,
         comentario_general=datos.comentario_general,
-        puntaje_total=None,
+        puntaje_total=0.00,
         id_estado=ID_ESTADO_PENDIENTE
     )
     db.add(nueva)

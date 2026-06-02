@@ -25,7 +25,7 @@ def _recalcular_puntaje_total(db: Session, evaluacion: EvaluacionModelo):
     puntajes = db.query(PuntajeCriterioModelo).filter(
         PuntajeCriterioModelo.id_evaluacion == evaluacion.id_evaluacion
     ).all()
-    total = Decimal("0.0")
+    total = Decimal("0.00")
     for p in puntajes:
         criterio = db.query(CriterioEvaluacionModelo).filter(
             CriterioEvaluacionModelo.id_criterio == p.id_criterio
