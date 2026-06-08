@@ -9,6 +9,7 @@ class CursoCrearSchema(BaseModel):
     fecha_inicio: date
     fecha_fin: date
     foto_url: str | None = None
+    horas: int
     
     @field_validator("nombre_curso")
     @classmethod
@@ -34,6 +35,7 @@ class CursoRespuestaSchema(BaseModel):
     fecha_fin: date
     id_estado: int
     foto_url: Optional[str] = None
+    horas: int
     
     class Config:
         from_attributes = True
@@ -44,7 +46,8 @@ class CursoActualizarSchema(BaseModel):
     fecha_inicio: Optional[date] = None
     fecha_fin: Optional[date] = None
     foto_url: Optional[str] = None
-    
+    horas: Optional[int] = None
+
     @field_validator("nombre_curso")
     @classmethod
     def validar_nombre(cls, v: str) -> str:

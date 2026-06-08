@@ -39,7 +39,8 @@ def crear_curso(db: Session, curso: CursoCrearSchema):
         fecha_inicio=curso.fecha_inicio,
         fecha_fin=curso.fecha_fin,
         id_estado=ESTADO_ACTIVO,
-        foto_url=curso.foto_url
+        foto_url=curso.foto_url,
+        horas=curso.horas
     )
     db.add(nuevo_curso)
     db.commit()

@@ -14,6 +14,7 @@ class CursoModelo(Base):
     fecha_fin = Column(Date, nullable=False)
     id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
     foto_url = Column(String, nullable=True)
+    horas = Column(Integer, nullable=False)
 
     inscripciones = relationship("InscripcionModelo", back_populates="curso")
     estados = relationship("EstadosModelo", back_populates="curso")
