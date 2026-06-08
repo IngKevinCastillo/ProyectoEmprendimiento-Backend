@@ -2,7 +2,7 @@ import re
 from datetime import datetime, timezone
 from typing import Optional
 
-def validar_nombre_usuario_utils(valor: str, min_len: int = 1, max_len: int = 30, campo: str = "Nombre") -> str:
+def validar_nombre_usuario_utils(valor: str, min_len: int = 1, max_len: int = 30, campo: str = "Nombre", permite_numeros: bool = False) -> str:
     if not isinstance(valor, str):
         raise TypeError(f"{campo} debe ser un texto.")
     valor = " ".join(valor.split())
@@ -10,39 +10,16 @@ def validar_nombre_usuario_utils(valor: str, min_len: int = 1, max_len: int = 30
         raise ValueError(f"{campo} no puede estar vacío.")
     if not (min_len <= len(valor) <= max_len):
         raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
-    caracteres = r"[A-Za-z0-9áéíóúÁÉÍÓÚàèìòùäëïöüÄËÏÖÜñÑ\-\']"
-    if not re.fullmatch(rf"{caracteres}+(\s{caracteres}+)*", valor):
+
+    if permite_numeros:
+        caracteres = r"[A-Za-z0-9áéíóúÁÉÍÓÚàèìòùäëïöüÄËÏÖÜñÑ\-\'\s]"
+    else:
+        caracteres = r"[A-Za-záéíóúÁÉÍÓÚàèìòùäëïöüÄËÏÖÜñÑ\-\'\s]"
+    
+    if not re.fullmatch(rf"{caracteres}+", valor):
         raise ValueError(
-            f"{campo} solo puede contener letras, números, espacios simples, "
+            f"{campo} solo puede contener letras, espacios, "
             f"tildes, guiones, apóstrofes y diéresis."
-        )
-    return valor
-
-def validar_contrasena_utils(valor: str, campo: str = "Contraseña") -> str:
-    if not isinstance(valor, str):
-        raise TypeError(f"{campo} debe ser un texto.")
-    if not (8 <= len(valor) <= 30):
-        raise ValueError(f"{campo} debe tener entre 8 y 30 caracteres.")
-    if not re.search(r"[A-Z]", valor):
-        raise ValueError(f"{campo} debe contener al menos una letra mayúscula.")
-    if not re.search(r"[a-z]", valor):
-        raise ValueError(f"{campo} debe contener al menos una letra minúscula.")
-    if not re.search(r"[0-9]", valor):
-        raise ValueError(f"{campo} debe contener al menos un número.")
-    if not re.search(r"[!@#$%^&*()\-_=+\[\]{};:'\",.<>?/\\|`~]", valor):
-        raise ValueError(f"{campo} debe contener al menos un carácter especial.")
-    caracteres_permitidos = r"[A-Za-z0-9!@#$%^&*()\-_=+\[\]{};:'\",.<>?/\\|`~]"
-    if not re.fullmatch(rf"{caracteres_permitidos}+", valor):
-        raise ValueError(f"{campo} contiene caracteres no permitidos.")
-    return valor
-
-def validar_documento(valor: str, campo: str = "Documento") -> str:
-    if not isinstance(valor, str):
-        raise TypeError(f"{campo} debe ser un texto.")
-    valor = valor.strip().replace(".", "").replace(",", "").replace(" ", "")
-    if not re.fullmatch(r"[A-Za-z0-9]{6,12}", valor):
-        raise ValueError(
-            f"{campo} inválido. Debe tener entre 6 y 12 caracteres alfanuméricos (sin puntos ni espacios)."
         )
     return valor
 
@@ -50,19 +27,17 @@ def validar_telefono_utils(valor: str, campo: str = "Teléfono") -> str:
     if not isinstance(valor, str):
         raise TypeError(f"{campo} debe ser un texto.")
     valor = valor.strip().replace(" ", "").replace("-", "")
+    
     if valor.startswith("+57"):
         valor = valor[3:]
     elif valor.startswith("57") and len(valor) > 10:
         valor = valor[2:]
-    if not valor.isdigit():
-        raise ValueError(f"{campo} solo debe contener dígitos.")
-    if len(valor) == 10 and valor.startswith("3"):
-        return valor
-    if len(valor) == 7:
-        return valor
-    raise ValueError(
-        f"{campo} inválido. Debe ser un número colombiano válido de 7 o 10 dígitos."
-    )
+    
+    if not re.fullmatch(r"3\d{9}", valor):
+        raise ValueError(
+            f"{campo} inválido. Debe ser un número de 10 dígitos iniciando con 3 (ej. 3243352524)."
+        )
+    return valor
 
 def validar_string(valor: str, min_len: int = 1, max_len: int = 255, campo: str = "Campo") -> str:
     if not isinstance(valor, str):
@@ -189,12 +164,28 @@ def validar_fecha(valor: str, campo: str = "Fecha") -> datetime:
     except ValueError:
         raise ValueError(f"{campo} no es una fecha valida (ej. 31/02/2000 no existe).")
     
+def validar_contrasena_utils(valor: str, campo: str = "Contraseña") -> str:
+    if not isinstance(valor, str):
+        raise TypeError(f"{campo} debe ser un texto.")
+    if not (8 <= len(valor) <= 30):
+        raise ValueError(f"{campo} debe tener entre 8 y 30 caracteres.")
+    if not re.search(r"[A-Z]", valor):
+        raise ValueError(f"{campo} debe contener al menos una letra mayúscula.")
+    if not re.search(r"[a-z]", valor):
+        raise ValueError(f"{campo} debe contener al menos una letra minúscula.")
+    if not re.search(r"[0-9]", valor):
+        raise ValueError(f"{campo} debe contener al menos un número.")
+    if not re.search(r"[!@#$%^&*()\-_=+\[\]{};:'\",.<>?/\\|`~]", valor):
+        raise ValueError(f"{campo} debe contener al menos un carácter especial.")
+    caracteres_permitidos = r"[A-Za-z0-9!@#$%^&*()\-_=+\[\]{};:'\",.<>?/\\|`~]"
+    if not re.fullmatch(rf"{caracteres_permitidos}+", valor):
+        raise ValueError(f"{campo} contiene caracteres no permitidos.")
+    return valor
 
 def validar_nombre_utils(v: str, min_len: int, max_len: int, campo: str) -> str:
     v = v.strip()
     if not (min_len <= len(v) <= max_len):
         raise ValueError(f"{campo} debe tener entre {min_len} y {max_len} caracteres.")
-    # Permite letras, números, espacios simples, puntos, guiones y ampersand
     import re
     if not re.match(r"^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9][a-zA-ZáéíóúÁÉÍÓÚñÑüÜ0-9\s\.\-\&]*$", v):
         raise ValueError(f"{campo} contiene caracteres no permitidos.")
