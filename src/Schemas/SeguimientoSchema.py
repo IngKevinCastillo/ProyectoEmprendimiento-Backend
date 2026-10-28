@@ -2,7 +2,10 @@ from typing import Optional
 from pydantic import BaseModel, field_validator, ValidationInfo
 from datetime import datetime
 from decimal import Decimal
-from Utils.Validacionesutilidades import validar_id_entero 
+from Utils.Validacionesutilidades import validar_id_entero
+from typing import Final
+
+ESTADOS_VALIDOS: Final[list[str]] = ["Idea", "En desarrollo", "Validación", "Aprobado", "En Progreso"]
 
 class SeguimientoBaseSchema(BaseModel):
     id_proyecto: Optional[int] = None

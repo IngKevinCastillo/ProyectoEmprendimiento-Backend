@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr, field_validator
-from typing import Optional
+from typing import Optional, Final
 from datetime import date, datetime
 import re
 from Utils.Validacionesutilidades import (
@@ -10,7 +10,7 @@ from Utils.Validacionesutilidades import (
     validar_telefono_utils
 )
 
-ESTADOS_VALIDOS = {"Activo", "Suspendido", "Eliminado"}
+ESTADOS_VALIDOS: Final[list[str]] = ["Activo", "Suspendido", "Eliminado"]
 
 class UsuarioBaseSchema(BaseModel):
     primer_nombre: Optional[str] = None

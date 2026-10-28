@@ -1,10 +1,10 @@
 from pydantic import BaseModel, field_validator, ValidationInfo
 from datetime import date
-from typing import Optional
+from typing import Optional, Final
 from Utils.Validacionesutilidades import validar_nombre_utils, validar_descripcion_utils, validar_id_entero, validar_calificacion
 
 
-ESTADOS_VALIDOS = {"Idea", "En desarrollo", "Validación","Aprobado", "Finalizado", "Eliminado", "En Progreso"}
+ESTADOS_VALIDOS: Final[list[str]] = ["Idea", "En desarrollo", "Validación","Aprobado", "Finalizado", "Eliminado", "En Progreso"]
 
 class ProyectoBaseSchema(BaseModel):
     nombre_proyecto: Optional[str] = None

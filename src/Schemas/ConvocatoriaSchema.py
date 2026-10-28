@@ -1,6 +1,9 @@
 from pydantic import BaseModel
 from typing import Optional
 from datetime import date, datetime
+from typing import Final
+
+ESTADOS_VALIDOS: Final[list[str]] = ["Finalizado", "Publicada"]
 
 class ConvocatoriaCrearSchema(BaseModel):
     titulo_convocatoria: str
@@ -28,7 +31,7 @@ class ConvocatoriaRespuestaSchema(BaseModel):
     fecha_cierre: date
     cupos: Optional[int]
     requisitos: Optional[str]
-    id_estado: int
+    estado: str
     creado_por: int
     id_tipo_convocatoria: int
     fecha_creacion: Optional[datetime]

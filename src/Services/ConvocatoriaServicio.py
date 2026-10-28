@@ -3,10 +3,10 @@ from fastapi import HTTPException, status
 from datetime import date
 from Models.ConvocatoriaModelo import ConvocatoriaModelo
 from Models.TipoConvocatoriaModelo import TipoConvocatoriaModelo
-from Schemas.ConvocatoriaSchema import ConvocatoriaCrearSchema, ConvocatoriaActualizarSchema
+from Schemas.ConvocatoriaSchema import ConvocatoriaCrearSchema, ConvocatoriaActualizarSchema, ESTADOS_VALIDOS
 
-ID_ESTADO_PUBLICADA = 19
-ID_ESTADO_FINALIZADA = 5
+ESTADO_PUBLICADA = ESTADOS_VALIDOS[1]
+ESTADO_FINALIZADA = ESTADOS_VALIDOS[0]
 
 def _validar_tipo_convocatoria(db: Session, id_tipo_convocatoria: int):
     tipo = db.query(TipoConvocatoriaModelo).filter(
@@ -17,8 +17,8 @@ def _validar_tipo_convocatoria(db: Session, id_tipo_convocatoria: int):
     return tipo
 
 def _verificar_y_finalizar(db: Session, convocatoria: ConvocatoriaModelo):
-    if convocatoria.id_estado == ID_ESTADO_PUBLICADA and convocatoria.fecha_cierre < date.today():
-        convocatoria.id_estado = ID_ESTADO_FINALIZADA
+    if convocatoria.estado == ESTADO_PUBLICADA and convocatoria.fecha_cierre < date.today():
+        convocatoria.estado = ESTADO_FINALIZADA
         db.commit()
         db.refresh(convocatoria)
     return convocatoria
@@ -31,12 +31,12 @@ def ObtenerConvocatorias(db: Session):
 
 def ObtenerConvocatoriasPublicadas(db: Session):
     convocatorias = db.query(ConvocatoriaModelo).filter(
-        ConvocatoriaModelo.id_estado == ID_ESTADO_PUBLICADA
+        ConvocatoriaModelo.estado == ESTADO_PUBLICADA
     ).all()
     for c in convocatorias:
         _verificar_y_finalizar(db, c)
     return db.query(ConvocatoriaModelo).filter(
-        ConvocatoriaModelo.id_estado == ID_ESTADO_PUBLICADA
+        ConvocatoriaModelo.estado == ESTADO_PUBLICADA
     ).all()
 
 def BuscarConvocatoria(db: Session, id_convocatoria: int):
@@ -52,7 +52,7 @@ def CrearConvocatoria(db: Session, datos: ConvocatoriaCrearSchema, id_admin: int
     nueva = ConvocatoriaModelo(
         **datos.model_dump(),
         creado_por=id_admin,
-        id_estado=ID_ESTADO_PUBLICADA
+        estado=ESTADO_PUBLICADA
     )
     db.add(nueva)
     db.commit()
@@ -63,7 +63,7 @@ def ActualizarConvocatoria(db: Session, id_convocatoria: int, datos: Convocatori
     convocatoria = BuscarConvocatoria(db, id_convocatoria)
     if not convocatoria:
         return None
-    if convocatoria.id_estado != ID_ESTADO_PUBLICADA:
+    if convocatoria.estado != ESTADO_PUBLICADA:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Solo se puede editar una convocatoria publicada"
@@ -80,7 +80,7 @@ def EliminarConvocatoria(db: Session, id_convocatoria: int):
     convocatoria = BuscarConvocatoria(db, id_convocatoria)
     if not convocatoria:
         return None
-    if convocatoria.id_estado != ID_ESTADO_PUBLICADA:
+    if convocatoria.estado != ESTADO_PUBLICADA:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Solo se puede eliminar una convocatoria publicada"
