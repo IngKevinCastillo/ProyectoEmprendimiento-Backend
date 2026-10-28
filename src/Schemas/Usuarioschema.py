@@ -206,7 +206,7 @@ class UsuarioRespuestaSchema(BaseModel):
     id_sede: int
     direccion: Optional[str] = None
     id_municipio: int
-    id_estado: int
+    id_estado: str
 
     class Config:
         from_attributes = True

@@ -17,7 +17,7 @@ class EstadosCrearSchema(EstadosBaseSchema):
     pass
 
 class CambiarEstado(BaseModel):
-    id_estado_cambiar: int 
+    id_estado_cambiar: str
 
 
 class EstadosRespuestaSchema(BaseModel):

@@ -1,6 +1,4 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-eliminado = 6
 
 from Schemas.Usuarioschema import (
     UsuarioCrearSchema,
@@ -15,7 +13,7 @@ from Schemas.Usuarioschema import (
 from Schemas.EstadosSchema import CambiarEstado
 from Schemas.Autenticacionschema import Token
 from Schemas.UsuarioProyectoSchema import UsuarioProyectoRespuestaSchema
-
+from typing import Final
 from Configs.bd import get_db
 
 from Controllers.UsuarioControlador import (
@@ -41,6 +39,7 @@ from Controllers.AutenticacionControlador import (
 )
 
 from Core.Seguridad import obtener_usuario_actual, verificar_usuario_admin
+ESTADO_ELIMINADO: Final = "Eliminado"
 
 
 router = APIRouter(
@@ -55,7 +54,7 @@ async def buscar_usuario(
     usuario_actual = Depends(obtener_usuario_actual)
 ):
     usuario = BuscarUsuarioControlador(db, id_usuario)
-    if not usuario or usuario.id_estado  == eliminado:
+    if not usuario or usuario.estado  == ESTADO_ELIMINADO:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario especificado no existe.")
     return usuario
 
@@ -66,7 +65,7 @@ async def buscar_usuario_por_documento(
     usuario_actual = Depends(obtener_usuario_actual)
 ):
     usuario = BuscarUsuarioPorDocumentoControlador(db, numero_documento)
-    if not usuario or usuario.id_estado  == eliminado:
+    if not usuario or usuario.estado  == ESTADO_ELIMINADO:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El usuario especificado no existe.")
     return usuario
 
@@ -76,7 +75,7 @@ async def buscar_tutor_de_mesa(
     db: Session = Depends(get_db),
 ):
     tutor = BuscarTutorDeMesaControlador(db, id_mesa)
-    if not tutor or tutor.id_estado == eliminado:
+    if not tutor or tutor.id_estado == ESTADO_ELIMINADO:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="El tutor especificado no existe.")
     return tutor
 
@@ -125,7 +124,7 @@ async def login(datos: LoginSchema, db: Session = Depends(get_db)):
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Credenciales inválidas")
     usuario = BuscarUsuarioPorCorreoControlador(db, datos.correo)
-    if(usuario.id_estado == eliminado):
+    if(usuario.id_estado == ESTADO_ELIMINADO):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="La cuenta no existe...por favor crea tu cuenta.")
     return token
 

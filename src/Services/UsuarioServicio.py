@@ -9,7 +9,7 @@ from Schemas.EstadosSchema import CambiarEstado
 from typing import Final
 from Services.SupabaseClienteServicio import supabase
 
-ESTADO_ELIMINADO: Final = 6
+ESTADO_ELIMINADO: Final = "Eliminado"
 
 def buscar_usuario(db: Session, id: int):
     return db.query(UsuarioModelo).filter(UsuarioModelo.id_usuario == id).first()
