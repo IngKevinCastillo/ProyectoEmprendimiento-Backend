@@ -4,29 +4,28 @@ from sqlalchemy import Date, and_, cast, func
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from Models.SeguimientoModelo import SeguimientoModelo
-from Schemas.SeguimientoSchema import SeguimientoCrearSchema, SeguimientoRespuestaSchema, SeguimientoActualizarSchema
-from Services.EstadosServicio import BuscarEstadosPorNombre
-from Core.CacheResolver import obtener_id_estado, obtener_nombre_mesa_por_id
+from Schemas.SeguimientoSchema import SeguimientoCrearSchema, SeguimientoActualizarSchema
+from Core.CacheResolver import obtener_nombre_mesa_por_id
 from Utils.Mapeadorutilidades import auto_mapear
 
 ESTADO_ELIMINADO: Final = "Eliminado"
 MESA_FINAL: Final = 4
 
 def BuscarSeguimiento(db: Session, id: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_seguimiento_emprendimiento == int(id), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).first()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_seguimiento_emprendimiento == int(id), SeguimientoModelo.estado != ESTADO_ELIMINADO).first()
 
 def BuscarUltimoSeguimientoPorProyecto(db: Session, id_proyecto: int):
     return db.query(SeguimientoModelo)\
-        .filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO))\
+        .filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.estado != ESTADO_ELIMINADO)\
         .order_by(SeguimientoModelo.fecha_registro.desc())\
         .first()
 
 def ObtenerSeguimientos(db: Session):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.estado != ESTADO_ELIMINADO).all()
 
 def ObtenerUltimoSeguimientoDeCadaProyecto(db: Session):
     subquery_max_fecha = db.query(SeguimientoModelo.id_proyecto, func.max(SeguimientoModelo.fecha_registro).label("ultima_fecha"))\
-        .filter(SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO))\
+        .filter(SeguimientoModelo.estado != ESTADO_ELIMINADO)\
         .group_by(
             SeguimientoModelo.id_proyecto
         )\
@@ -34,20 +33,20 @@ def ObtenerUltimoSeguimientoDeCadaProyecto(db: Session):
     return db.query(SeguimientoModelo).join(subquery_max_fecha, and_(SeguimientoModelo.id_proyecto == subquery_max_fecha.c.id_proyecto, SeguimientoModelo.fecha_registro == subquery_max_fecha.c.ultima_fecha)).all()
 
 def ObtenerSeguimientosPorProyecto(db: Session, id_proyecto: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_proyecto == int(id_proyecto), SeguimientoModelo.estado != ESTADO_ELIMINADO).all()
 
-def ObtenerSeguimientosPorEstado(db: Session, id_estado: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_estado == int(id_estado)).all()
+def ObtenerSeguimientosPorEstado(db: Session, estado: str):
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.estado == estado).all()
 
 def ObtenerSeguimientoPorUsuarioResponsable(db: Session, id: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_usuario_responsable == int(id), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_usuario_responsable == int(id), SeguimientoModelo.estado != ESTADO_ELIMINADO).all()
 
 def ObtenerSeguimientoPorFecha(db: Session, fecha: str):
     fecha_dt = datetime.strptime(fecha, "%d-%m-%Y").date()
-    return db.query(SeguimientoModelo).filter(cast(SeguimientoModelo.fecha_registro, Date) == fecha_dt, SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
+    return db.query(SeguimientoModelo).filter(cast(SeguimientoModelo.fecha_registro, Date) == fecha_dt, SeguimientoModelo.estado != ESTADO_ELIMINADO).all()
 
 def ObtenerSeguimientosPorMesas(db: Session, id_mesas: str):
-    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_mesas == int(id_mesas), SeguimientoModelo.id_estado != obtener_id_estado(db, ESTADO_ELIMINADO)).all()
+    return db.query(SeguimientoModelo).filter(SeguimientoModelo.id_mesas == int(id_mesas), SeguimientoModelo.estado != ESTADO_ELIMINADO).all()
 
 def ValidarMesaPermitida(db: Session, id_proyecto: int, id_mesa_solicitada: int) -> None:
     ultimo = BuscarUltimoSeguimientoPorProyecto(db, id_proyecto)
@@ -106,12 +105,8 @@ def EliminarSeguimiento(db: Session, id: int):
     seguimiento = BuscarSeguimiento(db, id)
     if not seguimiento:
         raise HTTPException(status_code=404, detail="No se encontró el seguimiento")
-
-    estado = obtener_id_estado(db, ESTADO_ELIMINADO)
-    if not estado:
-        raise HTTPException(status_code=404, detail="No se encontró el estado 'Eliminado' en la base de datos")
     
-    seguimiento.id_estado = estado
+    seguimiento.estado = ESTADO_ELIMINADO
     db.commit()
     db.refresh(seguimiento)
     return {"detail": "Seguimiento eliminado"}

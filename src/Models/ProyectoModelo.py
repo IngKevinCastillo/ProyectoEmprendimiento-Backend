@@ -8,7 +8,7 @@ class ProyectoModelo(Base):
     id_proyecto = Column(Integer, primary_key=True, autoincrement=True)
     nombre_proyecto = Column(String(100), nullable=False)
     descripcion = Column(Text, nullable=False)
-    id_estado = Column(String(15), nullable=False)
+    estado = Column(String(15), nullable=False)
     fecha_creacion = Column(Date, nullable=False, server_default=text("now()"))
     problematica = Column(Text, nullable=True)
     publico_objetivo = Column(Text, nullable=True)

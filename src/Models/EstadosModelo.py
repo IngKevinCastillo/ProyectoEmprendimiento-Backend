@@ -8,8 +8,6 @@ class EstadosModelo(Base):
     id_estado = Column(Integer, primary_key=True, nullable=False)
     nombre = Column(String(40), nullable=False)
     descripcion = Column(String(40), nullable=True)
-    
-    seguimientos = relationship("SeguimientoModelo", back_populates="estados")
     evento = relationship("EventoModelo", back_populates="estados")
     curso = relationship("CursoModelo", back_populates="estados")
     participaciones = relationship("ParticipacionEventoModelo", back_populates="estados")

@@ -49,13 +49,13 @@ async def listar_ultimo_seguimiento_de_cada_proyecto(
     return obtener_ultimo_seguimiento_de_cada_proyecto_controlador(db)
 
 
-@router.get("/estado/{id_estado}", response_model=list[SeguimientoRespuestaSchema])
+@router.get("/estado/{estado}", response_model=list[SeguimientoRespuestaSchema])
 async def listar_seguimientos_por_estado(
-    id_estado: str,
+    estado: str,
     db: Session = Depends(get_db),
     usuario_actual=Depends(obtener_usuario_actual)
 ):
-    return obtener_seguimientos_por_estado_controlador(db, id_estado)
+    return obtener_seguimientos_por_estado_controlador(db, estado)
 
 
 @router.get("/proyecto/{id_proyecto}", response_model=list[SeguimientoRespuestaSchema])

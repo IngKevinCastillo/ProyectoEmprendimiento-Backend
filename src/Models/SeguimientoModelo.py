@@ -1,8 +1,6 @@
 from sqlalchemy import Boolean, Column, Integer, String, Numeric, TIMESTAMP, text, ForeignKey
 from sqlalchemy.orm import relationship
 from Configs.bd import Base
-from Models.ProyectoModelo import ProyectoModelo
-from Models.UsuarioModelo import UsuarioModelo
 
 class SeguimientoModelo(Base):
     __tablename__ = "Seguimiento"
@@ -12,7 +10,7 @@ class SeguimientoModelo(Base):
     observaciones = Column(String(400), nullable=False)
     id_usuario_responsable = Column(Integer, ForeignKey("Usuario.id_usuario", ondelete="RESTRICT"), nullable=False)
     fecha_registro = Column(TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
-    id_estado = Column(Integer, ForeignKey("Estados.id_estado", ondelete="RESTRICT"), nullable=False)
+    estado = Column(String(15), nullable=False)
     avance_porcentaje = Column(Numeric(5, 2), nullable=False)
     aspecto_revisado = Column(String(200), nullable=False)
     id_mesas = Column(Integer, ForeignKey("Mesas.id", ondelete="RESTRICT"), nullable=False)

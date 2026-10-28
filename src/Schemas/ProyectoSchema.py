@@ -9,7 +9,7 @@ ESTADOS_VALIDOS = {"Idea", "En desarrollo", "Validación","Aprobado", "Finalizad
 class ProyectoBaseSchema(BaseModel):
     nombre_proyecto: Optional[str] = None
     descripcion: Optional[str] = None
-    id_estado: Optional[str] = None
+    estado: Optional[str] = None
     id_categoria: Optional[int] = None
     problematica: Optional[str] = None
     publico_objetivo: Optional[str] = None
@@ -66,7 +66,7 @@ class ProyectoBaseSchema(BaseModel):
 class ProyectoCrearSchema(ProyectoBaseSchema):
     nombre_proyecto: str
     descripcion: str
-    id_estado: str
+    estado: str
     id_categoria: int
     id_tipo_proyecto: int
     id_escala: int
@@ -76,7 +76,7 @@ class ProyectoRespuestaSchema(BaseModel):
     id_proyecto: int
     nombre_proyecto: str
     descripcion: str
-    id_estado: str
+    estado: str
     id_categoria: int
     id_tipo_proyecto: int
     id_escala: int
@@ -95,7 +95,7 @@ class ProyectoRespuestaSchema(BaseModel):
 class ProyectoActualizarSchema(ProyectoBaseSchema):
     nombre_proyecto: Optional[str] = None
     descripcion: Optional[str] = None
-    id_estado: Optional[str] = None
+    estado: Optional[str] = None
     id_categoria: Optional[int] = None
     id_tipo_proyecto: Optional[int] = None
     id_escala: Optional[int] = None

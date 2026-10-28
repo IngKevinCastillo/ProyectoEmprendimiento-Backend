@@ -12,25 +12,25 @@ from Utils.Mapeadorutilidades import auto_mapear
 ESTADO_ELIMINADO: Final = "Eliminado"
 
 def buscarEmprendimiento(db: Session, id: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.id_proyecto == int(id), ProyectoModelo.id_estado != ESTADO_ELIMINADO).first()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_proyecto == int(id), ProyectoModelo.estado != ESTADO_ELIMINADO).first()
 
 def buscarEmprendimientoPorNombre(db: Session, nombre: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.nombre_proyecto == nombre, ProyectoModelo.id_estado != ESTADO_ELIMINADO).first()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.nombre_proyecto == nombre, ProyectoModelo.estado != ESTADO_ELIMINADO).first()
 
 def obtenerEmprendimientos(db: Session):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.id_estado != ESTADO_ELIMINADO).all()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.estado != ESTADO_ELIMINADO).all()
 
-def obtenerEmprendimientosPorEstado(db: Session, estado: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.id_estado == estado).all()
+def obtenerEmprendimientosPorEstado(db: Session, estadoEntrante: str):
+    return db.query(ProyectoModelo).filter(ProyectoModelo.estado == estadoEntrante).all()
 
 def obtenerEmprendimientosPorCategoria(db: Session, categoria: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.id_categoria == int(categoria), ProyectoModelo.id_estado != ESTADO_ELIMINADO).all()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_categoria == int(categoria), ProyectoModelo.estado != ESTADO_ELIMINADO).all()
 
 def obtenerEmprendimientosPorTipoProyecto(db: Session, tipo_proyecto: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.id_tipo_proyecto == int(tipo_proyecto), ProyectoModelo.id_estado != ESTADO_ELIMINADO).all()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_tipo_proyecto == int(tipo_proyecto), ProyectoModelo.estado != ESTADO_ELIMINADO).all()
 
 def obtenerEmprendimientosPorEscala(db: Session, escala: str):
-    return db.query(ProyectoModelo).filter(ProyectoModelo.id_escala == int(escala), ProyectoModelo.id_estado != ESTADO_ELIMINADO).all()
+    return db.query(ProyectoModelo).filter(ProyectoModelo.id_escala == int(escala), ProyectoModelo.estado != ESTADO_ELIMINADO).all()
 
 def crearEmprendimiento(db: Session, emprendimiento: ProyectoCrearSchema):
     existente = buscarEmprendimientoPorNombre(db, emprendimiento.nombre_proyecto)
@@ -83,7 +83,7 @@ def eliminarEmprendimiento(db: Session, id: int):
     if not emprendimiento:
         raise HTTPException(status_code=404, detail="No se encontró el emprendimiento")
 
-    emprendimiento.id_estado = ESTADO_ELIMINADO
+    emprendimiento.estado = ESTADO_ELIMINADO
     db.commit()
     db.refresh(emprendimiento)
     return {"detail": "Emprendimiento eliminado"}
