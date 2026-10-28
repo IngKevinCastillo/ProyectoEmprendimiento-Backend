@@ -10,6 +10,8 @@ from Utils.Validacionesutilidades import (
     validar_telefono_utils
 )
 
+ESTADOS_VALIDOS = {"Activo", "Suspendido", "Eliminado"}
+
 class UsuarioBaseSchema(BaseModel):
     primer_nombre: Optional[str] = None
     segundo_nombre: Optional[str] = None

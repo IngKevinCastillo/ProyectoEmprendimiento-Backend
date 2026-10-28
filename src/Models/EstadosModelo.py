@@ -9,7 +9,6 @@ class EstadosModelo(Base):
     nombre = Column(String(40), nullable=False)
     descripcion = Column(String(40), nullable=True)
     
-    proyecto = relationship("ProyectoModelo", back_populates="estados")
     seguimientos = relationship("SeguimientoModelo", back_populates="estados")
     evento = relationship("EventoModelo", back_populates="estados")
     curso = relationship("CursoModelo", back_populates="estados")
@@ -20,5 +19,4 @@ class EstadosModelo(Base):
     evaluaciones = relationship("EvaluacionModelo", back_populates="estado")
     postulaciones = relationship("PostulacionModelo", back_populates="estado")
     beneficios_asignados = relationship("BeneficioAsignadoModelo", back_populates="estado")
-    rol = relationship("RolesModelo", back_populates="estado")
     metas = relationship("MetasModelo", back_populates="estado")

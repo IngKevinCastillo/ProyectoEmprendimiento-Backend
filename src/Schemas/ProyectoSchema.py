@@ -4,10 +4,12 @@ from typing import Optional
 from Utils.Validacionesutilidades import validar_nombre_utils, validar_descripcion_utils, validar_id_entero, validar_calificacion
 
 
+ESTADOS_VALIDOS = {"Idea", "En desarrollo", "Validación","Aprobado", "Finalizado", "Eliminado", "En Progreso"}
+
 class ProyectoBaseSchema(BaseModel):
     nombre_proyecto: Optional[str] = None
     descripcion: Optional[str] = None
-    id_estado: Optional[int] = None
+    id_estado: Optional[str] = None
     id_categoria: Optional[int] = None
     problematica: Optional[str] = None
     publico_objetivo: Optional[str] = None
@@ -29,10 +31,10 @@ class ProyectoBaseSchema(BaseModel):
     def validar_descripcion_proyecto(cls, v: Optional[str]) -> str:
         return validar_descripcion_utils(v, min_len=20, max_len=2000, campo="Descripción del proyecto")
 
-    @field_validator("id_estado")
-    @classmethod
-    def validar_id_estado(cls, v: Optional[int]) -> int:
-        return validar_id_entero(v, campo="ID del estado del proyecto") 
+    # @field_validator("id_estado")
+    # @classmethod
+    # def validar_id_estado(cls, v: Optional[int]) -> int:
+    #     return validar_id_entero(v, campo="ID del estado del proyecto") 
 
     @field_validator("id_categoria")
     @classmethod
@@ -64,7 +66,7 @@ class ProyectoBaseSchema(BaseModel):
 class ProyectoCrearSchema(ProyectoBaseSchema):
     nombre_proyecto: str
     descripcion: str
-    id_estado: int
+    id_estado: str
     id_categoria: int
     id_tipo_proyecto: int
     id_escala: int
@@ -74,7 +76,7 @@ class ProyectoRespuestaSchema(BaseModel):
     id_proyecto: int
     nombre_proyecto: str
     descripcion: str
-    id_estado: int
+    id_estado: str
     id_categoria: int
     id_tipo_proyecto: int
     id_escala: int
@@ -93,7 +95,7 @@ class ProyectoRespuestaSchema(BaseModel):
 class ProyectoActualizarSchema(ProyectoBaseSchema):
     nombre_proyecto: Optional[str] = None
     descripcion: Optional[str] = None
-    id_estado: Optional[int] = None
+    id_estado: Optional[str] = None
     id_categoria: Optional[int] = None
     id_tipo_proyecto: Optional[int] = None
     id_escala: Optional[int] = None
